@@ -20,10 +20,10 @@ export default class extends Script<{}> {
   async execute(): Promise<void> {
     // await buildModules();
 
-    const ret = await git.status();
-    console.log({ ret });
-
-    return;
+    // const isClean = (await git.status()).isClean();
+    // if (!isClean) {
+    //   throw new Error("请提交后执行");
+    // }
 
     // 更新版本号
     const targetVersion = "0.0.7";

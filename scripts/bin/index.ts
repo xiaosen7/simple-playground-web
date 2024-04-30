@@ -19,7 +19,6 @@ import { SCRIPTS_PLACED_ROOT, SCRIPTS_ROOT } from "../src/utils";
 
   function errorHandler(error: Error) {
     console.error("命令执行失败");
-    console.error(error.message);
     if (error.stack) {
       console.error(error.stack);
     }
