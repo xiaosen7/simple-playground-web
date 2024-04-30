@@ -1,0 +1,15 @@
+{
+  "name": "@simple-playground-web/ui",
+  "main": "src/index.ts",
+  "devDependencies": {
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@simple-playground-web/dom": "workspace:^",
+    "@simple-playground-web/logger": "workspace:^",
+    "@simple-playground-web/types": "workspace:^",
+    "monaco-editor": "^0.48.0",
+    "rxjs": "^7.8.1"
+  }
+}

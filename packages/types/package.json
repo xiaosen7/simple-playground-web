@@ -1,0 +1,8 @@
+{
+  "name": "@simple-playground-web/types",
+  "main": "src/index.ts",
+  "devDependencies": {
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5"
+  }
+}

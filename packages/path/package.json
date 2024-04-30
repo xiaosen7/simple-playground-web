@@ -1,0 +1,11 @@
+{
+  "name": "@simple-playground-web/path",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@simple-playground-web/types": "workspace:^"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5"
+  }
+}
