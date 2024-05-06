@@ -111,6 +111,7 @@ async function buildPackages() {
       silent: true,
       clean: true,
       format: ["esm"],
+      tsconfig: join(project.dir, "tsconfig.json"),
       external: [
         ...Object.keys(project.manifest.dependencies ?? {}),
         ...Object.keys(project.manifest.peerDependencies ?? {}),
