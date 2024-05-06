@@ -12,6 +12,8 @@ import { join, resolve } from "path";
 import { build } from "tsup";
 import { readFile } from "fs-extra";
 
+const MAIN_BRANCH = "main";
+
 const git = simpleGit();
 
 git.outputHandler((_command, stdout, stderr) => {
@@ -29,6 +31,12 @@ export default class extends Script<{}> {
       throw new Error("请提交后执行");
     }
 
+    const branch = await git.branch({});
+
+    if (branch.current !== MAIN_BRANCH) {
+      throw new Error(`请切换到 ${MAIN_BRANCH} 分支后执行`);
+    }
+
     // 更新版本号
     const targetVersion = await readFile(VERSION_FILE, "utf-8");
 
@@ -40,7 +48,7 @@ export default class extends Script<{}> {
     // 生成 git commit
     await git.add(".");
     await git.commit(`chore: update version to ${targetVersion}`);
-    await git.push("origin");
+    await git.push("origin", MAIN_BRANCH);
 
     // 生成 git tag
     await git.addTag(`release/v${targetVersion}`);
