@@ -1,6 +1,7 @@
 {
   "name": "@simple-playground-web/scripts",
   "private": true,
+  "description": "Internal scripts",
   "bin": {
     "scripts": "bin/index.ts"
   },

@@ -1,5 +1,6 @@
 {
   "name": "@simple-playground-web/path",
+  "description": "Path utilities",
   "dependencies": {
     "@simple-playground-web/types": "workspace:^"
   },

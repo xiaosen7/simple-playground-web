@@ -1,5 +1,6 @@
 {
   "name": "@simple-playground-web/project",
+  "description": "Project model",
   "dependencies": {
     "@simple-playground-web/logger": "workspace:^",
     "@simple-playground-web/path": "workspace:^",

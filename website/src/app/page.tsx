@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import ReactDOMClient from "react-dom/client";
 import React, { useEffect, useState } from "react";
+import wasmUrl from "esbuild-wasm/esbuild.wasm";
 
 const globals = {
   "react-dom/client": ReactDOMClient,
@@ -10,7 +11,7 @@ const globals = {
 };
 
 const DynamicPlayground = dynamic(
-  () => import("@/ui/playground").then((x) => x.UIPlayground),
+  () => import("@simple-playground-web/react").then((x) => x.Playground),
   {
     loading: () => <p>Loading...</p>,
     ssr: false,
@@ -32,9 +33,10 @@ export default function Home() {
 
   return (
     <DynamicPlayground
+      wasmUrl={wasmUrl}
       buildInput="/src/**/*"
       files={files}
-      entry="src/index.tsx"
+      entry="/src/index.tsx"
       globalExternals={globals}
     />
   );

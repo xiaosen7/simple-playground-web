@@ -2,14 +2,13 @@
   "name": "website",
   "version": "0.0.1",
   "private": true,
+  "description": "Website",
   "scripts": {
     "dev": "next dev",
     "build": "next build"
   },
   "dependencies": {
-    "@simple-playground-web/bundler": "workspace:^",
-    "@simple-playground-web/project": "workspace:^",
-    "@simple-playground-web/ui": "workspace:^",
+    "@simple-playground-web/react": "workspace:^",
     "@types/lodash-es": "^4.17.12",
     "ahooks": "^3.7.11",
     "classnames": "^2.5.1",

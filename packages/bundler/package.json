@@ -1,5 +1,6 @@
 {
   "name": "@simple-playground-web/bundler",
+  "description": "The web bundler",
   "dependencies": {
     "@simple-playground-web/types": "workspace:^",
     "lodash-es": "^4.17.21"

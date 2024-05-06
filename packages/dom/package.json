@@ -1,5 +1,6 @@
 {
   "name": "@simple-playground-web/dom",
+  "description": "Dom utilities",
   "dependencies": {
     "@simple-playground-web/types": "workspace:^"
   },

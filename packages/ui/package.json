@@ -1,5 +1,6 @@
 {
   "name": "@simple-playground-web/ui",
+  "description": "UI models",
   "devDependencies": {
     "tsup": "^8.0.2",
     "typescript": "^5.4.5"

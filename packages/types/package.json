@@ -1,5 +1,6 @@
 {
   "name": "@simple-playground-web/types",
+  "description": "Common types",
   "devDependencies": {
     "tsup": "^8.0.2",
     "typescript": "^5.4.5"

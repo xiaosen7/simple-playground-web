@@ -1,5 +1,6 @@
 {
   "name": "@simple-playground-web/logger",
+  "description": "Logger utilities",
   "devDependencies": {
     "tsup": "^8.0.2",
     "typescript": "^5.4.5"
