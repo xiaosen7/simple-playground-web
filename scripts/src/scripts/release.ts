@@ -53,7 +53,7 @@ export default class extends Script<{}> {
 
     // 生成 git commit
     await git.add(".");
-    await git.commit(`chore: update version to ${version}`);
+    await git.commit(`chore: update version to v${version}`);
     await git.push("origin", MAIN_BRANCH);
 
     // 生成 git tag
