@@ -13,6 +13,7 @@ import { build } from "tsup";
 import { readFile } from "fs-extra";
 
 const MAIN_BRANCH = "main";
+const REMOTE_NAME = "origin";
 
 const git = simpleGit();
 
@@ -60,6 +61,13 @@ export default class extends Script<{}> {
       excludeRoot: true,
       patterns: ["packages/*"],
     });
+    const repository = {
+      type: "git",
+      url: (await $`git remote get-url origin`).stdout.replace(
+        "git@github.com:",
+        "git+https://github.com/"
+      ),
+    };
     await Promise.all(
       pkgs.map((x) =>
         x.writeProjectManifest({
@@ -71,10 +79,13 @@ export default class extends Script<{}> {
           main: undefined,
           devDependencies: undefined,
           scripts: undefined,
+          repository,
         })
       )
     );
     await $`pnpm publish -r --access public --no-git-checks`;
+
+    await $`git restore .`;
   }
 }
 

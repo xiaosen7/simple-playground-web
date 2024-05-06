@@ -35,5 +35,6 @@
     "typescript": "^5.4.3"
   },
   "version": "0.0.1",
-  "main": "src/index.ts"
+  "main": "src/index.ts",
+  "repository": {}
 }
