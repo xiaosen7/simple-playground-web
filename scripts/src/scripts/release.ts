@@ -73,8 +73,8 @@ export default class extends Script<{}> {
         x.writeProjectManifest({
           ...x.manifest,
           version: targetVersion,
-          module: "dist/index.js",
-          types: "dist/index.d.ts",
+          module: "dist/index.mjs",
+          types: "dist/index.d.mts",
           files: ["dist"],
           main: undefined,
           devDependencies: undefined,
@@ -105,6 +105,11 @@ async function buildPackages() {
       outDir: join(project.dir, "dist"),
       silent: true,
       clean: true,
+      format: ["esm"],
+      external: [
+        ...Object.keys(project.manifest.dependencies ?? {}),
+        ...Object.keys(project.manifest.peerDependencies ?? {}),
+      ],
     });
   }
 }
