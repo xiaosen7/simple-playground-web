@@ -4,7 +4,7 @@
   "dependencies": {
     "@simple-playground-web/types": "workspace:^"
   },
-  "version": "0.0.10",
+  "version": "0.0.11",
   "module": "dist/index.mjs",
   "types": "dist/index.d.mts",
   "files": [
