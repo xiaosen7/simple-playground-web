@@ -50,11 +50,14 @@ export default class extends Script<{}> {
           version: targetVersion,
           module: "dist/index.js",
           types: "dist/index.d.ts",
+          files: ["dist"],
           main: undefined,
+          devDependencies: undefined,
+          scripts: undefined,
         })
       )
     );
-    await $`pnpm publish -r --access public`;
+    await $`pnpm publish -r --access public --no-git-checks`;
   }
 }
 
