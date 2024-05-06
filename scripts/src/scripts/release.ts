@@ -18,27 +18,15 @@ export default class extends Script<{}> {
     "构建，发布，更新版本号，生成 changelog，生成 git tag, 发布到 git";
 
   async execute(): Promise<void> {
-    await buildModules();
+    const isClean = (await git.status()).isClean();
+    if (!isClean) {
+      throw new Error("请提交后执行");
+    }
 
-    // const isClean = (await git.status()).isClean();
-    // if (!isClean) {
-    //   throw new Error("请提交后执行");
-    // }
+    await buildModules();
 
     // 更新版本号
     const targetVersion = "0.0.1";
-    const pkgs = await findWorkspaceProjects();
-    await Promise.all(
-      pkgs.map((x) =>
-        x.writeProjectManifest({
-          ...x.manifest,
-          version: targetVersion,
-          module: "dist/index.js",
-          types: "dist/index.d.ts",
-          main: undefined,
-        })
-      )
-    );
 
     // 生成 changelog
     await $`pnpm conventional-changelog -p angular -i ./CHANGELOG.md -s`;
@@ -51,7 +39,22 @@ export default class extends Script<{}> {
     await git.addTag(`release/v${targetVersion}`);
 
     // 推送 git tag
-    await git.pushTags("origin");
+    // await git.pushTags("origin");
+
+    // 发布到 npm
+    const pkgs = await findWorkspaceProjects();
+    await Promise.all(
+      pkgs.map((x) =>
+        x.writeProjectManifest({
+          ...x.manifest,
+          version: targetVersion,
+          module: "dist/index.js",
+          types: "dist/index.d.ts",
+          main: undefined,
+        })
+      )
+    );
+    await $`pnpm publish -r --access public`;
   }
 }
 

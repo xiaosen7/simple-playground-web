@@ -8,10 +8,5 @@
     "change-case": "^5.4.4"
   },
   "version": "0.0.1",
-  "main": "src/index.ts",
-  "publishConfig": {
-    "main": null,
-    "module": "dist/index.js",
-    "types": "dist/index.d.ts"
-  }
+  "main": "src/index.ts"
 }

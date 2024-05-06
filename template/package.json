@@ -1,5 +1,6 @@
 {
   "name": "template",
+  "private": true,
   "dependencies": {
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -7,10 +8,5 @@
     "xstate": "^5.12.0"
   },
   "version": "0.0.1",
-  "main": "src/index.ts",
-  "publishConfig": {
-    "main": null,
-    "module": "dist/index.js",
-    "types": "dist/index.d.ts"
-  }
+  "main": "src/index.ts"
 }
