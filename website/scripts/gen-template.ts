@@ -36,13 +36,3 @@ async function dirToJson(
   );
   return ret;
 }
-
-function removeDts(pathToCode: IPathToCode) {
-  const ret = { ...pathToCode };
-  Object.keys(ret).forEach((key) => {
-    if (key.endsWith(".d.ts")) {
-      delete ret[key];
-    }
-  });
-  return ret;
-}

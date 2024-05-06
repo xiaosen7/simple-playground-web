@@ -18,7 +18,7 @@ export default class extends Script<{}> {
     "构建，发布，更新版本号，生成 changelog，生成 git tag, 发布到 git";
 
   async execute(): Promise<void> {
-    // await buildModules();
+    await buildModules();
 
     // const isClean = (await git.status()).isClean();
     // if (!isClean) {
@@ -26,16 +26,22 @@ export default class extends Script<{}> {
     // }
 
     // 更新版本号
-    const targetVersion = "0.0.7";
+    const targetVersion = "0.0.1";
     const pkgs = await findWorkspaceProjects();
     await Promise.all(
       pkgs.map((x) =>
-        x.writeProjectManifest({ ...x.manifest, version: targetVersion })
+        x.writeProjectManifest({
+          ...x.manifest,
+          version: targetVersion,
+          module: "dist/index.js",
+          types: "dist/index.d.ts",
+          main: undefined,
+        })
       )
     );
 
     // 生成 changelog
-    await $`pnpm conventional-changelog -p angular -i packages/website/src/pages/CHANGELOG.md -s`;
+    await $`pnpm conventional-changelog -p angular -i ./CHANGELOG.md -s`;
 
     // 生成 git commit
     await git.add(".");

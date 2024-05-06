@@ -2,5 +2,6 @@
   "release": "发布",
   "template": "生成 template.json",
   "test": "测试",
-  "dev": "开发模式"
+  "dev": "开发模式",
+  "postinstall": "安装后执行的脚本"
 }

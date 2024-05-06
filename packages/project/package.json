@@ -1,6 +1,5 @@
 {
   "name": "@simple-playground-web/project",
-  "main": "src/index.ts",
   "dependencies": {
     "@simple-playground-web/logger": "workspace:^",
     "@simple-playground-web/path": "workspace:^",
@@ -13,5 +12,12 @@
   },
   "peerDependencies": {
     "monaco-editor": "^0.48.0"
+  },
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "publishConfig": {
+    "main": null,
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts"
   }
 }

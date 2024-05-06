@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  monaco-editor: 0.40.0
-
 importers:
 
   .:
@@ -115,8 +112,8 @@ importers:
         specifier: ^9.0.4
         version: 9.0.4
       monaco-editor:
-        specifier: 0.40.0
-        version: 0.40.0
+        specifier: ^0.48.0
+        version: 0.48.0
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -146,8 +143,8 @@ importers:
         specifier: workspace:^
         version: link:../types
       monaco-editor:
-        specifier: 0.40.0
-        version: 0.40.0
+        specifier: ^0.48.0
+        version: 0.48.0
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -294,11 +291,11 @@ importers:
         specifier: ^9.0.4
         version: 9.0.4
       monaco-editor:
-        specifier: 0.40.0
-        version: 0.40.0
+        specifier: ^0.48.0
+        version: 0.48.0
       monaco-editor-webpack-plugin:
         specifier: ^7.1.0
-        version: 7.1.0(monaco-editor@0.40.0)(webpack@5.91.0)
+        version: 7.1.0(monaco-editor@0.48.0)(webpack@5.91.0)
       next:
         specifier: 14.2.3
         version: 14.2.3(react-dom@18.2.0)(react@18.2.0)
@@ -3848,19 +3845,19 @@ packages:
       ufo: 1.5.3
     dev: true
 
-  /monaco-editor-webpack-plugin@7.1.0(monaco-editor@0.40.0)(webpack@5.91.0):
+  /monaco-editor-webpack-plugin@7.1.0(monaco-editor@0.48.0)(webpack@5.91.0):
     resolution: {integrity: sha512-ZjnGINHN963JQkFqjjcBtn1XBtUATDZBMgNQhDQwd78w2ukRhFXAPNgWuacaQiDZsUr4h1rWv5Mv6eriKuOSzA==}
     peerDependencies:
-      monaco-editor: 0.40.0
+      monaco-editor: '>= 0.31.0'
       webpack: ^4.5.0 || 5.x
     dependencies:
       loader-utils: 2.0.4
-      monaco-editor: 0.40.0
+      monaco-editor: 0.48.0
       webpack: 5.91.0(esbuild@0.19.12)
     dev: false
 
-  /monaco-editor@0.40.0:
-    resolution: {integrity: sha512-1wymccLEuFSMBvCk/jT1YDW/GuxMLYwnFwF9CDyYCxoTw2Pt379J3FUhwy9c43j51JdcxVPjwk0jm0EVDsBS2g==}
+  /monaco-editor@0.48.0:
+    resolution: {integrity: sha512-goSDElNqFfw7iDHMg8WDATkfcyeLTNpBHQpO8incK6p5qZt5G/1j41X0xdGzpIkGojGXM+QiRQyLjnfDVvrpwA==}
     dev: false
 
   /ms@2.1.2:

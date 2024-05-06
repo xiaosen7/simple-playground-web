@@ -1,11 +1,17 @@
 {
   "name": "@simple-playground-web/logger",
-  "main": "src/index.ts",
   "devDependencies": {
     "tsup": "^8.0.2",
     "typescript": "^5.4.5"
   },
   "dependencies": {
     "change-case": "^5.4.4"
+  },
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "publishConfig": {
+    "main": null,
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts"
   }
 }

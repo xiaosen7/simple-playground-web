@@ -1,6 +1,5 @@
 {
   "name": "@simple-playground-web/ui",
-  "main": "src/index.ts",
   "devDependencies": {
     "tsup": "^8.0.2",
     "typescript": "^5.4.5"
@@ -11,5 +10,12 @@
     "@simple-playground-web/types": "workspace:^",
     "monaco-editor": "^0.48.0",
     "rxjs": "^7.8.1"
+  },
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "publishConfig": {
+    "main": null,
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts"
   }
 }
