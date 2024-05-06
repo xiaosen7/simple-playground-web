@@ -8,12 +8,17 @@
     "minimatch": "^9.0.4",
     "rxjs": "^7.8.1"
   },
-  "devDependencies": {
-    "typescript": "^5.4.5"
-  },
   "peerDependencies": {
     "monaco-editor": "^0.48.0"
   },
-  "version": "0.0.1",
-  "main": "src/index.ts"
+  "version": "0.0.10",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiaosen7/simple-playground-web.git"
+  }
 }

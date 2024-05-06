@@ -1,13 +1,17 @@
 {
   "name": "@simple-playground-web/logger",
   "description": "Logger utilities",
-  "devDependencies": {
-    "tsup": "^8.0.2",
-    "typescript": "^5.4.5"
-  },
   "dependencies": {
     "change-case": "^5.4.4"
   },
-  "version": "0.0.1",
-  "main": "src/index.ts"
+  "version": "0.0.10",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiaosen7/simple-playground-web.git"
+  }
 }

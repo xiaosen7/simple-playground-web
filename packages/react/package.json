@@ -1,8 +1,7 @@
 {
   "name": "@simple-playground-web/react",
-  "main": "src/index.ts",
   "description": "The playground ui library of react framework",
-  "version": "0.0.1",
+  "version": "0.0.10",
   "dependencies": {
     "@simple-playground-web/bundler": "^0.0.4",
     "@simple-playground-web/project": "^0.0.4",
@@ -20,8 +19,13 @@
   "peerDependencies": {
     "react": ">=16.8.0"
   },
-  "devDependencies": {
-    "react": "^18",
-    "typescript": "^5.4.5"
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiaosen7/simple-playground-web.git"
   }
 }

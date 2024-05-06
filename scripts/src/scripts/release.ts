@@ -27,26 +27,25 @@ export default class extends Script<{}> {
     "构建，发布，更新版本号，生成 changelog，生成 git tag, 发布到 git";
 
   async execute(): Promise<void> {
-    const isClean = (await git.status()).isClean();
-    if (!isClean) {
-      throw new Error("请提交后执行");
-    }
-
-    const branch = await git.branch({});
-
-    if (branch.current !== MAIN_BRANCH) {
-      throw new Error(`请切换到 ${MAIN_BRANCH} 分支后执行`);
-    }
-
     const version = await readFile(VERSION_FILE, "utf-8");
     const tag = `release/v${version}`;
 
-    const tagExists = (await git.tag()).includes(tag);
-    if (tagExists) {
-      throw new Error(`tag ${tag} 已存在`);
-    }
+    await check(tag);
 
     console.log(`upgrade to ${version}`);
+
+    const pkgs = await findWorkspaceProjects({
+      excludeRoot: true,
+      patterns: ["packages/*"],
+    });
+    await Promise.all(
+      pkgs.map((x) =>
+        x.writeProjectManifest({
+          ...x.manifest,
+          version: version,
+        })
+      )
+    );
 
     // 生成 changelog
     await $`pnpm conventional-changelog -p angular -i ./CHANGELOG.md -s`;
@@ -62,10 +61,7 @@ export default class extends Script<{}> {
 
     // 发布到 npm
     await buildPackages();
-    const pkgs = await findWorkspaceProjects({
-      excludeRoot: true,
-      patterns: ["packages/*"],
-    });
+
     const repository = {
       type: "git",
       url: (await $`git remote get-url origin`).stdout.replace(
@@ -91,6 +87,29 @@ export default class extends Script<{}> {
     await $`pnpm publish -r --access public --no-git-checks`;
 
     await $`git restore .`;
+  }
+}
+
+async function check(tag: string) {
+  const isNpmLogin = !!(await $`npm whoami`).stdout;
+  if (!isNpmLogin) {
+    throw new Error("请先登录 npm");
+  }
+
+  const isClean = (await git.status()).isClean();
+  if (!isClean) {
+    throw new Error("请提交后执行");
+  }
+
+  const branch = await git.branch({});
+
+  if (branch.current !== MAIN_BRANCH) {
+    throw new Error(`请切换到 ${MAIN_BRANCH} 分支后执行`);
+  }
+
+  const tagExists = (await git.tag()).includes(tag);
+  if (tagExists) {
+    throw new Error(`tag ${tag} 已存在`);
   }
 }
 
