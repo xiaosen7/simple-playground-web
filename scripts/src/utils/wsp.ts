@@ -1,12 +1,12 @@
-import { existsSync } from 'fs';
-import { readFile, writeFile } from 'fs/promises';
-import { basename, join } from 'path';
+import { existsSync } from "fs";
+import { readFile, writeFile } from "fs/promises";
+import { basename, join } from "path";
 
-import { findWorkspacePackages } from '@pnpm/workspace.find-packages';
+import { findWorkspacePackages } from "@pnpm/workspace.find-packages";
 
-import { PKG_ROOT } from './path';
+import { PKG_ROOT } from "./path";
 
-import type { Project } from '@pnpm/types';
+import type { Project } from "@pnpm/types";
 
 export interface IProject extends Project {
   readme: {
@@ -21,16 +21,24 @@ export interface IProject extends Project {
   };
 }
 
-export async function findWorkspaceProjects({ excludeRoot = false }: { excludeRoot?: boolean } = {}): Promise<IProject[]> {
-  let projects = await findWorkspacePackages(PKG_ROOT);
-  if (excludeRoot) {
+export async function findWorkspaceProjects(
+  opts: { excludeRoot?: boolean } & Parameters<
+    typeof findWorkspacePackages
+  >[1] = {}
+): Promise<IProject[]> {
+  let projects = await findWorkspacePackages(PKG_ROOT, opts);
+  if (opts.excludeRoot) {
     projects = projects.filter((x) => x.dir !== PKG_ROOT);
   }
 
-  return await Promise.all(projects.map(async (project) => fillReadme(project).then(fillPackageScriptsJSON)));
+  return await Promise.all(
+    projects.map(async (project) =>
+      fillReadme(project).then(fillPackageScriptsJSON)
+    )
+  );
 
   async function fillReadme<T extends Project>(project: T) {
-    const filePath = join(project.dir, 'README.md');
+    const filePath = join(project.dir, "README.md");
     const exists = existsSync(filePath);
     const write = (content: string) => writeFile(filePath, content);
 
@@ -38,27 +46,33 @@ export async function findWorkspaceProjects({ excludeRoot = false }: { excludeRo
       await write(`# ${project.manifest.name ?? basename(project.dir)}`);
     }
 
-    const content = await readFile(filePath, 'utf-8');
+    const content = await readFile(filePath, "utf-8");
 
     return {
       ...project,
       readme: {
         filePath,
         content,
-        write
-      }
+        write,
+      },
     };
   }
 
   async function fillPackageScriptsJSON<T extends Project>(project: T) {
-    const filePath = join(project.dir, 'package-scripts.json');
+    const filePath = join(project.dir, "package-scripts.json");
     const exists = existsSync(filePath);
-    const content = exists ? JSON.parse(await readFile(filePath, 'utf-8')) : {};
+    const content = exists ? JSON.parse(await readFile(filePath, "utf-8")) : {};
     const write = (content: string) => writeFile(filePath, content);
 
-    const needExistedKeys = Object.keys(project.manifest.scripts ?? {}).filter((x) => !content[x]);
+    const needExistedKeys = Object.keys(project.manifest.scripts ?? {}).filter(
+      (x) => !content[x]
+    );
     if (needExistedKeys.length > 0) {
-      throw new Error(`[${project.manifest.name}]: 请在 package-scripts.json 中补充 ${needExistedKeys.join(', ')} 描述`);
+      throw new Error(
+        `[${
+          project.manifest.name
+        }]: 请在 package-scripts.json 中补充 ${needExistedKeys.join(", ")} 描述`
+      );
       // needExistedKeys.forEach((key) => (content[key] = '请在 package-scripts.json 中补充说明信息'));
       // await write(JSON.stringify(content, null, 2));
     }
@@ -68,8 +82,8 @@ export async function findWorkspaceProjects({ excludeRoot = false }: { excludeRo
       packageScriptsJSON: {
         filePath,
         content,
-        write
-      }
+        write,
+      },
     };
   }
 }
