@@ -38,21 +38,26 @@ export default class extends Script<{}> {
       throw new Error(`请切换到 ${MAIN_BRANCH} 分支后执行`);
     }
 
-    // 更新版本号
-    const targetVersion = await readFile(VERSION_FILE, "utf-8");
+    const version = await readFile(VERSION_FILE, "utf-8");
+    const tag = `release/v${version}`;
 
-    console.log(`upgrade to ${targetVersion}`);
+    const tagExists = (await git.tag()).includes(tag);
+    if (tagExists) {
+      throw new Error(`tag ${tag} 已存在`);
+    }
+
+    console.log(`upgrade to ${version}`);
 
     // 生成 changelog
     await $`pnpm conventional-changelog -p angular -i ./CHANGELOG.md -s`;
 
     // 生成 git commit
     await git.add(".");
-    await git.commit(`chore: update version to ${targetVersion}`);
+    await git.commit(`chore: update version to ${version}`);
     await git.push("origin", MAIN_BRANCH);
 
     // 生成 git tag
-    await git.addTag(`release/v${targetVersion}`);
+    await git.addTag(tag);
     await git.pushTags("origin");
 
     // 发布到 npm
@@ -72,7 +77,7 @@ export default class extends Script<{}> {
       pkgs.map((x) =>
         x.writeProjectManifest({
           ...x.manifest,
-          version: targetVersion,
+          version: version,
           module: "dist/index.mjs",
           types: "dist/index.d.mts",
           files: ["dist"],
