@@ -42,22 +42,22 @@ export default class extends Script<{}> {
     // await git.pushTags("origin");
 
     // 发布到 npm
-    const pkgs = await findWorkspaceProjects();
-    await Promise.all(
-      pkgs.map((x) =>
-        x.writeProjectManifest({
-          ...x.manifest,
-          version: targetVersion,
-          module: "dist/index.js",
-          types: "dist/index.d.ts",
-          files: ["dist"],
-          main: undefined,
-          devDependencies: undefined,
-          scripts: undefined,
-        })
-      )
-    );
-    await $`pnpm publish -r --access public --no-git-checks`;
+    // const pkgs = await findWorkspaceProjects();
+    // await Promise.all(
+    //   pkgs.map((x) =>
+    //     x.writeProjectManifest({
+    //       ...x.manifest,
+    //       version: targetVersion,
+    //       module: "dist/index.js",
+    //       types: "dist/index.d.ts",
+    //       files: ["dist"],
+    //       main: undefined,
+    //       devDependencies: undefined,
+    //       scripts: undefined,
+    //     })
+    //   )
+    // );
+    // await $`pnpm publish -r --access public --no-git-checks`;
   }
 }
 
