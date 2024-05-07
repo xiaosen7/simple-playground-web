@@ -5,6 +5,6 @@
     "@simple-playground-web/types": "workspace:^",
     "minimatch": "^9.0.4"
   },
-  "version": "0.0.10",
+  "version": "0.0.12",
   "main": "src/index.ts"
 }
