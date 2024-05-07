@@ -1,7 +1,7 @@
 {
   "name": "@simple-playground-web/react",
   "description": "The playground ui library of react framework",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "dependencies": {
     "@simple-playground-web/bundler": "workspace:^",
     "@simple-playground-web/path": "workspace:^",
