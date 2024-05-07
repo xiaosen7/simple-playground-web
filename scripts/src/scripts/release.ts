@@ -53,14 +53,15 @@ export default class extends Script<{}> {
     // 生成 git commit
     await git.add(".");
     await git.commit(`chore: update version to v${version}`);
-    await git.push("origin", MAIN_BRANCH);
 
     // 生成 git tag
     await git.addTag(tag);
-    await git.pushTags("origin");
 
     // 发布到 npm
     await buildPackages();
+
+    await git.pushTags("origin");
+    await git.push("origin", MAIN_BRANCH);
 
     const repository = {
       type: "git",
