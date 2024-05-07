@@ -4,12 +4,13 @@
   "private": true,
   "description": "Website",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build"
+    "dev": "scripts gen-template && next dev",
+    "build": "scripts gen-template && next build"
   },
   "dependencies": {
     "@simple-playground-web/react": "workspace:^",
     "@types/lodash-es": "^4.17.12",
+    "@xstate/react": "^4.1.1",
     "ahooks": "^3.7.11",
     "classnames": "^2.5.1",
     "esbuild-wasm": "^0.20.2",

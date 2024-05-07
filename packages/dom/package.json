@@ -4,14 +4,6 @@
   "dependencies": {
     "@simple-playground-web/types": "workspace:^"
   },
-  "version": "0.0.11",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.mts",
-  "files": [
-    "dist"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/xiaosen7/simple-playground-web.git"
-  }
+  "version": "0.0.10",
+  "main": "src/index.ts"
 }

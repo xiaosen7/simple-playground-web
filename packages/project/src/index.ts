@@ -1,9 +1,9 @@
 import * as monaco from "monaco-editor";
-import { Subject } from "rxjs";
 import { Logger } from "@simple-playground-web/logger";
-import { join } from "@simple-playground-web/path";
-import { FileTypeClassifier, IFileType } from "./file-extension-classifier";
-import { match, filter as createFilterPattern } from "minimatch";
+import {
+  ICreateFilterPatternOptions,
+  createFilterPattern,
+} from "@simple-playground-web/path";
 
 const defaultCompilerOptions: monaco.languages.typescript.CompilerOptions = {
   target: monaco.languages.typescript.ScriptTarget.ESNext,
@@ -23,13 +23,15 @@ const defaultCompilerOptions: monaco.languages.typescript.CompilerOptions = {
  */
 class Project {
   #logger = new Logger("project");
-
-  #fileTypeClassifier = new FileTypeClassifier();
+  monaco = monaco;
 
   constructor() {
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
       defaultCompilerOptions
     );
+    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+      diagnosticCodesToIgnore: [2307], // module not found
+    });
   }
 
   /**
@@ -60,7 +62,6 @@ class Project {
   #writeDts(filePath: string, content: string) {
     const path = decodeURIComponent(monaco.Uri.file(filePath).toString());
     monaco.languages.typescript.typescriptDefaults.addExtraLib(content, path);
-    this.#fileTypeClassifier.addFile(path);
 
     this.#logger.log("writeDts", path);
   }
@@ -81,7 +82,6 @@ class Project {
     }
 
     this.#logger.log("writeSource", uri);
-    this.#fileTypeClassifier.addFile(model.uri.fsPath);
     return model.getValue();
   }
 
@@ -92,22 +92,20 @@ class Project {
     return model?.getValue() ?? "";
   }
 
-  getSourcesFromFileTypes(fileType: IFileType[]) {
-    return this.#fileTypeClassifier
-      .getFiles(fileType)
-      .reduce((ret, filePath) => {
-        ret[filePath] = this.getSource(filePath);
-        return ret;
-      }, {} as Record<string, string>);
+  getSourcesFromPattern(
+    pattern: string | string[],
+    options?: ICreateFilterPatternOptions
+  ) {
+    const filterPattern = createFilterPattern(pattern, options);
+    return this.filterSources(filterPattern);
   }
 
-  getSourcesFromPattern(pattern: string) {
-    const filterPattern = createFilterPattern(pattern);
-    const models = monaco.editor
-      .getModels()
-      .filter((x) => filterPattern(x.uri.path));
+  filterSources(filter: (filePath: string) => boolean) {
+    const models = monaco.editor.getModels();
     return models.reduce((ret, model) => {
-      ret[model.uri.path] = model.getValue();
+      if (filter(model.uri.path)) {
+        ret[model.uri.path] = model.getValue();
+      }
       return ret;
     }, {} as Record<string, string>);
   }
@@ -117,7 +115,6 @@ class Project {
     const model = monaco.editor.getModel(path);
     if (model) {
       model.dispose();
-      this.#fileTypeClassifier.remove(filePath);
       return true;
     }
 

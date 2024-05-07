@@ -8,15 +8,17 @@ import { set } from "lodash-es";
 import { useSubs } from "../hooks";
 import { DirectoryTree } from "./directory-tree";
 import { ISafeAny } from "../../../types/src";
+import { createFilterPattern } from "@simple-playground-web/path";
+import { Loading } from "./loading";
 
 const createPlayground = (options: {
   files: Record<string, string>;
   globals?: Record<string, ISafeAny>;
   entry: string;
-  input: string;
+  buildInputPattern: string | string[];
   wasmUrl: string;
 }) => {
-  const { entry, files, globals = {}, input, wasmUrl } = options;
+  const { entry, files, globals = {}, buildInputPattern, wasmUrl } = options;
 
   Object.entries(files).forEach(([path, content]) => {
     project.writeFile(path, content);
@@ -34,9 +36,9 @@ const createPlayground = (options: {
   const bundler = new Bundler(wasmUrl);
 
   const build = () => {
-    bundler
+    return bundler
       .build({
-        input: project.getSourcesFromPattern(input),
+        input: project.getSourcesFromPattern(buildInputPattern),
         entry,
         globalExternals: Object.entries(globals).reduce(
           (ret, [name]) => set(ret, name, `__globals["${name}"]`),
@@ -63,22 +65,35 @@ export interface IPlaygroundProps {
   files: Record<string, string>;
   entry: string;
   globalExternals?: Record<string, ISafeAny>;
-  buildInput: string;
+  /**
+   * The input of esbuild, can be glob pattern
+   */
+  buildInputPattern: string | string[];
+  /**
+   * The url of esbuild.wasm
+   */
   wasmUrl: string;
 }
 export function Playground(props: IPlaygroundProps) {
-  const { files, entry, globalExternals: globals, buildInput, wasmUrl } = props;
-  const paths = useMemo(() => Object.keys(files), [files]);
+  const {
+    files,
+    entry,
+    globalExternals: globals,
+    buildInputPattern,
+    wasmUrl,
+  } = props;
+
+  const [loading, setLoading] = React.useState(false);
   const { editor, previewer, build } = useMemo(
     () =>
       createPlayground({
         files,
         globals,
         entry,
-        input: buildInput,
+        buildInputPattern: buildInputPattern,
         wasmUrl,
       }),
-    [files]
+    [files, buildInputPattern]
   );
   const [editorRef, previewerRef] = [useRef(null), useRef(null)];
 
@@ -89,13 +104,24 @@ export function Playground(props: IPlaygroundProps) {
     debouncedBuild();
   });
 
-  const { run: debouncedBuild } = useDebounceFn(build, { wait: 500 });
+  const { run: debouncedBuild } = useDebounceFn(
+    () => {
+      setLoading(true);
+      build().finally(() => setLoading(false));
+    },
+    { wait: 500 }
+  );
 
   useSubs(editor.contentChange$, debouncedBuild);
 
+  const paths = useMemo(() => {
+    const filter = createFilterPattern(["**/*", "!**/node_modules/**"]);
+    return Object.keys(files).filter(filter);
+  }, [files]);
+
   return (
     <div className="flex h-full">
-      <div className="w-1/6 h-full bg-[#242322] text-white p-4">
+      <div className="w-1/6 h-full overflow-auto bg-[#242322] text-white p-4">
         <DirectoryTree
           defaultSelectedPath={entry}
           onFileSelect={(path) => editor.renderPath(path)}
@@ -105,7 +131,9 @@ export function Playground(props: IPlaygroundProps) {
 
       <div className="flex-1 flex h-full">
         <div className="w-1/2 h-full overflow-auto" ref={editorRef}></div>
-        <div className="w-1/2 h-full overflow-auto" ref={previewerRef}></div>
+        <Loading loading={loading} tip="Building..." className="w-1/2 h-full ">
+          <div className="h-full overflow-auto" ref={previewerRef}></div>
+        </Loading>
       </div>
     </div>
   );

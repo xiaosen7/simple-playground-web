@@ -9,6 +9,7 @@
     "@pnpm/read-project-manifest": "^5.0.11",
     "@pnpm/types": "^9.4.2",
     "@pnpm/workspace.find-packages": "^1.1.12",
+    "@simple-playground-web/dts-rollup": "workspace:^",
     "@types/fs-extra": "^11.0.4",
     "@types/inquirer": "^9.0.7",
     "@types/lodash-es": "^4.17.12",

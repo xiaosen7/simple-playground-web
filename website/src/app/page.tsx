@@ -3,17 +3,22 @@
 import dynamic from "next/dynamic";
 import ReactDOMClient from "react-dom/client";
 import React, { useEffect, useState } from "react";
-import wasmUrl from "esbuild-wasm/esbuild.wasm";
+import * as xstate from "xstate";
+import * as xstateReact from "@xstate/react";
 
-const globals = {
+const globalExternals = {
   "react-dom/client": ReactDOMClient,
   react: React,
+  xstate,
+  "@xstate/react": xstateReact,
 };
 
-const DynamicPlayground = dynamic(
+const Loading = () => <p>Loading...</p>;
+
+const Playground = dynamic(
   () => import("@simple-playground-web/react").then((x) => x.Playground),
   {
-    loading: () => <p>Loading...</p>,
+    loading: Loading,
     ssr: false,
   }
 );
@@ -28,16 +33,16 @@ export default function Home() {
   }, []);
 
   if (!files) {
-    return <>Loading...</>;
+    return <Loading />;
   }
 
   return (
-    <DynamicPlayground
-      wasmUrl={wasmUrl}
-      buildInput="/src/**/*"
+    <Playground
+      wasmUrl={"https://www.unpkg.com/esbuild-wasm@0.20.2/esbuild.wasm"}
+      buildInputPattern="/src/**/*"
       files={files}
       entry="/src/index.tsx"
-      globalExternals={globals}
+      globalExternals={globalExternals}
     />
   );
 }

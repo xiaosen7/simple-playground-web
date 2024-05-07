@@ -2,16 +2,9 @@
   "name": "@simple-playground-web/path",
   "description": "Path utilities",
   "dependencies": {
-    "@simple-playground-web/types": "workspace:^"
+    "@simple-playground-web/types": "workspace:^",
+    "minimatch": "^9.0.4"
   },
-  "version": "0.0.11",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.mts",
-  "files": [
-    "dist"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/xiaosen7/simple-playground-web.git"
-  }
+  "version": "0.0.10",
+  "main": "src/index.ts"
 }

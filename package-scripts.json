@@ -1,7 +1,8 @@
 {
   "release": "发布",
-  "template": "生成 template.json",
   "test": "测试",
   "dev": "开发模式",
-  "postinstall": "安装后执行的脚本"
+  "postinstall": "安装后执行的脚本",
+  "storybook": "启动 storybook 开发服务器",
+  "build-storybook": "构建 storybook"
 }

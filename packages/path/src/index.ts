@@ -1,3 +1,5 @@
+import { filter as createSingleFilterPattern } from "minimatch";
+
 export function basename(path: string): string {
   const segments = path.split("/");
   return segments[segments.length - 1];
@@ -31,4 +33,20 @@ export function join(...paths: string[]) {
   });
 
   return normalizedSegments.join(separator);
+}
+
+export type ICreateFilterPatternOptions = Parameters<
+  typeof createSingleFilterPattern
+>[1];
+export function createFilterPattern(
+  pattern: string | string[],
+  options?: ICreateFilterPatternOptions
+) {
+  if (!Array.isArray(pattern)) {
+    return createFilterPattern([pattern], options);
+  }
+
+  const filters = pattern.map((p) => createSingleFilterPattern(p, options));
+
+  return (x: string) => filters.every((filter) => filter(x));
 }

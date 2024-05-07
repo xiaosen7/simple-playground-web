@@ -18,8 +18,9 @@ export function DirectoryTree(props: {
   selectedFile?: string;
   defaultSelectedPath?: string;
   onCreate?: (path: string) => void;
+  hideNodeModules?: boolean;
 }) {
-  const { paths, defaultSelectedPath } = props;
+  const { paths, defaultSelectedPath, hideNodeModules } = props;
   const [_selectedFileId, onSelectFileChange] = useControllableValue(props, {
     defaultValue: props.defaultSelectedPath,
     defaultValuePropName: "defaultSelectedFile",
@@ -51,7 +52,7 @@ export function DirectoryTree(props: {
 
   useEffect(() => {
     setData(pathsToData(paths));
-  }, [paths]);
+  }, [paths, hideNodeModules]);
 
   if (data.length === 0) {
     return null;
