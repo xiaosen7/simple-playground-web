@@ -8,6 +8,6 @@
     "monaco-editor": "^0.48.0",
     "rxjs": "^7.8.1"
   },
-  "version": "0.0.13",
+  "version": "0.0.14",
   "main": "src/index.ts"
 }
