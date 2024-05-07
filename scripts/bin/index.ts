@@ -1,4 +1,4 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env -S npx tsx
 import { readdir } from "fs/promises";
 import { basename, join } from "path";
 
