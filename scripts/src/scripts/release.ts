@@ -88,6 +88,8 @@ export default class extends Script<{}> {
     await $`pnpm publish -r --access public --no-git-checks`;
 
     await $`git restore .`;
+
+    console.log(`Release ${version} successfully.`);
   }
 }
 
