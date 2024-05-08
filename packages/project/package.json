@@ -11,6 +11,6 @@
   "peerDependencies": {
     "monaco-editor": "^0.48.0"
   },
-  "version": "0.0.15",
+  "version": "0.0.16",
   "main": "src/index.ts"
 }
