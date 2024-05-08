@@ -3,7 +3,7 @@ import { join } from "path";
 import { DtsRollup } from "@simple-playground-web/dts-rollup";
 import fg from "fast-glob";
 
-import { WEBSITE_PUBLIC, WEBSITE_TEMPLATE } from "../utils";
+import { WEBSITE_PUBLIC, TEMPLATE_ROOT } from "../utils";
 
 import { Script } from "@/models/script";
 import { remove, rm, rmdir } from "fs-extra";
@@ -16,12 +16,15 @@ export default class extends Script<{}> {
   protected description =
     "生成 playground 的模板(website/public/template.json)";
   async execute(): Promise<void> {
-    const dtsOut = join(WEBSITE_TEMPLATE, "dts-rollup");
+    const dtsOut = join(TEMPLATE_ROOT, "dts-rollup");
     const dtsRollup = new DtsRollup({
-      entries: [join(WEBSITE_TEMPLATE, "src/index.tsx")],
+      entries: await fg(["src/**/*"], {
+        absolute: true,
+        cwd: TEMPLATE_ROOT,
+      }),
       ignoreExternals: [],
       outDir: dtsOut,
-      rootDir: WEBSITE_TEMPLATE,
+      rootDir: TEMPLATE_ROOT,
     });
 
     await dtsRollup.run();
@@ -31,7 +34,7 @@ export default class extends Script<{}> {
 
     const json = {
       ...(await dirToJson(dtsOut, "/", ["**/*"])),
-      ...(await dirToJson(join(WEBSITE_TEMPLATE), "/", [
+      ...(await dirToJson(join(TEMPLATE_ROOT), "/", [
         "**/*",
         "!node_modules",
         "!src",

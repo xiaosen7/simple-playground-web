@@ -47,7 +47,9 @@ import { SCRIPTS_PLACED_ROOT, SCRIPTS_ROOT } from "../src/utils";
       .action(async () => {
         const { default: CommandCtor } = await import(path);
         const command = new CommandCtor();
-        console.log(`执行脚本 ${name}： \`${command.description}\``);
+        console.log(
+          `执行脚本 ${name}： \`${command.description}\` path: ${path}`
+        );
         await command.execute();
       });
   });

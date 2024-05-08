@@ -50,3 +50,21 @@ export function createFilterPattern(
 
   return (x: string) => filters.every((filter) => filter(x));
 }
+
+export function absoluteNormalizedPath(path: string): string {
+  // eslint-disable-next-line no-param-reassign
+  if (path[0] !== "/") path = "/" + path;
+  const parts = path.split("/");
+  parts.shift();
+  let end = 0;
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (part === "..") {
+      if (end) end--;
+    } else if (part !== "." && part !== "") {
+      parts[end++] = part;
+    }
+  }
+  parts.length = end;
+  return "/" + parts.join("/");
+}

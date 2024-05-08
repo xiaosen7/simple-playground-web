@@ -1,6 +1,6 @@
 import * as monaco from "monaco-editor";
 import { Logger } from "@simple-playground-web/logger";
-import { Subject } from "rxjs";
+import { ReplaySubject } from "rxjs";
 
 export enum ETheme {
   dark = "vs-dark",
@@ -11,7 +11,7 @@ export class Editor {
   #codeEditor: monaco.editor.IStandaloneCodeEditor;
   #dom: HTMLDivElement;
   #logger = new Logger("Editor");
-  contentChange$ = new Subject<void>();
+  contentChange$ = new ReplaySubject<void>();
 
   static ETheme = ETheme;
   static setTheme(theme: ETheme) {
@@ -35,10 +35,17 @@ export class Editor {
     container.append(this.#dom);
   }
 
+  /**
+   * render content of absolutePath in container
+   * @param absolutePath
+   */
   renderPath(absolutePath: string) {
     const model = monaco.editor.getModel(monaco.Uri.parse(absolutePath));
-    this.#logger.log("renderSource", { filePath: absolutePath, model });
-    this.#codeEditor.setModel(model);
+
+    if (model && this.#codeEditor.getModel() !== model) {
+      this.#codeEditor.setModel(model);
+      this.#logger.log("codeEditor.setModel", { absolutePath, model });
+    }
   }
 
   dispose() {

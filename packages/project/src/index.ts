@@ -4,6 +4,7 @@ import {
   ICreateFilterPatternOptions,
   createFilterPattern,
 } from "@simple-playground-web/path";
+import { ReplaySubject } from "rxjs";
 
 const defaultCompilerOptions: monaco.languages.typescript.CompilerOptions = {
   target: monaco.languages.typescript.ScriptTarget.ESNext,
@@ -24,6 +25,7 @@ const defaultCompilerOptions: monaco.languages.typescript.CompilerOptions = {
 class Project {
   #logger = new Logger("project");
   monaco = monaco;
+  newFile$ = new ReplaySubject<string>();
 
   constructor() {
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
@@ -60,10 +62,14 @@ class Project {
    * @returns
    */
   #writeDts(filePath: string, content: string) {
-    const path = decodeURIComponent(monaco.Uri.file(filePath).toString());
+    const uri = monaco.Uri.file(filePath);
+    const path = decodeURIComponent(uri.toString());
     monaco.languages.typescript.typescriptDefaults.addExtraLib(content, path);
 
-    this.#logger.log("writeDts", path);
+    let model = monaco.editor.getModel(uri);
+    if (!model) {
+      this.newFile$.next(filePath);
+    }
   }
 
   /**
@@ -79,38 +85,50 @@ class Project {
       model.setValue(content);
     } else {
       model = monaco.editor.createModel(content, undefined, uri);
+      this.newFile$.next(filePath);
     }
 
-    this.#logger.log("writeSource", uri);
     return model.getValue();
   }
 
-  getSource(filePath: string) {
+  getFile(filePath: string) {
     const uri = monaco.Uri.file(filePath);
     let model = monaco.editor.getModel(uri);
-    this.#logger.log("getSource", { uri, model, filePath });
     return model?.getValue() ?? "";
   }
 
-  getSourcesFromPattern(
-    pattern: string | string[],
+  getFilesFromPattern(
+    pattern: string | string[] = "**/*",
     options?: ICreateFilterPatternOptions
   ) {
     const filterPattern = createFilterPattern(pattern, options);
-    return this.filterSources(filterPattern);
+    return this.filterFiles(filterPattern);
   }
 
-  filterSources(filter: (filePath: string) => boolean) {
+  filterFiles(filter: (filePath: string) => boolean) {
     const models = monaco.editor.getModels();
-    return models.reduce((ret, model) => {
-      if (filter(model.uri.path)) {
-        ret[model.uri.path] = model.getValue();
-      }
-      return ret;
-    }, {} as Record<string, string>);
+    return models.reduce(
+      (ret, model) => {
+        if (filter(model.uri.path)) {
+          ret[model.uri.path] = model.getValue();
+        }
+        return ret;
+      },
+      {} as Record<string, string>
+    );
   }
 
-  delete(filePath: string) {
+  getPaths(pattern?: string[] | string, options?: ICreateFilterPatternOptions) {
+    const models = monaco.editor.getModels();
+    if (!pattern) {
+      return models.map((x) => x.uri.path);
+    }
+
+    const filterPattern = createFilterPattern(pattern, options);
+    return models.map((x) => x.uri.path).filter((x) => filterPattern(x));
+  }
+
+  deleteFile(filePath: string) {
     const path = monaco.Uri.file(filePath);
     const model = monaco.editor.getModel(path);
     if (model) {

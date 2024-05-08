@@ -8,6 +8,8 @@
     "build": "scripts gen-template && next build"
   },
   "dependencies": {
+    "@simple-playground-web/bundler": "workspace:^",
+    "@simple-playground-web/project": "workspace:^",
     "@simple-playground-web/react": "workspace:^",
     "@types/lodash-es": "^4.17.12",
     "@xstate/react": "^4.1.1",

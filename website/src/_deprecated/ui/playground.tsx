@@ -35,7 +35,7 @@ const createPlayground = (
   const build = () => {
     bundler
       .build({
-        input: project.getSourcesFromPattern(input),
+        input: project.getFilesFromPattern(input),
         entry,
         globalExternals: Object.entries(globals).reduce(
           (ret, [name]) => set(ret, name, `__globals["${name}"]`),

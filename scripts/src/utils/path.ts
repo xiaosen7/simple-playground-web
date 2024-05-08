@@ -3,7 +3,7 @@ import path, { relative } from "path";
 export const PKG_ROOT = path.join(__dirname, "..", "..", "..");
 export const VERSION_FILE = path.join(PKG_ROOT, ".version");
 export const WEBSITE_ROOT = path.join(PKG_ROOT, "website");
-export const WEBSITE_TEMPLATE = path.join(PKG_ROOT, "template");
+export const TEMPLATE_ROOT = path.join(PKG_ROOT, "template");
 export const WEBSITE_PUBLIC = path.join(WEBSITE_ROOT, "public");
 export const WEBSITE_OUT = path.join(WEBSITE_ROOT, "out");
 export const SCRIPTS_ROOT = path.join(PKG_ROOT, "scripts");

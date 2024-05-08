@@ -14,29 +14,24 @@ type ITree = Parameters<typeof flattenTree>[0];
 
 export function DirectoryTree(props: {
   paths: string[];
-  onFileSelect?: (path: string) => void;
-  selectedFile?: string;
+  onSelectPath?: (path: string) => void;
+  selectedPath?: string;
   defaultSelectedPath?: string;
   onCreate?: (path: string) => void;
-  hideNodeModules?: boolean;
 }) {
-  const { paths, defaultSelectedPath, hideNodeModules } = props;
+  const { paths, defaultSelectedPath } = props;
   const [_selectedFileId, onSelectFileChange] = useControllableValue(props, {
     defaultValue: props.defaultSelectedPath,
-    defaultValuePropName: "defaultSelectedFile",
-    valuePropName: "selectedFile",
-    trigger: "onFileSelect",
+    defaultValuePropName: "defaultSelectedPath",
+    valuePropName: "selectedPath",
+    trigger: "onSelectPath",
   });
   const selectedFileId = _selectedFileId
     ? pathToId(_selectedFileId)
     : undefined;
-  const [selectedId, setSelectedId] = useState<string | undefined>(
-    selectedFileId
-  );
 
   const onNodeSelect = useMemoizedFn(
     ({ element, isBranch }: ITreeViewOnNodeSelectProps) => {
-      setSelectedId(element.id as string);
       if (!isBranch) {
         onSelectFileChange(element.id as string);
       }
@@ -52,11 +47,13 @@ export function DirectoryTree(props: {
 
   useEffect(() => {
     setData(pathsToData(paths));
-  }, [paths, hideNodeModules]);
+  }, [paths]);
 
-  if (data.length === 0) {
+  if (data.length <= 1) {
     return null;
   }
+
+  console.log({ selectedFileId, data });
 
   return (
     <div>
@@ -163,7 +160,9 @@ export function pathsToData(paths: string[]): INode<IFlatMetadata>[] {
   });
 
   root.children = sortDirectoryTree(root.children ?? []);
-  return flattenTree(root);
+  const data = flattenTree(root);
+
+  return data;
 }
 
 type ISortableTreeData = Array<{

@@ -50,13 +50,18 @@ export class Previewer {
   #errorContainer = createNode(
     `<div style="color: red; position: fixed; left: 0; right: 0; top: 0; bottom: 0; background: rgba(0, 0, 0, 0.75); padding: 20px; overflow: auto"></div>`
   ) as HTMLDivElement;
+  #window: Window;
+  loaded: boolean = false;
+  insertedContainer = false;
   // #toolbarContainer = createNode(
   //   `<div style="height: 30px; background: aliceblue" id="toolbar"></div>`
   // ) as HTMLDivElement;
 
   constructor() {
     this.#iframe.addEventListener("load", () => {
-      console.log("iframe loaded");
+      this.loaded = true;
+      this.#window = this.#iframe.contentWindow;
+      console.log("iframe loaded", window);
 
       this.#renderHtml();
 
@@ -72,12 +77,11 @@ export class Previewer {
   }
 
   #renderHtml = () => {
-    const window = this.#iframe.contentWindow;
-    if (!window) {
+    if (!this.#window) {
       return;
     }
 
-    const body = window.document.body;
+    const body = this.#window.document.body;
 
     // 解决全屏后背景色为黑色
     body.style.backgroundColor = "white";
@@ -111,10 +115,10 @@ export class Previewer {
 
     // globals
     Object.keys(this.#sourceReferences.globals).forEach((key) => {
-      delete window[key as ISafeAny];
+      delete this.#window[key as ISafeAny];
     });
     Object.entries(globals).forEach(([key, value]) => {
-      window[key as ISafeAny] = value;
+      this.#window[key as ISafeAny] = value;
     });
     this.#sourceReferences.globals = globals;
 
@@ -163,6 +167,7 @@ export class Previewer {
   };
 
   render = (container: HTMLElement) => {
+    this.insertedContainer = true;
     container.append(this.#iframe);
   };
 

@@ -3,8 +3,9 @@ import classNames from "classnames";
 import { VscLoading } from "react-icons/vsc";
 
 interface ILoadingProps {
-  loading: boolean;
-  children: React.ReactNode | (() => React.ReactNode);
+  loading?: boolean;
+  children?: React.ReactNode;
+  render?: () => React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
   tip?: React.ReactNode;
@@ -12,12 +13,13 @@ interface ILoadingProps {
 }
 export function Loading(props: ILoadingProps) {
   const {
-    loading,
+    loading = true,
     className,
     style,
     children,
     tip,
     spin = <VscLoading />,
+    render,
   } = props;
   return (
     <div
@@ -25,7 +27,8 @@ export function Loading(props: ILoadingProps) {
       className={classNames(className, "relative")}
       style={style}
     >
-      {typeof children === "function" ? !loading && children() : children}
+      {children}
+      {!loading && render?.()}
       {loading && (
         <div
           aria-label="spin"

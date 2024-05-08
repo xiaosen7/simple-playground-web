@@ -152,6 +152,9 @@ importers:
       monaco-editor:
         specifier: ^0.48.0
         version: 0.48.0
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
 
   packages/react:
     dependencies:
@@ -336,6 +339,12 @@ importers:
 
   website:
     dependencies:
+      '@simple-playground-web/bundler':
+        specifier: workspace:^
+        version: link:../packages/bundler
+      '@simple-playground-web/project':
+        specifier: workspace:^
+        version: link:../packages/project
       '@simple-playground-web/react':
         specifier: workspace:^
         version: link:../packages/react

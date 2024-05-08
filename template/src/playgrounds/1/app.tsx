@@ -27,5 +27,3 @@ export const Toggler = () => {
     </button>
   );
 };
-
-createRoot(document.getElementById("root")!).render(<Toggler />);

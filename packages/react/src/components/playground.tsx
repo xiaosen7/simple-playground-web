@@ -8,39 +8,40 @@ import { set } from "lodash-es";
 import { useSubs } from "../hooks";
 import { DirectoryTree } from "./directory-tree";
 import { ISafeAny } from "../../../types/src";
-import { createFilterPattern } from "@simple-playground-web/path";
 import { Loading } from "./loading";
+import { PlaygroundContext } from "../context";
+import { debounce, debounceTime, filter } from "rxjs";
+import { join } from "@simple-playground-web/path";
+import classNames from "classnames";
 
-const createPlayground = (options: {
-  files: Record<string, string>;
-  globals?: Record<string, ISafeAny>;
+interface ICreatePlaygroundOptions {
+  // files: Record<string, string>;
+  globalExternals?: Record<string, ISafeAny>;
   entry: string;
-  buildInputPattern: string | string[];
-  wasmUrl: string;
-}) => {
-  const { entry, files, globals = {}, buildInputPattern, wasmUrl } = options;
-
-  Object.entries(files).forEach(([path, content]) => {
-    project.writeFile(path, content);
-  });
+  /**
+   * The input of esbuild, can be glob pattern
+   */
+  buildInputPattern?: string[];
+  bundler: Bundler;
+}
+const createPlayground = (options: ICreatePlaygroundOptions) => {
+  const { entry, globalExternals = {}, buildInputPattern, bundler } = options;
 
   const editor = new Editor();
-  editor.renderPath(entry);
   const previewer = new Previewer();
   previewer.updateSources({
     globals: {
-      __globals: globals,
+      __globals: globalExternals,
     },
   });
 
-  const bundler = new Bundler(wasmUrl);
-
   const build = () => {
+    const input = project.getFilesFromPattern(buildInputPattern);
     return bundler
       .build({
-        input: project.getSourcesFromPattern(buildInputPattern),
+        input,
         entry,
-        globalExternals: Object.entries(globals).reduce(
+        globalExternals: Object.entries(globalExternals).reduce(
           (ret, [name]) => set(ret, name, `__globals["${name}"]`),
           {} as Record<string, string>
         ),
@@ -61,80 +62,162 @@ const createPlayground = (options: {
   };
 };
 
-export interface IPlaygroundProps {
-  files: Record<string, string>;
-  entry: string;
-  globalExternals?: Record<string, ISafeAny>;
+export interface IPlaygroundProps
+  extends Omit<ICreatePlaygroundOptions, "bundler"> {
   /**
-   * The input of esbuild, can be glob pattern
+   * @default "!**\/node_modules\/**"
    */
-  buildInputPattern: string | string[];
-  /**
-   * The url of esbuild.wasm
-   */
-  wasmUrl: string;
+  directoryTreePathsPattern?: string[];
+  cwd: string;
+  className?: string;
+  style?: React.CSSProperties;
 }
-export function Playground(props: IPlaygroundProps) {
-  const {
-    files,
-    entry,
-    globalExternals: globals,
-    buildInputPattern,
-    wasmUrl,
-  } = props;
+export const Playground = React.memo(
+  (props: IPlaygroundProps) => {
+    const {
+      entry,
+      globalExternals,
+      buildInputPattern,
+      directoryTreePathsPattern,
+      cwd,
+      className,
+      style,
+    } = props;
 
-  const [loading, setLoading] = React.useState(false);
-  const { editor, previewer, build } = useMemo(
-    () =>
-      createPlayground({
-        files,
-        globals,
-        entry,
-        buildInputPattern: buildInputPattern,
-        wasmUrl,
-      }),
-    [files, buildInputPattern]
-  );
-  const [editorRef, previewerRef] = [useRef(null), useRef(null)];
+    return (
+      <NormalizedPropsPlayground
+        className={className}
+        style={style}
+        cwd={cwd}
+        entry={entry.startsWith("/") ? entry : join(cwd, entry)}
+        buildInputPattern={
+          buildInputPattern?.map((x) =>
+            x.startsWith("/") ? x : join(cwd, x)
+          ) ?? [join(cwd, "**/*")]
+        }
+        directoryTreePathsPattern={directoryTreePathsPattern?.map((x) =>
+          x.startsWith("/") ? x : join(cwd, x)
+        )}
+        globalExternals={globalExternals}
+      />
+    );
+  },
+  (oldProps, newProps) => {
+    const deepEqualKeys: Array<keyof ICreatePlaygroundOptions> = [
+      "globalExternals",
+    ];
 
-  useMount(() => {
-    editorRef.current && editor.render(editorRef.current);
-    previewerRef.current && previewer.render(previewerRef.current);
+    return Object.keys(oldProps).every(
+      (key: keyof ICreatePlaygroundOptions) => {
+        if (deepEqualKeys.includes(key)) {
+          return oldProps[key] === newProps[key];
+        }
 
-    debouncedBuild();
-  });
+        return JSON.stringify(oldProps[key]) === JSON.stringify(newProps[key]);
+      }
+    );
+  }
+);
 
-  const { run: debouncedBuild } = useDebounceFn(
-    () => {
-      setLoading(true);
-      build().finally(() => setLoading(false));
-    },
-    { wait: 500 }
-  );
+const NormalizedPropsPlayground = React.memo(
+  (props: IPlaygroundProps) => {
+    const {
+      entry,
+      globalExternals,
+      buildInputPattern,
+      directoryTreePathsPattern,
+      cwd,
+      className,
+      style,
+    } = props;
+    const { bundler } = React.useContext(PlaygroundContext);
 
-  useSubs(editor.contentChange$, debouncedBuild);
+    const [directoryTreePaths, setDirectoryTreePaths] = React.useState<
+      string[]
+    >([]);
+    const [loading, setLoading] = React.useState(false);
+    const playground = useMemo(
+      () =>
+        createPlayground({
+          globalExternals,
+          entry,
+          buildInputPattern,
+          bundler,
+        }),
+      [buildInputPattern, globalExternals, entry, bundler]
+    );
+    const [editorRef, previewerRef] = [useRef(null), useRef(null)];
 
-  const paths = useMemo(() => {
-    const filter = createFilterPattern(["**/*", "!**/node_modules/**"]);
-    return Object.keys(files).filter(filter);
-  }, [files]);
+    useMount(() => {
+      playground.editor.render(editorRef.current);
+      playground.previewer.render(previewerRef.current);
+    });
 
-  return (
-    <div className="flex h-full">
-      <div className="w-1/6 h-full overflow-auto bg-[#242322] text-white p-4">
-        <DirectoryTree
-          defaultSelectedPath={entry}
-          onFileSelect={(path) => editor.renderPath(path)}
-          paths={paths}
-        />
+    const { run: debouncedBuild } = useDebounceFn(
+      () => {
+        setLoading(true);
+        playground.build().finally(() => setLoading(false));
+      },
+      { wait: 500 }
+    );
+
+    useSubs(playground.editor.contentChange$, debouncedBuild);
+    useSubs(project.newFile$.pipe(debounceTime(500)), () => {
+      const paths = project.getPaths(directoryTreePathsPattern);
+      setDirectoryTreePaths(
+        paths.filter((x) => x.startsWith(cwd)).map((x) => x.replace(cwd, ""))
+      );
+    });
+    useSubs(project.newFile$.pipe(filter((value) => value === entry)), () => {
+      playground.editor.renderPath(entry);
+    });
+    useSubs(project.newFile$, debouncedBuild);
+
+    return (
+      <div
+        aria-label={"playground"}
+        className={classNames(
+          "flex border border-gray-300 border-solid",
+          className
+        )}
+        style={style}
+      >
+        <div className="w-1/6 h-full overflow-auto bg-[#242322] text-white p-4">
+          <DirectoryTree
+            defaultSelectedPath={entry.replace(cwd, "")}
+            onSelectPath={(path) => {
+              playground.editor.renderPath(join(cwd, path));
+            }}
+            paths={directoryTreePaths}
+          />
+        </div>
+
+        <div className="flex-1 flex h-full">
+          <div className="w-1/2 h-full overflow-auto" ref={editorRef}></div>
+          <Loading
+            loading={loading}
+            tip="Building..."
+            className="w-1/2 h-full "
+          >
+            <div className="h-full overflow-auto" ref={previewerRef}></div>
+          </Loading>
+        </div>
       </div>
+    );
+  },
+  (oldProps, newProps) => {
+    const deepEqualKeys: Array<keyof ICreatePlaygroundOptions> = [
+      "globalExternals",
+    ];
 
-      <div className="flex-1 flex h-full">
-        <div className="w-1/2 h-full overflow-auto" ref={editorRef}></div>
-        <Loading loading={loading} tip="Building..." className="w-1/2 h-full ">
-          <div className="h-full overflow-auto" ref={previewerRef}></div>
-        </Loading>
-      </div>
-    </div>
-  );
-}
+    return Object.keys(oldProps).every(
+      (key: keyof ICreatePlaygroundOptions) => {
+        if (deepEqualKeys.includes(key)) {
+          return oldProps[key] === newProps[key];
+        }
+
+        return JSON.stringify(oldProps[key]) === JSON.stringify(newProps[key]);
+      }
+    );
+  }
+);
