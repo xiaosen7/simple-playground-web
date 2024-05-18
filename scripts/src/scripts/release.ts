@@ -48,6 +48,8 @@ export default class extends Script<{}> {
       )
     );
 
+    await buildPackages();
+
     // 生成 changelog
     await $`pnpm conventional-changelog -p angular -i ./CHANGELOG.md -s`;
 
@@ -58,12 +60,10 @@ export default class extends Script<{}> {
     // 生成 git tag
     await git.addTag(tag);
 
-    // 发布到 npm
-    await buildPackages();
-
     await git.pushTags("origin");
     await git.push("origin", MAIN_BRANCH);
 
+    // 发布到 npm
     const repository = {
       type: "git",
       url: (await $`git remote get-url origin`).stdout.replace(
