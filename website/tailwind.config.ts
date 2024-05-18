@@ -7,7 +7,14 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/ui/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    join(__dirname, "..", "packages", "react", "src/**/*.{js,ts,jsx,tsx,mdx}"),
+    join(
+      __dirname,
+      "..",
+      "packages",
+      "frameworks",
+      "react",
+      "src/**/*.{js,ts,jsx,tsx,mdx}"
+    ),
   ],
   plugins: [],
 };

@@ -1,0 +1,11 @@
+{
+  "name": "@simple-playground-web/core",
+  "description": "Core models",
+  "dependencies": {
+    "@simple-playground-web/bundler": "workspace:^",
+    "@simple-playground-web/playground": "workspace:^",
+    "@simple-playground-web/project": "workspace:^"
+  },
+  "version": "0.0.16",
+  "main": "src/index.ts"
+}

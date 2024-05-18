@@ -4,13 +4,11 @@ import { DtsRollup } from "@simple-playground-web/dts-rollup";
 import fg from "fast-glob";
 
 import { WEBSITE_PUBLIC, TEMPLATE_ROOT } from "../utils";
-
 import { Script } from "@/models/script";
 import { remove, rm, rmdir } from "fs-extra";
+import { Project } from "ts-morph";
 
 type IPathToCode = Record<string, string>;
-
-(async () => {})();
 
 export default class extends Script<{}> {
   protected description =
@@ -27,23 +25,34 @@ export default class extends Script<{}> {
       rootDir: TEMPLATE_ROOT,
     });
 
+    const globalNodeModules = await globalModules();
+
     await dtsRollup.run();
 
     const publicDir = WEBSITE_PUBLIC;
     const templateFilePath = join(publicDir, "template.json");
 
     const json = {
-      ...(await dirToJson(dtsOut, "/", ["**/*"])),
-      ...(await dirToJson(join(TEMPLATE_ROOT), "/", [
-        "**/*",
-        "!node_modules",
-        "!src",
-        "!dts-rollup",
-        "!dist",
-      ])),
+      files: {
+        ...(await dirToJson(dtsOut, "/", ["**/*"])),
+        ...(await dirToJson(join(TEMPLATE_ROOT), "/", [
+          "**/*",
+          "!node_modules",
+          "!src",
+          "!dts-rollup",
+          "!dist",
+          "!externals",
+        ])),
+      },
+
+      externals: {
+        cjsCode: await readFile(
+          join(TEMPLATE_ROOT, "externals", "cjs.js"),
+          "utf-8"
+        ),
+      },
     };
 
-    await rm(dtsOut, { recursive: true });
     await writeFile(templateFilePath, JSON.stringify(json), "utf-8");
   }
 }
@@ -70,12 +79,23 @@ async function dirToJson(
   return ret;
 }
 
-function removeDts(pathToCode: IPathToCode) {
-  const ret = { ...pathToCode };
-  Object.keys(ret).forEach((key) => {
-    if (key.endsWith(".d.ts")) {
-      delete ret[key];
-    }
+async function globalModules() {
+  const srcDir = join(TEMPLATE_ROOT, "src");
+  const paths = await fg(["**/*"], {
+    cwd: srcDir,
+    absolute: true,
   });
-  return ret;
+  const project = new Project();
+
+  const externals = new Set<string>();
+  paths.forEach((path) => {
+    const sourceFile = project.addSourceFileAtPath(path);
+    sourceFile.getImportDeclarations().forEach((dec) => {
+      if (dec.getModuleSpecifierSourceFile()?.isInNodeModules()) {
+        externals.add(dec.getModuleSpecifierValue());
+      }
+    });
+  });
+
+  return externals;
 }

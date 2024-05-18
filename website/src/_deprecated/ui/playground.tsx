@@ -1,6 +1,6 @@
 "use client";
 import { project } from "@simple-playground-web/project";
-import { Editor, Previewer } from "@simple-playground-web/ui";
+import { Editor, Previewer } from "@simple-playground-web/renderers";
 import wasmUrl from "esbuild-wasm/esbuild.wasm";
 import { Bundler } from "@simple-playground-web/bundler";
 import { useEffect, useMemo, useRef } from "react";
@@ -18,7 +18,7 @@ const createPlayground = (
   input: string
 ) => {
   Object.entries(files).forEach(([path, content]) => {
-    project.writeFile(path, content);
+    project.writeFileSync(path, content);
   });
 
   const editor = new Editor();
@@ -35,7 +35,7 @@ const createPlayground = (
   const build = () => {
     bundler
       .build({
-        input: project.getFilesFromPattern(input),
+        input: project.getFilesByPattern(input),
         entry,
         globalExternals: Object.entries(globals).reduce(
           (ret, [name]) => set(ret, name, `__globals["${name}"]`),

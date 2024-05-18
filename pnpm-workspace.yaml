@@ -1,5 +1,9 @@
 packages:
-  - packages/*
+  - packages/cores/*
+  - packages/utilities/*
+  - packages/renderers
+  - packages/frameworks/*
   - website
   - template
   - scripts
+  - .storybook

@@ -3,6 +3,7 @@
     "target": "ESNext",
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "strict": true
   }
 }

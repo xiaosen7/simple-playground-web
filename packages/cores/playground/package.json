@@ -1,0 +1,21 @@
+{
+  "name": "@simple-playground-web/playground",
+  "description": "Playground model",
+  "dependencies": {
+    "@simple-playground-web/bundler": "workspace:^",
+    "@simple-playground-web/directory-tree": "workspace:^",
+    "@simple-playground-web/logger": "workspace:^",
+    "@simple-playground-web/path": "workspace:^",
+    "@simple-playground-web/project": "workspace:^",
+    "@simple-playground-web/renderers": "workspace:^",
+    "lodash-es": "^4.17.21",
+    "rxjs": "^7.8.1",
+    "type-fest": "^4.18.2",
+    "undo-manager": "^1.1.1"
+  },
+  "version": "0.0.16",
+  "main": "src/index.ts",
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.12"
+  }
+}
