@@ -138,6 +138,7 @@ async function buildPackages() {
         ...Object.keys(project.manifest.dependencies ?? {}),
         ...Object.keys(project.manifest.peerDependencies ?? {}),
       ],
+      dts: true,
     });
   }
 }
