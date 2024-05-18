@@ -4,7 +4,7 @@ import util from "util";
 // must be no slashes or device names (c:\) in the array
 // (so also no leading and trailing slashes - it does not distinguish
 // relative and absolute paths)
-function normalizeArray(parts, allowAboveRoot) {
+function normalizeArray(parts: string[], allowAboveRoot: boolean) {
   var res = [];
   for (var i = 0; i < parts.length; i++) {
     var p = parts[i];
@@ -28,7 +28,7 @@ function normalizeArray(parts, allowAboveRoot) {
 
 // returns an array with empty elements removed from either end of the input
 // array or the original array if no elements need to be removed
-function trimArray(arr) {
+function trimArray(arr: string[]) {
   var lastIndex = arr.length - 1;
   var start = 0;
   for (; start <= lastIndex; start++) {
@@ -51,13 +51,13 @@ var splitPathRe =
   /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
 var posix = {};
 
-function posixSplitPath(filename) {
-  return splitPathRe.exec(filename).slice(1);
+function posixSplitPath(filename: string) {
+  return splitPathRe.exec(filename)?.slice(1) ?? [];
 }
 
 // path.normalize(path)
 // posix version
-export const normalize = function (path) {
+export const normalize = function (path: string) {
   var isAbs = isAbsolute(path),
     trailingSlash = path && path[path.length - 1] === "/";
 
@@ -75,7 +75,7 @@ export const normalize = function (path) {
 };
 
 // posix version
-export const isAbsolute = function (path) {
+export const isAbsolute = function (path: string) {
   return path.charAt(0) === "/";
 };
 
@@ -100,7 +100,7 @@ export const join = function (...paths: string[]) {
 
 // path.relative(from, to)
 // posix version
-export const relative = function (from, to) {
+export const relative = function (from: string, to: string) {
   from = join(from).substr(1);
   to = join(to).substr(1);
 
@@ -126,11 +126,11 @@ export const relative = function (from, to) {
   return outputParts.join("/");
 };
 
-const _makeLong = function (path) {
+const _makeLong = function (path: string) {
   return path;
 };
 
-export const dirname = function (path) {
+export const dirname = function (path: string) {
   var result = posixSplitPath(path),
     root = result[0],
     dir = result[1];
@@ -157,11 +157,11 @@ export const basename = function (path: string, ext?: string) {
   return f;
 };
 
-export const extname = function (path) {
+export const extname = function (path: string) {
   return posixSplitPath(path)[3];
 };
 
-export const format = function (pathObject) {
+export const format = function (pathObject: any) {
   if (!util.isObject(pathObject)) {
     throw new TypeError(
       "Parameter 'pathObject' must be an object, not " + typeof pathObject
@@ -182,7 +182,7 @@ export const format = function (pathObject) {
   return dir + base;
 };
 
-export const parse = function (pathString) {
+export const parse = function (pathString: string) {
   if (!util.isString(pathString)) {
     throw new TypeError(
       "Parameter 'pathString' must be a string, not " + typeof pathString
