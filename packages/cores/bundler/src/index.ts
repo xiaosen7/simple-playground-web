@@ -104,6 +104,7 @@ class Bundler {
           hash: "",
           js: "",
           buildError: buildError as Error,
+          globalExternals: {},
         };
       }
     }
@@ -152,12 +153,12 @@ class Bundler {
       css: cssResult?.text ?? "",
       hash,
       errors: result.errors,
-      // globalExternals: {
-      //   __globals: {
-      //     ...this.#globalExternals,
-      //     ...options.globalExternals,
-      //   },
-      // },
+      globalExternals: {
+        __globals: {
+          ...this.#globalExternals,
+          ...options.globalExternals,
+        },
+      },
     };
   }
 }
@@ -170,6 +171,7 @@ export type IBuildResult = {
   css: string;
   hash: string;
   errors: esbuild.Message[];
+  globalExternals?: Record<string, any>;
 };
 
 /**
