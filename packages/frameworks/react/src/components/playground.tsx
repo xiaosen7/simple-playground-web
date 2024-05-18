@@ -15,7 +15,7 @@ import { Previewer } from "./previewer";
 import { usePlayground } from "../hooks/playground";
 import { omit } from "lodash-es";
 import { PlaygroundContext } from "../context";
-import { Stack, Typography } from "@mui/material";
+import { Paper, Stack, Typography } from "@mui/material";
 import {
   CreateFile,
   CreateFolder,
@@ -29,6 +29,9 @@ import {
 } from "./actions";
 import DockLayout, { LayoutData, DividerBox } from "rc-dock";
 import "rc-dock/dist/rc-dock.css";
+import { IComponentProps } from "./types";
+import { project } from "@simple-playground-web/project";
+import { filter } from "rxjs";
 
 export interface IPlaygroundProps extends IPlaygroundOptions {
   className?: string;
@@ -63,65 +66,65 @@ export const Playground = React.memo(
   }
 );
 
-const PlaygroundUI = (props: {
-  className?: string;
-  style?: React.CSSProperties;
-}) => {
+const PlaygroundUI = (props: IComponentProps) => {
   const { className, style } = props;
   console.log({ className, style });
   const playground = usePlayground();
-  const selectedPath = useObservable(playground.selectedPath$);
+  const selectedFilePath = useObservable(
+    playground.selectedPath$.pipe(
+      filter((x) => project.fs.statSync(playground.explore.resolve(x)).isFile())
+    )
+  );
 
   // Do not destroy playground because it may be used in other places
 
   return (
-    <DividerBox
-      mode="horizontal"
-      {...props}
-      className={classNames(
-        "border border-gray-300 border-solid",
-        props.className
-      )}
+    <Paper
+      style={style}
+      elevation={3}
+      className={classNames("border border-gray-300 border-solid", className)}
     >
-      <div className="flex flex-col w-1/3">
-        <Stack direction={"row"} className="overflow-scroll">
-          <Rename />
-          <CreateFile />
-          <CreateFolder />
-          <Delete />
-          <Undo />
-          <Redo />
-        </Stack>
-        <Explore className="flex-1 border-0 border-t border-solid border-gray-200" />
-      </div>
-
-      <div className="flex flex-col border-0 border-r border-l border-solid border-gray-200 w-1/3">
-        <Stack
-          direction={"row"}
-          alignItems={"center"}
-          paddingX={1}
-          justifyContent={"space-between"}
-        >
-          <Typography>{selectedPath}</Typography>
-          <Stack direction={"row"}>
-            <FormatCode />
+      <DividerBox mode="horizontal" className="h-full">
+        <div className="flex flex-col w-1/5">
+          <Stack direction={"row"} className="overflow-scroll">
+            <Rename />
+            <CreateFile />
+            <CreateFolder />
+            <Delete />
+            <Undo />
+            <Redo />
           </Stack>
-        </Stack>
-
-        <Editor className="flex-1 min-h-24 border-0 border-t border-b border-solid border-gray-200" />
-
-        <div>
-          <BuildInfo />
+          <Explore className="flex-1 border-0 border-t border-solid border-gray-200" />
         </div>
-      </div>
 
-      <div className="flex flex-col w-1/3">
-        <Stack direction={"row"} className="overflow-scroll">
-          <RequestPreviewerFullScreen />
-          <ReloadPreviewer />
-        </Stack>
-        <Previewer className="overflow-auto flex-1 border-0 border-t border-solid border-gray-200" />
-      </div>
-    </DividerBox>
+        <div className="flex flex-col border-0 border-r border-l border-solid border-gray-200 w-2/5">
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            paddingX={1}
+            justifyContent={"space-between"}
+          >
+            <Typography>{selectedFilePath}</Typography>
+            <Stack direction={"row"}>
+              <FormatCode />
+            </Stack>
+          </Stack>
+
+          <Editor className="flex-1 min-h-24 border-0 border-t border-b border-solid border-gray-200" />
+
+          <div>
+            <BuildInfo />
+          </div>
+        </div>
+
+        <div className="flex flex-col w-2/5">
+          <Stack direction={"row"} className="overflow-scroll">
+            <RequestPreviewerFullScreen />
+            <ReloadPreviewer />
+          </Stack>
+          <Previewer className="overflow-auto flex-1 border-0 border-t border-solid border-gray-200" />
+        </div>
+      </DividerBox>
+    </Paper>
   );
 };
