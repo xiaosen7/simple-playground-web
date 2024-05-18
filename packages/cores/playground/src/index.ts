@@ -65,7 +65,6 @@ export class Playground {
   static #playgroundMap = new Map<string, Playground>();
 
   static create(options: IPlaygroundOptions) {
-    debugger;
     if (this.#playgroundMap.has(options.cwd)) {
       return this.#playgroundMap.get(options.cwd)!;
     }

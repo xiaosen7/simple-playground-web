@@ -10,7 +10,7 @@ import { PlaygroundProvider } from "@simple-playground-web/react";
 import { useMount } from "ahooks";
 import { range, once } from "lodash-es";
 
-bundler.setWasmUrl("https://www.unpkg.com/esbuild-wasm@0.20.2/esbuild.wasm");
+bundler.setWasmUrl("/esbuild.wasm");
 
 const globalExternals = {
   "react-dom/client": ReactDOMClient,
