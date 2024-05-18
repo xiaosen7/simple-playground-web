@@ -7,7 +7,6 @@
     "@mui/material": "^5.15.17",
     "@mui/x-tree-view": "^7.3.1",
     "@simple-playground-web/bundler": "workspace:^",
-    "@simple-playground-web/directory-tree": "workspace:^",
     "@simple-playground-web/path": "workspace:^",
     "@simple-playground-web/playground": "workspace:^",
     "@simple-playground-web/project": "workspace:^",

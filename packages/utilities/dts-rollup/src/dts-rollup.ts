@@ -96,9 +96,7 @@ export class DtsRollup {
 
     let count = this.#sourceFileMap.size;
     console.log(
-      `Total ${count} source files, node modules: ${
-        this.#nodeModulesCache.size
-      }.`
+      `Total ${count} source files, node modules: ${this.#nodeModulesCache.size}.`
     );
 
     const packageJsonOutFields =
@@ -162,7 +160,7 @@ export class DtsRollup {
       const moduleSourceFile = importSourceFiles[index];
       const moduleOutFilePath = this.#getOutFilePath(moduleSourceFile);
       const dummyFilePath = `${this.#getNodeModuleOutDir(
-        declaration.getModuleSpecifierValue()
+        declaration.getModuleSpecifierValue()!
       )}.d.ts`;
       if (!existsSync(dummyFilePath)) {
         ensureDirSync(dirname(dummyFilePath));

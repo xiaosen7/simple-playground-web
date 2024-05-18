@@ -3,7 +3,6 @@
   "description": "Playground model",
   "dependencies": {
     "@simple-playground-web/bundler": "workspace:^",
-    "@simple-playground-web/directory-tree": "workspace:^",
     "@simple-playground-web/logger": "workspace:^",
     "@simple-playground-web/path": "workspace:^",
     "@simple-playground-web/project": "workspace:^",
