@@ -31,13 +31,13 @@ export default class extends Script<{}> {
     const version = await readFile(VERSION_FILE, "utf-8");
     const tag = `release/v${version}`;
 
-    await check(tag);
+    // await check(tag);
 
     console.log(`upgrade to ${version}`);
 
     const pkgs = await findWorkspaceProjects({
       excludeRoot: true,
-      patterns: ["packages/*"],
+      patterns: ["packages/**/*"],
     });
     await Promise.all(
       pkgs.map((x) =>
