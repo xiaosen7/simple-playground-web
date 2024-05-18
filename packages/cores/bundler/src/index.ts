@@ -89,23 +89,25 @@ class Bundler {
     await loadEsbuildWasm(this.#esbuildWasmUrl);
   });
 
-  build = singleAsyncFn(async (options: IBuildOptions) => {
-    try {
-      const result = await this.#build(options);
-      return {
-        ...result,
-        buildError: undefined,
-      };
-    } catch (buildError) {
-      return {
-        css: "",
-        errors: [],
-        hash: "",
-        js: "",
-        buildError: buildError as Error,
-      };
+  build = singleAsyncFn(
+    async (options: IBuildOptions): Promise<IBuildResult> => {
+      try {
+        const result = await this.#build(options);
+        return {
+          ...result,
+          buildError: undefined,
+        };
+      } catch (buildError) {
+        return {
+          css: "",
+          errors: [],
+          hash: "",
+          js: "",
+          buildError: buildError as Error,
+        };
+      }
     }
-  });
+  );
 
   async #build(options: IBuildOptions) {
     await this.load();
@@ -150,21 +152,25 @@ class Bundler {
       css: cssResult?.text ?? "",
       hash,
       errors: result.errors,
-      globalExternals: {
-        __globals: {
-          ...this.#globalExternals,
-          ...options.globalExternals,
-        },
-      },
+      // globalExternals: {
+      //   __globals: {
+      //     ...this.#globalExternals,
+      //     ...options.globalExternals,
+      //   },
+      // },
     };
   }
 }
 
 export const bundler = new Bundler();
 
-export type IBuildResult = AsyncReturnType<
-  InstanceType<typeof Bundler>["build"]
->;
+export type IBuildResult = {
+  buildError?: Error;
+  js: string;
+  css: string;
+  hash: string;
+  errors: esbuild.Message[];
+};
 
 /**
  * 同一时间内，函数只会被执行一次，多次调用排队执行
