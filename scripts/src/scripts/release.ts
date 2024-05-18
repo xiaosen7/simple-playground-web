@@ -129,7 +129,6 @@ async function buildPackages() {
 
     await build({
       entry: [join(project.dir, "src", "index.ts")],
-      dts: true,
       outDir: join(project.dir, "dist"),
       silent: true,
       clean: true,

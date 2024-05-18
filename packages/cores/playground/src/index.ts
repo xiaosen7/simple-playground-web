@@ -88,6 +88,7 @@ export class Playground {
   directoryTreePaths$ = new ReplaySubject<string[]>();
   buildState$ = new BehaviorSubject<EBuildState>(EBuildState.Start);
   selectedPath$ = new ReplaySubject<string>();
+  // @ts-ignore
   buildResult$ = new BehaviorSubject<IBuildResult | undefined>(undefined);
   newFile$ = new ReplaySubject<string>();
 
