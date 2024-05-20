@@ -4,6 +4,6 @@
   "dependencies": {
     "change-case": "^5.4.4"
   },
-  "version": "0.0.21",
+  "version": "0.0.22",
   "main": "src/index.ts"
 }
