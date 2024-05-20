@@ -7,13 +7,13 @@ import { bundler, project } from "@simple-playground-web/core";
 window.process = process;
 window.Buffer = Buffer;
 
-fetch("/template.json")
+fetch("./template.json")
   .then((res) => res.json())
   .then((template) => {
     project.setTemplate(template);
   });
 
-bundler.setWasmUrl("/esbuild.wasm");
+bundler.setWasmUrl("./esbuild.wasm");
 
 const preview: Preview = {
   parameters: {

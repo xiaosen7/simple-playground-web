@@ -27,7 +27,6 @@ export default class extends Script<{}> {
     "构建，发布，更新版本号，生成 changelog，生成 git tag, 发布到 git";
 
   async execute(): Promise<void> {
-    debugger;
     const version = await readFile(VERSION_FILE, "utf-8");
     const tag = `release/v${version}`;
 
@@ -81,7 +80,6 @@ export default class extends Script<{}> {
           files: ["dist"],
           main: undefined,
           devDependencies: undefined,
-          scripts: undefined,
           repository,
         })
       )
@@ -122,10 +120,16 @@ async function buildPackages() {
     excludeRoot: true,
     patterns: ["packages/**/*"],
   });
-  await Promise.all(projects.map((x) => buildPkgDir(x)));
+  await projects.reduce(
+    (pre, project) => pre.then(() => buildProject(project)),
+    Promise.resolve()
+  );
 
-  async function buildPkgDir(project: IProject) {
+  async function buildProject(project: IProject) {
     console.log(`Building ${project.manifest.name}`);
+
+    const cwd = process.cwd();
+    process.chdir(project.dir);
 
     await build({
       entry: [join(project.dir, "src", "index.ts")],
@@ -140,5 +144,7 @@ async function buildPackages() {
       ],
       dts: true,
     });
+
+    process.chdir(cwd);
   }
 }

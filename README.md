@@ -56,6 +56,7 @@ import process from "process/browser";
 import { Buffer } from "buffer";
 import { bundler, project } from "@simple-playground-web/core";
 import { Playground } from "@simple-playground-web/react";
+import "@simple-playground-web/react/dist/index.css";
 
 window.process = process;
 window.Buffer = Buffer;
