@@ -12,6 +12,6 @@
   "devDependencies": {
     "@types/lodash-es": "^4.17.12"
   },
-  "version": "0.0.25",
+  "version": "0.0.28",
   "main": "src/index.ts"
 }
