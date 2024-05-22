@@ -99,6 +99,10 @@ export class Explore {
     project.fs.writeFileSync(resolve(this.cwd, path), content);
   }
 
+  readFileSync(path: string, encoding: string) {
+    return project.fs.readFileSync(resolve(this.cwd, path), encoding);
+  }
+
   isDirectory(path: string) {
     return project.fs.statSync(resolve(this.cwd, path)).isDirectory();
   }

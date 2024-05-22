@@ -167,7 +167,6 @@ describe("fs", () => {
       const fs = new FS();
       fs.writeFileSync("/dir/src/index.ts", "");
       expect(fs.globSync(["**/*"], { onlyFiles: false })).toEqual([
-        "/",
         "/dir",
         "/dir/src",
         "/dir/src/index.ts",

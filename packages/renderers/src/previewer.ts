@@ -5,7 +5,8 @@ import {
   createNode,
 } from "@simple-playground-web/dom";
 import { ISafeAny } from "@simple-playground-web/types";
-import { Subject } from "rxjs";
+import { Observable, Subject, Subscription, fromEvent } from "rxjs";
+import { createConsole } from "./console";
 
 /**
  * 预览的可以改变资源，代码，全局变量
@@ -31,9 +32,11 @@ enum EState {
   Loading,
   Loaded,
 }
+
 export class Previewer {
   static EState = EState;
   EState = EState;
+  console = createConsole();
 
   #sources: ISources = {
     scripts: [],
@@ -49,30 +52,36 @@ export class Previewer {
     html: createNode("<div id='root'></div>") as HTMLElement,
   };
 
+  #subscription = new Subscription();
   state$ = new Subject<EState>();
   error$ = new Subject<string>();
+  load$: Observable<Event>;
 
   #iframe = createNode(
     `<iframe style="border: none; width: 100%; height: 100%"></iframe>`
   ) as HTMLIFrameElement;
   #window: Window | null = null; // If this.#window is null, it means the iframe hasn't loaded yet.
-  // #toolbarContainer = createNode(
-  //   `<div style="height: 30px; background: aliceblue" id="toolbar"></div>`
-  // ) as HTMLDivElement;
 
   constructor() {
     this.state$.next(EState.Loading);
-    this.#iframe.addEventListener("load", () => {
-      this.state$.next(EState.Loaded);
-      this.#window = this.#iframe.contentWindow;
-      this.#loadSources();
-    });
+    this.load$ = fromEvent(this.#iframe, "load");
+
+    this.#subscription.add(
+      this.load$.subscribe(() => {
+        this.state$.next(EState.Loaded);
+        this.#window = this.#iframe.contentWindow;
+        this.#loadSources();
+      })
+    );
   }
 
   #loadSources = () => {
     if (!this.#window) {
       return;
     }
+
+    // @ts-ignore
+    this.#window.console = this.console;
 
     // 错误处理
     this.#window.addEventListener("error", (ev) => {
@@ -86,18 +95,6 @@ export class Previewer {
 
     // 解决全屏后背景色为黑色
     body.style.backgroundColor = "white";
-
-    // toolbar
-    // this.#iframe.contentWindow!.document.body.append(this.#toolbarContainer);
-    // ReactDOM.render(
-    //   <Toolbar
-    //     key={uniqueId()}
-    //     onFullscreen={() => this.#iframe.requestFullscreen()}
-    //     onReload={() => window.location.reload()}
-    //     headerElement={window.document.head}
-    //   />,
-    //   this.#toolbarContainer,
-    // );
 
     // sources
 
@@ -175,6 +172,7 @@ export class Previewer {
   };
 
   dispose = () => {
+    this.#subscription.unsubscribe();
     this.#iframe.remove();
   };
 

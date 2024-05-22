@@ -72,7 +72,7 @@ export const BuildInfo: React.FC<IBuildInfoProps> = (
 
   return (
     <div
-      className={classNames("max-h-28 overflow-auto px-2", props.className)}
+      className={classNames("overflow-auto px-2", props.className)}
       style={props.style}
     >
       {getContent()}

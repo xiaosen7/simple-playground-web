@@ -25,3 +25,15 @@ export function useObservable<T>(observable: Observable<T>) {
   useSubs(observable, debounce(setValue));
   return value;
 }
+
+export function useObservableValues<T>(observable: Observable<T>) {
+  const [values, setValues] = useState<T[]>([]);
+  useSubs(observable, (value) => {
+    setValues((x) => [...x, value]);
+  });
+
+  const clear = useMemoizedFn(() => {
+    setValues([]);
+  });
+  return [values, clear] as const;
+}

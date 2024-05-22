@@ -41,6 +41,7 @@ interface IActionProps extends IComponentProps {
  * @returns
  */
 export function Action(props: IActionProps) {
+  console.log({ props });
   const { Icon, title, className, onClick, style, disabled } = props;
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 

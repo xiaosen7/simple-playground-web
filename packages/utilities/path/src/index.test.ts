@@ -8,6 +8,11 @@ describe("path", () => {
     expect(filter("a/node_modules/ds.a")).toBe(false);
   });
 
+  test("createFilterPattern 2", () => {
+    const filter = createFilterPattern(["/**/*", "/*"]);
+    expect(filter("/index.ts")).toBe(true);
+  });
+
   test("dirname", () => {
     expect(dirname("a/b")).toBe("a");
     expect(dirname("/a/b/")).toBe("/a");

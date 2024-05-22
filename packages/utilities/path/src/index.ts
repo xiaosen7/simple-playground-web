@@ -1,11 +1,16 @@
 import { isAbsolute, join } from "./npm-path";
 //@ts-ignore
-import picomatch from "picomatch-browser";
+import picomatch from "picomatch";
 
 export * from "./npm-path";
 
 export function createFilterPattern(pattern: string | string[]) {
-  const isMatch = picomatch(pattern);
+  const isMatch = picomatch(pattern, {
+    // contains: true,
+    // basename: true,
+    // bash: true,
+    // strictSlashes: true,
+  });
   return (x: string) => isMatch(x);
 }
 

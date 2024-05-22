@@ -32,6 +32,7 @@ export interface IPlaygroundOptions {
    * The input of esbuild, can be glob pattern
    * @default  [
         join(options.cwd, "**\/*"),
+        join(options.cwd, "\/*"),
         "/node_modules\/**\/*.js",
       ]
    */
@@ -41,7 +42,10 @@ export interface IPlaygroundOptions {
    */
   buildOptions?: Omit<IBuildOptions, "entry" | "input" | "globalExternals">;
   /**
-   * @default [join(options.cwd, '**\/*')]
+   * @default  [
+        join(options.cwd, "**\/*"),
+        join(options.cwd, "\/*"),
+      ]
    */
   directoryTreePathsPattern?: string[];
   /**
@@ -98,10 +102,17 @@ export class Playground {
 
   private constructor(options: IPlaygroundOptions) {
     const DEFAULT_OPTIONS = {
-      buildInputPattern: [join(options.cwd, "**/*"), "/node_modules/**/*.js"],
+      buildInputPattern: [
+        join(options.cwd, "**/*"),
+        join(options.cwd, "*"),
+        "/node_modules/**/*.js",
+      ],
       buildOptions: {},
       globalExternals: {},
-      directoryTreePathsPattern: [join(options.cwd, "**/*")],
+      directoryTreePathsPattern: [
+        join(options.cwd, "**/*"),
+        join(options.cwd, "*"),
+      ],
     } as const satisfies Pick<
       IPlaygroundOptions,
       OptionalKeysOf<IPlaygroundOptions>
@@ -134,7 +145,7 @@ export class Playground {
             return;
           }
 
-          project.fs.writeFileSync(filePath, value);
+          this.explore.writeFileSync(filePath, value);
           this.build();
         })
     );
@@ -211,8 +222,10 @@ export class Playground {
 
   async build() {
     this.buildState$.next(EBuildState.LoadingEsbuildWasm);
+    this.#logger.log("loading esbuild.wasm...");
     await bundler.load();
     this.buildState$.next(EBuildState.Building);
+    this.#logger.log("building...");
     const {
       globalExternals = {},
       buildInputPattern,
@@ -240,6 +253,7 @@ export class Playground {
         hash: "",
         js: "",
       });
+      this.#logger.log("build error");
       return;
     }
 
@@ -254,6 +268,7 @@ export class Playground {
         hash: "",
         js: "",
       });
+      this.#logger.log("build error");
       return;
     }
 
@@ -268,22 +283,23 @@ export class Playground {
         if (result.errors.length > 0 || result.buildError) {
           this.buildState$.next(EBuildState.Error);
           this.buildResult$.next(result);
+          this.#logger.log("build error");
           return;
         }
+
+        this.#logger.log("build success");
 
         this.buildState$.next(EBuildState.Done);
 
         const lastBuildHash = this.buildResult$.getValue()?.hash;
         if (lastBuildHash === result.hash) {
+          this.#logger.log("hash equals");
           return;
         }
 
         this.buildResult$.next(result);
 
         const { css, js, globalExternals } = result;
-        this.previewer.updateSources({
-          globals: globalExternals,
-        });
         this.previewer.updateSources({
           scripts: [
             {

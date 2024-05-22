@@ -1,4 +1,12 @@
-import { Box, Grid, Paper, Stack } from "@mui/material";
+import {
+  Badge,
+  Box,
+  Divider,
+  Grid,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { PlaygroundProviderBuilder } from "../provider";
 import { Playground } from "./playground";
 import React from "react";
@@ -18,6 +26,8 @@ import {
   Undo,
 } from "./actions";
 import { range } from "lodash-es";
+import DockLayout, { DividerBox } from "rc-dock";
+import { SelectedPath } from "./selected-path";
 
 export default {
   component: Playground,
@@ -33,9 +43,14 @@ export const Base = () => (
 export const CustomLayout = () => {
   return (
     <PlaygroundProviderBuilder cwd="/src/playgrounds/1" entry="index.tsx">
-      <Stack style={{ height: "calc(100vh - 40px)" }} spacing={2}>
-        <Paper>
-          <Stack direction={"row"}>
+      <DividerBox
+        mode="vertical"
+        className={"border border-solid border-gray-300"}
+        style={{ height: "calc(100vh - 20px)" }}
+      >
+        {/* explore part */}
+        <div className="flex flex-col ">
+          <Stack direction={"row"} className="overflow-scroll">
             <Rename />
             <CreateFile />
             <CreateFolder />
@@ -43,24 +58,38 @@ export const CustomLayout = () => {
             <Undo />
             <Redo />
           </Stack>
-          <Explore style={{ height: 200 }} />
-        </Paper>
-        <Paper>
-          <Stack direction={"row"}>
+          <Explore className="border-0 border-t border-solid border-gray-300 h-20" />
+        </div>
+
+        {/* editor part */}
+        <Stack className="border-0 border-b border-t border-solid border-gray-300 overflow-hidden">
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            paddingX={1}
+            justifyContent={"space-between"}
+          >
+            <SelectedPath />
             <FormatCode />
           </Stack>
-          <Editor style={{ height: 200 }} />
-          <BuildInfo />
-        </Paper>
-        <Paper>
-          <Stack direction={"row"}>
-            <ReloadPreviewer />
-            <RequestPreviewerFullScreen />
+
+          <Editor className="flex-1 border-0 border-t border-b border-solid border-gray-300" />
+          <BuildInfo className="min-h-8" />
+        </Stack>
+
+        {/* preview part */}
+        <DividerBox mode="vertical">
+          <Stack>
+            <Stack direction={"row"} className="overflow-scroll">
+              <RequestPreviewerFullScreen />
+              <ReloadPreviewer />
+            </Stack>
+            <Previewer className="overflow-auto flex-1 border-0 border-b border-t border-solid border-gray-200" />
           </Stack>
 
-          <Previewer style={{ height: 200 }} />
-        </Paper>
-      </Stack>
+          <Previewer.Console className="border-0 border-t border-solid border-gray-300 h-24" />
+        </DividerBox>
+      </DividerBox>
     </PlaygroundProviderBuilder>
   );
 };

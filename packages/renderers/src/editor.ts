@@ -1,7 +1,7 @@
 import * as monaco from "monaco-editor";
 import { Logger } from "@simple-playground-web/logger";
 import { ReplaySubject } from "rxjs";
-import { uniqueId } from "lodash-es";
+import { mergeWith, uniqueId } from "lodash-es";
 
 export class Editor {
   #logger = new Logger("Editor");
@@ -13,18 +13,27 @@ export class Editor {
 
   constructor() {}
 
-  render = (container: HTMLElement) => {
+  render = (
+    container: HTMLElement,
+    options: monaco.editor.IStandaloneEditorConstructionOptions = {}
+  ) => {
     if (this.#codeEditor) {
       this.#codeEditor.dispose();
     }
 
-    const codeEditor = monaco.editor.create(container, {
-      fontSize: 14,
-      automaticLayout: true,
-      minimap: {
-        enabled: false,
-      },
-    });
+    const codeEditor = monaco.editor.create(
+      container,
+      mergeWith(
+        {
+          fontSize: 14,
+          automaticLayout: true,
+          minimap: {
+            enabled: false,
+          },
+        },
+        options
+      )
+    );
 
     codeEditor.onDidChangeModelContent(() => {
       this.contentChange$.next([

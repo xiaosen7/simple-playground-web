@@ -20,7 +20,12 @@ export const Toggler = () => {
   const [state, send] = useMachine(toggleMachine);
 
   return (
-    <button onClick={() => send({ type: "TOGGLE" })}>
+    <button
+      onClick={() => {
+        console.log("TOGGLE");
+        send({ type: "TOGGLE" });
+      }}
+    >
       {state.value === "inactive"
         ? "Click to activate"
         : "Active! Click to deactivate"}

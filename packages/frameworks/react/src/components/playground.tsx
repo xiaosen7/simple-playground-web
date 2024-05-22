@@ -32,6 +32,7 @@ import "rc-dock/dist/rc-dock.css";
 import { IComponentProps } from "./types";
 import { project } from "@simple-playground-web/project";
 import { filter } from "rxjs";
+import { SelectedPath } from "./selected-path";
 
 export interface IPlaygroundProps extends IPlaygroundOptions {
   className?: string;
@@ -67,64 +68,60 @@ export const Playground = React.memo(
 );
 
 const PlaygroundUI = (props: IComponentProps) => {
-  const { className, style } = props;
-  console.log({ className, style });
   const playground = usePlayground();
-  const selectedFilePath = useObservable(
-    playground.selectedPath$.pipe(
-      filter((x) => project.fs.statSync(playground.explore.resolve(x)).isFile())
-    )
-  );
 
   // Do not destroy playground because it may be used in other places
 
   return (
-    <Paper
-      style={style}
-      elevation={3}
-      className={classNames("border border-gray-300 border-solid", className)}
+    <DividerBox
+      mode="horizontal"
+      style={props.style}
+      className={classNames(
+        "border border-solid border-gray-300",
+        props.className
+      )}
     >
-      <DividerBox mode="horizontal" className="h-full">
-        <div className="flex flex-col w-1/5">
-          <Stack direction={"row"} className="overflow-scroll">
-            <Rename />
-            <CreateFile />
-            <CreateFolder />
-            <Delete />
-            <Undo />
-            <Redo />
-          </Stack>
-          <Explore className="flex-1 border-0 border-t border-solid border-gray-200" />
-        </div>
+      <div className="flex flex-col w-1/5 border-0 border-r border-solid border-gray-300">
+        <Stack direction={"row"} className="overflow-scroll">
+          <Rename />
+          <CreateFile />
+          <CreateFolder />
+          <Delete />
+          <Undo />
+          <Redo />
+        </Stack>
+        <Explore className="border-0 border-t border-solid border-gray-300" />
+      </div>
 
-        <div className="flex flex-col border-0 border-r border-l border-solid border-gray-200 w-2/5">
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            paddingX={1}
-            justifyContent={"space-between"}
-          >
-            <Typography>{selectedFilePath}</Typography>
-            <Stack direction={"row"}>
-              <FormatCode />
-            </Stack>
-          </Stack>
+      <Stack className="w-2/5 border-0 border-r border-l border-solid border-gray-300">
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          paddingX={1}
+          justifyContent={"space-between"}
+        >
+          <SelectedPath />
+          <FormatCode />
+        </Stack>
 
-          <Editor className="flex-1 min-h-24 border-0 border-t border-b border-solid border-gray-200" />
+        <Editor className="flex-1 border-0 border-t border-b border-solid border-gray-300" />
+        <BuildInfo className="min-h-8" />
+      </Stack>
 
-          <div>
-            <BuildInfo />
-          </div>
-        </div>
-
-        <div className="flex flex-col w-2/5">
+      <DividerBox
+        mode="vertical"
+        className="w-2/5 border-0 border-l border-solid border-gray-300"
+      >
+        <Stack>
           <Stack direction={"row"} className="overflow-scroll">
             <RequestPreviewerFullScreen />
             <ReloadPreviewer />
           </Stack>
-          <Previewer className="overflow-auto flex-1 border-0 border-t border-solid border-gray-200" />
-        </div>
+          <Previewer className="overflow-auto flex-1 border-0 border-b border-t border-solid border-gray-200" />
+        </Stack>
+
+        <Previewer.Console className="border-0 border-t border-solid border-gray-300 min-h-24 h-24" />
       </DividerBox>
-    </Paper>
+    </DividerBox>
   );
 };

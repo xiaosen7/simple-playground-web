@@ -5,4 +5,5 @@ export * from "./editor";
 export * from "./explore";
 export * from "./playground";
 export * from "./previewer";
+export * from "./selected-path";
 export * from "./types";
