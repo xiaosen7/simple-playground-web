@@ -6,6 +6,6 @@
     "@simple-playground-web/playground": "workspace:^",
     "@simple-playground-web/project": "workspace:^"
   },
-  "version": "0.0.32",
+  "version": "0.0.33",
   "main": "src/index.ts"
 }

@@ -1,7 +1,7 @@
 {
   "name": "@simple-playground-web/gen-template",
   "description": "Cli for generating template.json",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "main": "src/index.ts",
   "bin": {
     "gen-template": "./bin-dev/index.ts"
