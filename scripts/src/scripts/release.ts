@@ -31,64 +31,67 @@ export default class extends Script<{}> {
     const tag = `release/v${version}`;
 
     await check(tag);
+    console.log(`upgrading to ${version}`);
 
-    console.log(`upgrade to ${version}`);
+    try {
+      const pkgs = await findWorkspaceProjects({
+        excludeRoot: true,
+        patterns: ["packages/**/*"],
+      });
+      await Promise.all(
+        pkgs.map((x) =>
+          x.writeProjectManifest({
+            ...x.manifest,
+            version: version,
+          })
+        )
+      );
 
-    const pkgs = await findWorkspaceProjects({
-      excludeRoot: true,
-      patterns: ["packages/**/*"],
-    });
-    await Promise.all(
-      pkgs.map((x) =>
-        x.writeProjectManifest({
-          ...x.manifest,
-          version: version,
-        })
-      )
-    );
+      await buildPackages();
 
-    await buildPackages();
+      // 生成 changelog
+      await $`pnpm conventional-changelog -p angular -i ./CHANGELOG.md -s`;
 
-    // 生成 changelog
-    await $`pnpm conventional-changelog -p angular -i ./CHANGELOG.md -s`;
+      // 生成 git commit
+      await git.add(".");
+      await git.commit(`chore: update version to v${version}`);
 
-    // 生成 git commit
-    await git.add(".");
-    await git.commit(`chore: update version to v${version}`);
+      // 生成 git tag
+      await git.addTag(tag);
 
-    // 生成 git tag
-    await git.addTag(tag);
+      await git.pushTags("origin");
+      await git.push("origin", MAIN_BRANCH);
 
-    await git.pushTags("origin");
-    await git.push("origin", MAIN_BRANCH);
-
-    // 发布到 npm
-    const repository = {
-      type: "git",
-      url: (await $`git remote get-url origin`).stdout.replace(
-        "git@github.com:",
-        "git+https://github.com/"
-      ),
-    };
-    await Promise.all(
-      pkgs.map((x) =>
-        x.writeProjectManifest({
-          ...x.manifest,
-          version: version,
-          module: "dist/index.mjs",
-          types: "dist/index.d.mts",
-          files: ["dist"],
-          main: undefined,
-          devDependencies: undefined,
-          repository,
-        })
-      )
-    );
-    await $`pnpm publish -r --access public --no-git-checks`;
+      // 发布到 npm
+      const repository = {
+        type: "git",
+        url: (await $`git remote get-url origin`).stdout.replace(
+          "git@github.com:",
+          "git+https://github.com/"
+        ),
+      };
+      await Promise.all(
+        pkgs.map((x) =>
+          x.writeProjectManifest({
+            ...x.manifest,
+            version: version,
+            module: "dist/index.mjs",
+            types: "dist/index.d.mts",
+            files: ["dist"],
+            main: undefined,
+            devDependencies: undefined,
+            repository,
+          })
+        )
+      );
+      await $`pnpm publish -r --access public --no-git-checks`;
+      console.log(`Release ${version} successfully.`);
+    } catch (error) {
+      console.log(`Release failed.`);
+      console.error(error);
+    }
 
     await $`git restore .`;
-
-    console.log(`Release ${version} successfully.`);
   }
 }
 

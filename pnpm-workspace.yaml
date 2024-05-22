@@ -3,7 +3,7 @@ packages:
   - packages/utilities/*
   - packages/renderers
   - packages/frameworks/*
-  - website
+  - packages/libs/*
   - template
   - scripts
   - .storybook

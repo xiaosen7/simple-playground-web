@@ -42,7 +42,6 @@ dist
 .turbo
 .env
 .vscode
-website/public/template*
 .version
 *storybook.log
 /stories

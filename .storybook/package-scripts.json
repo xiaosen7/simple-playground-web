@@ -1,4 +1,6 @@
 {
   "dev": "开发模式",
-  "build": "构建 storybook"
+  "build": "构建 storybook",
+  "template": "Generate template",
+  "deploy": "Deploy to gh-pages"
 }

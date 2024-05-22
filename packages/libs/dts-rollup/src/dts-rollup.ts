@@ -321,7 +321,8 @@ export class DtsRollup {
     if (isOutside) {
       return join(
         outDir,
-        "outside",
+        "node_modules",
+        "__outside__",
         relativeToRootPath.replaceAll("../", "__/")
       );
     }

@@ -27,6 +27,9 @@ import { Logger } from "@simple-playground-web/logger";
 
 export interface IPlaygroundOptions {
   globalExternals?: Record<string, any>;
+  /**
+   * The entry file to be built and auto selected, can be absolute path or relative path, if not set, it will be auto resolved from cwd in these files: ["./index.ts", "./index.tsx", "./src/index.ts", "./src.index.tsx"]
+   */
   entry?: string;
   /**
    * The input of esbuild, can be glob pattern

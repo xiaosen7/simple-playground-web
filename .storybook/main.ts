@@ -23,7 +23,7 @@ const config: StorybookConfig = {
     name: "@storybook/react-vite",
     options: {},
   },
-  staticDirs: ["../website/public"],
+  staticDirs: ["./public"],
   viteFinal: async (config) => {
     const tailwindConfig = await getTailwindConfig();
     return mergeConfig(config, {
