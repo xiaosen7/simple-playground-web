@@ -84,7 +84,9 @@ export default class extends Script<{}> {
           })
         )
       );
-      await $`pnpm publish -r --access public --no-git-checks`;
+      await $({
+        stdio: "inherit",
+      })`pnpm publish -r --access public --no-git-checks`;
       console.log(`Release ${version} successfully.`);
     } catch (error) {
       console.log(`Release failed.`);
