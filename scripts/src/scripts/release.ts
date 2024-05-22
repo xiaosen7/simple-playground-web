@@ -50,7 +50,9 @@ export default class extends Script<{}> {
       await buildPackages();
 
       // 生成 changelog
-      await $`pnpm conventional-changelog -p angular -i ./CHANGELOG.md -s`;
+      await $({
+        stdio: "inherit",
+      })`pnpm conventional-changelog -p angular -i ./CHANGELOG.md -s`;
 
       // 生成 git commit
       await git.add(".");
@@ -98,7 +100,11 @@ export default class extends Script<{}> {
 }
 
 async function check(tag: string) {
-  const isNpmLogin = !!(await $`npm whoami`).stdout;
+  const isNpmLogin = !!(
+    await $({
+      stdio: "inherit",
+    })`npm whoami`
+  ).stdout;
   if (!isNpmLogin) {
     throw new Error("请先登录 npm");
   }
