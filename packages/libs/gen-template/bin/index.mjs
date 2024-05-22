@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-import "../dist";
+import "../dist/index.mjs";

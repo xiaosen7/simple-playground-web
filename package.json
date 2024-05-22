@@ -6,9 +6,8 @@
   "scripts": {
     "test": "vitest",
     "release": "scripts release",
-    "dev": "pnpm --filter=website dev",
     "postinstall": "husky install",
-    "storybook": "pnpm --filter=storybook dev"
+    "dev": "pnpm --filter=storybook dev"
   },
   "keywords": [],
   "author": "",

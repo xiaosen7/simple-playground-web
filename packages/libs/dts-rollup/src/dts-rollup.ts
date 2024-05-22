@@ -2,14 +2,7 @@ import { writeFile } from "fs/promises";
 import { dirname, join, relative } from "path";
 
 import { findUpSync } from "find-up";
-import {
-  ensureDir,
-  ensureDirSync,
-  exists,
-  existsSync,
-  writeFileSync,
-  writeJSON,
-} from "fs-extra";
+import fsx from "fs-extra";
 import logUpdate from "log-update";
 import { Project } from "ts-morph";
 import type { PackageManifest } from "@pnpm/types";
@@ -23,6 +16,15 @@ import type {
 } from "ts-morph";
 import { pick } from "lodash-es";
 import { dedent } from "ts-dedent";
+
+const {
+  ensureDir,
+  ensureDirSync,
+  exists,
+  existsSync,
+  writeFileSync,
+  writeJSON,
+} = fsx;
 
 export interface IDtsRollupOptions {
   rootDir: string;
