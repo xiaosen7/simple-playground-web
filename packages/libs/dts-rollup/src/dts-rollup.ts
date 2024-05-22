@@ -24,6 +24,7 @@ const {
   existsSync,
   writeFileSync,
   writeJSON,
+  readJSONSync,
 } = fsx;
 
 export interface IDtsRollupOptions {
@@ -345,7 +346,7 @@ function resolvePackageManifest(filePath: string) {
     throw new Error(`Can't find package.json for ${filePath}`);
   }
 
-  const manifest = require(packageJsonPath) as PackageManifest;
+  const manifest = readJSONSync(packageJsonPath) as PackageManifest;
   if (!manifest.name) {
     return resolvePackageManifest(dirname(packageJsonPath));
   }

@@ -96,10 +96,12 @@ export default class extends Script<{}> {
           await x.writeProjectManifest({
             ...x.manifest,
             version: version,
+            // @ts-ignore
+            type: "module",
+            main: "dist/index.mjs",
             module: "dist/index.mjs",
             types: "dist/index.d.mts",
             files: ["dist"],
-            main: undefined,
             devDependencies: undefined,
             repository,
             bin,
