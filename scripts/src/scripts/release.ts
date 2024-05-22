@@ -10,7 +10,7 @@ import { simpleGit } from "simple-git";
 import { readdir, writeFile } from "fs/promises";
 import { join, resolve } from "path";
 import { build } from "tsup";
-import { readFile } from "fs-extra";
+import { ensureFile, readFile } from "fs-extra";
 import { isObject } from "lodash-es";
 
 const MAIN_BRANCH = "main";
@@ -82,6 +82,7 @@ export default class extends Script<{}> {
               path.includes("bin-dev/index.ts")
             )[0];
             if (name && path) {
+              await ensureFile(join(x.dir, "bin", "index.mjs"));
               await writeFile(
                 join(x.dir, "bin", "index.mjs"),
                 `#!/usr/bin/env node
