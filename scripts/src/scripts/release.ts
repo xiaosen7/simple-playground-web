@@ -100,11 +100,7 @@ export default class extends Script<{}> {
 }
 
 async function check(tag: string) {
-  const isNpmLogin = !!(
-    await $({
-      stdio: "inherit",
-    })`npm whoami`
-  ).stdout;
+  const isNpmLogin = !!(await $`npm whoami`).stdout;
   if (!isNpmLogin) {
     throw new Error("请先登录 npm");
   }
