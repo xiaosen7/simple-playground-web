@@ -1,0 +1,1 @@
+# @simple-playground-web/gen-template
