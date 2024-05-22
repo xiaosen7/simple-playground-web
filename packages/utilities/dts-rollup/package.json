@@ -1,7 +1,7 @@
 {
   "name": "@simple-playground-web/dts-rollup",
   "description": "Collect all referenced *.d.ts files of *.ts entry files",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "main": "src/index.ts",
   "dependencies": {
     "@pnpm/types": "^9.4.2",
