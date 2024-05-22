@@ -98,8 +98,8 @@ export default class extends Script<{}> {
             version: version,
             // @ts-ignore
             type: "module",
-            main: "dist/index.mjs",
-            module: "dist/index.mjs",
+            main: "dist/esm/index.js",
+            module: "dist/esm/index.js",
             types: "dist/index.d.mts",
             files: ["dist"],
             devDependencies: undefined,
@@ -171,6 +171,7 @@ async function buildPackages() {
         ...Object.keys(project.manifest.dependencies ?? {}),
         ...Object.keys(project.manifest.peerDependencies ?? {}),
       ],
+      legacyOutput: true,
       dts: true,
     });
 

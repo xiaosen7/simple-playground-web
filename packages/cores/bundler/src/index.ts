@@ -140,6 +140,7 @@ class Bundler {
         ...(options.esbuildOptions?.plugins ?? []),
       ],
       outdir: "dist",
+      jsx: "automatic",
       ...omit(options.esbuildOptions, "plugins"),
     });
 
