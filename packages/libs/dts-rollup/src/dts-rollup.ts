@@ -353,6 +353,6 @@ function resolvePackageManifest(filePath: string) {
 
   return {
     path: packageJsonPath,
-    manifest: require(packageJsonPath) as PackageManifest,
+    manifest,
   };
 }
