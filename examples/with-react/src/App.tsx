@@ -6,14 +6,9 @@ import "@simple-playground-web/react/dist/index.css";
 window.process = process;
 window.Buffer = Buffer;
 
-project.setTemplate({
-  files: {
-    "/index.ts": "console.log('hello world');",
-  },
-  externals: {
-    cjsCode: "",
-  },
-});
+fetch("/template.json")
+  .then((r) => r.json())
+  .then((template) => project.setTemplate(template));
 
 bundler.setWasmUrl(
   "https://cdn.jsdelivr.net/npm/esbuild-wasm@0.20.2/esbuild.wasm"

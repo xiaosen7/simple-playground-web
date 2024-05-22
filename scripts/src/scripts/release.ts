@@ -7,10 +7,11 @@ import {
 import { Script } from "@/models/script";
 import { $ } from "execa";
 import { simpleGit } from "simple-git";
-import { readdir } from "fs/promises";
+import { readdir, writeFile } from "fs/promises";
 import { join, resolve } from "path";
 import { build } from "tsup";
 import { readFile } from "fs-extra";
+import { isObject } from "lodash-es";
 
 const MAIN_BRANCH = "main";
 const REMOTE_NAME = "origin";
@@ -73,8 +74,25 @@ export default class extends Script<{}> {
         ),
       };
       await Promise.all(
-        pkgs.map((x) =>
-          x.writeProjectManifest({
+        pkgs.map(async (x) => {
+          //bin-dev/index.ts
+          const bin = x.manifest.bin;
+          if (bin && isObject(bin)) {
+            const [name, path] = Object.entries(bin).filter(([name, path]) =>
+              path.includes("bin-dev/index.ts")
+            )[0];
+            if (name && path) {
+              await writeFile(
+                join(x.dir, "bin", "index.mjs"),
+                `#!/usr/bin/env node
+              import "../dist/index.mjs";
+              `
+              );
+              bin[name] = "./bin/index.mjs";
+            }
+          }
+
+          await x.writeProjectManifest({
             ...x.manifest,
             version: version,
             module: "dist/index.mjs",
@@ -83,8 +101,9 @@ export default class extends Script<{}> {
             main: undefined,
             devDependencies: undefined,
             repository,
-          })
-        )
+            bin,
+          });
+        })
       );
       await $({
         stdio: "inherit",

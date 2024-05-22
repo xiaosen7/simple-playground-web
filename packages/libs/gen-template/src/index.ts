@@ -2,7 +2,7 @@ import { readFile, writeFile, mkdir } from "fs/promises";
 import { join, resolve } from "path";
 import { DtsRollup } from "@simple-playground-web/dts-rollup";
 import fg from "fast-glob";
-import { CAC } from "cac";
+import { Command } from "commander";
 import cpy from "cpy";
 import { build } from "esbuild";
 
@@ -11,32 +11,38 @@ import temp from "temp";
 
 temp.track();
 
-const cli = new CAC("gen-template");
+const cli = new Command("gen-template");
 cli
-  .command("[dir]", "Generate template.json from dir (default: .)")
-  .option("--outFile <outFile>", "Template out file", {
-    default: "./template.json",
-  })
+  .argument("[dir]", "Generate template.json from dir")
+  .option("--outFile <outFile>", "Template out file", "./template.json")
+  .option(
+    "--extraExternals [extraExternals...]",
+    "Template externals, this cli will scan source files to get external node modules and build them, you can add extra externals manually"
+  )
   .action((dir = ".", options) => {
-    const outDir = join(
+    dir = resolve(dir);
+    const outDir = temp.mkdirSync({
       dir,
-      temp.mkdirSync({
-        dir,
-      })
-    );
+    });
     const outFile = resolve(options.outFile);
-    execute(resolve(dir), outDir, outFile);
+    options = { ...options, root: dir, outDir, outFile };
+    execute(options);
   });
-cli.help();
 cli.parse();
 
 type IPathToCode = Record<string, string>;
 
-async function execute(
-  root: string,
-  outDir: string,
-  outFile: string
-): Promise<void> {
+async function execute({
+  root,
+  outDir,
+  outFile,
+  extraExternals,
+}: {
+  root: string;
+  outDir: string;
+  outFile: string;
+  extraExternals?: string[];
+}): Promise<void> {
   const srcDir = join(root, "src");
   const extraCopyPattern = ["!dist"];
 
@@ -63,7 +69,11 @@ async function execute(
   );
 
   await mkdir(join(outDir, "externals"));
-  const externalCode = await buildExternals(srcDir, join(outDir, "externals"));
+  const externalCode = await buildExternals(
+    srcDir,
+    join(outDir, "externals"),
+    extraExternals
+  );
 
   const json = {
     files: {
@@ -99,10 +109,16 @@ async function dirToJson(
   return ret;
 }
 
-async function buildExternals(scanSrcDir: string, outDir: string) {
+async function buildExternals(
+  scanSrcDir: string,
+  outDir: string,
+  extraExternals: string[] = []
+) {
   const entryFile = join(outDir, "index.ts");
   const outFile = join(outDir, "index.js");
-  const externals = [...(await scanExternals(scanSrcDir))];
+  const externals = [
+    ...new Set([...(await scanExternals(scanSrcDir)), ...extraExternals]),
+  ];
   await writeFile(
     entryFile,
     `${externals.map((name, index) => `import * as $${index} from "${name}";`).join("\n")}
@@ -115,7 +131,7 @@ export default modules;
     `
   );
 
-  const code = await build({
+  await build({
     entryPoints: [entryFile],
     bundle: true,
     format: "cjs",

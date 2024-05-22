@@ -114,9 +114,15 @@ importers:
 
   examples/with-react:
     dependencies:
+      '@mui/material':
+        specifier: ^5.15.17
+        version: 5.15.17(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@types/react@18.2.79)(react-dom@18.2.0)(react@18.2.0)
       '@simple-playground-web/core':
         specifier: workspace:^
         version: link:../../packages/cores/core
+      '@simple-playground-web/gen-template':
+        specifier: workspace:^
+        version: link:../../packages/libs/gen-template
       '@simple-playground-web/react':
         specifier: workspace:^
         version: link:../../packages/frameworks/react
@@ -394,6 +400,9 @@ importers:
       cac:
         specifier: ^6.7.14
         version: 6.7.14
+      commander:
+        specifier: ^12.0.0
+        version: 12.0.0
       cpy:
         specifier: ^11.0.1
         version: 11.0.1

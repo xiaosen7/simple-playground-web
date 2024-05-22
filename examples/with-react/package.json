@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mui/material": "^5.15.17",
     "@simple-playground-web/core": "workspace:^",
+    "@simple-playground-web/gen-template": "workspace:^",
     "@simple-playground-web/react": "workspace:^",
     "buffer": "^6.0.3",
     "monaco-editor": "^0.48.0",

@@ -314,6 +314,9 @@ export class DtsRollup {
       } = this.#sourceFileMap.get(sourceFile)!;
       const packagePath = dirname(packageJsonPath);
 
+      if (!name) {
+        debugger;
+      }
       return join(
         this.#getNodeModuleOutDir(name, version),
         relative(packagePath, filePath)
@@ -337,8 +340,14 @@ function resolvePackageManifest(filePath: string) {
   const packageJsonPath = findUpSync("package.json", {
     cwd: dirname(filePath),
   });
+
   if (!packageJsonPath) {
     throw new Error(`Can't find package.json for ${filePath}`);
+  }
+
+  const manifest = require(packageJsonPath) as PackageManifest;
+  if (!manifest.name) {
+    return resolvePackageManifest(dirname(packageJsonPath));
   }
 
   return {
