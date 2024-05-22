@@ -47,6 +47,10 @@ export interface IDtsRollupOptions {
      */
     allowMultipleVersionModules?: Set<string>;
   };
+  /**
+   * extra externals
+   */
+  extraExternals?: string[];
 }
 /**
  * 以 *.ts 入口文件开始，收集所有他依赖的 d.ts 文件到一个文件夹
@@ -88,7 +92,12 @@ export class DtsRollup {
 
   async run() {
     const project = this.#project;
-    const { entries, ignoreExternals: externals, outDir } = this.#options;
+    const {
+      entries,
+      ignoreExternals: externals,
+      outDir,
+      extraExternals = [],
+    } = this.#options;
 
     await ensureDir(outDir);
 
@@ -96,6 +105,15 @@ export class DtsRollup {
       const entrySourceFile = project.addSourceFileAtPath(entry);
       this.#updateMap(entrySourceFile, externals, project);
     });
+
+    this.#updateMap(
+      project.createSourceFile(
+        join(outDir, "extra-externals.d.ts"),
+        extraExternals.map((name) => `import "${name}"`).join("\n")
+      ),
+      externals,
+      project
+    );
 
     let count = this.#sourceFileMap.size;
     console.log(

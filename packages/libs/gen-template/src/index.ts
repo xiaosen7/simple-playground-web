@@ -55,6 +55,7 @@ async function execute({
     ignoreExternals: [],
     outDir: projectOutDir,
     rootDir: root,
+    extraExternals,
   });
   await dtsRollup.run();
   await cpy(

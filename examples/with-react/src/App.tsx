@@ -1,10 +1,6 @@
-import { Buffer } from "buffer";
 import { bundler, project } from "@simple-playground-web/core";
 import { Playground } from "@simple-playground-web/react";
-import "@simple-playground-web/react/dist/index.css";
-
-window.process = process;
-window.Buffer = Buffer;
+import "@simple-playground-web/react/dist/esm/index.css";
 
 fetch("/template.json")
   .then((r) => r.json())
