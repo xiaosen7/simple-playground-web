@@ -4,7 +4,7 @@ import { useMount } from "ahooks";
 import { usePlayground } from "../hooks/playground";
 import { useSubs } from "../hooks";
 import classNames from "classnames";
-import { fromEvent } from "rxjs";
+import { debounceTime, fromEvent, merge } from "rxjs";
 
 export interface IEditorProps extends IComponentProps {}
 
@@ -24,6 +24,16 @@ export function Editor(props: IEditorProps) {
     window.playground = playground;
     playground.editor.render(editorRef.current!);
     // playground.editor.layout();
+    const resize$ = merge(
+      fromEvent(editorRef.current!, "resize"),
+      fromEvent(window, "resize")
+    ).pipe(debounceTime(200));
+    const subs = resize$.subscribe(() => {
+      console.log("resize");
+      playground.editor.layout();
+    });
+
+    return () => subs.unsubscribe();
   });
 
   return (
