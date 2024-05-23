@@ -26,8 +26,16 @@ const config: StorybookConfig = {
   staticDirs: ["./public"],
   viteFinal: async (config) => {
     const tailwindConfig = await getTailwindConfig();
+    config.root = __dirname;
     return mergeConfig(config, {
-      plugins: [monacoEditorPlugin({})],
+      plugins: [
+        monacoEditorPlugin({
+          customDistPath(root, buildOutDir, base) {
+            console.log({ root, buildOutDir, base });
+            return join(buildOutDir, "monacoeditorwork");
+          },
+        }),
+      ],
       css: {
         postcss: {
           plugins: [tailwindcss({ config: tailwindConfig })],
