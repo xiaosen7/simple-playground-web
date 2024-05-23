@@ -138,6 +138,18 @@ export default modules;
     format: "cjs",
     minify: true,
     outfile: outFile,
+    loader: {
+      ".svg": "dataurl",
+      ".js": "js",
+      ".json": "json",
+      ".css": "css",
+      ".jsx": "jsx",
+      ".ts": "ts",
+      ".tsx": "tsx",
+      ".text": "text",
+      ".jpg": "base64",
+      ".webp": "file",
+    },
   });
 
   return readFile(outFile, "utf-8");

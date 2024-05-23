@@ -14,22 +14,10 @@ export function Editor(props: IEditorProps) {
   const editorRef = useRef(null);
   const playground = usePlayground();
 
-  // This is to fix a bug in rc-dock-layout, i don't know why this bug appears
-  useSubs(fullscreenChange$, () => {
-    playground.editor.layout();
-  });
-
   useMount(() => {
-    // @ts-ignore
-    window.playground = playground;
     playground.editor.render(editorRef.current!);
-    // playground.editor.layout();
-    const resize$ = merge(
-      fromEvent(editorRef.current!, "resize"),
-      fromEvent(window, "resize")
-    ).pipe(debounceTime(200));
+    const resize$ = merge(fromEvent(window, "resize")).pipe(debounceTime(50));
     const subs = resize$.subscribe(() => {
-      console.log("resize");
       playground.editor.layout();
     });
 
