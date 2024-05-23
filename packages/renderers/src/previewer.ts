@@ -35,8 +35,19 @@ enum EState {
 
 export class Previewer {
   static EState = EState;
+
   EState = EState;
   console = createConsole();
+
+  state$ = new Subject<EState>();
+  error$ = new Subject<string>();
+  load$: Observable<Event>;
+  fullscreenChange$: Observable<Event>;
+
+  #iframe = createNode(
+    `<iframe style="border: none; width: 100%; height: 100%"></iframe>`
+  ) as HTMLIFrameElement;
+  #window: Window | null = null; // If this.#window is null, it means the iframe hasn't loaded yet.
 
   #sources: ISources = {
     scripts: [],
@@ -53,14 +64,6 @@ export class Previewer {
   };
 
   #subscription = new Subscription();
-  state$ = new Subject<EState>();
-  error$ = new Subject<string>();
-  load$: Observable<Event>;
-
-  #iframe = createNode(
-    `<iframe style="border: none; width: 100%; height: 100%"></iframe>`
-  ) as HTMLIFrameElement;
-  #window: Window | null = null; // If this.#window is null, it means the iframe hasn't loaded yet.
 
   constructor() {
     this.state$.next(EState.Loading);
@@ -73,6 +76,8 @@ export class Previewer {
         this.#loadSources();
       })
     );
+
+    this.fullscreenChange$ = fromEvent(this.#iframe, "fullscreenchange");
   }
 
   #loadSources = () => {

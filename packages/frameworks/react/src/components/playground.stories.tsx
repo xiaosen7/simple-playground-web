@@ -62,7 +62,10 @@ export const CustomLayout = () => {
         </div>
 
         {/* editor part */}
-        <Stack className="border-0 border-b border-t border-solid border-gray-300 overflow-hidden">
+        <DividerBox
+          mode="vertical"
+          className="border-0 border-b border-t border-solid border-gray-300 "
+        >
           <Stack
             direction={"row"}
             alignItems={"center"}
@@ -75,7 +78,7 @@ export const CustomLayout = () => {
 
           <Editor className="flex-1 border-0 border-t border-b border-solid border-gray-300" />
           <BuildInfo className="min-h-8" />
-        </Stack>
+        </DividerBox>
 
         {/* preview part */}
         <DividerBox mode="vertical">

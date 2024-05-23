@@ -82,7 +82,7 @@ const PlaygroundUI = (props: IComponentProps) => {
       )}
     >
       <div className="flex flex-col w-1/5 border-0 border-r border-solid border-gray-300">
-        <Stack direction={"row"} className="overflow-scroll">
+        <Stack direction={"row"} alignItems={"center"} overflow={"scroll"}>
           <Rename />
           <CreateFile />
           <CreateFolder />
@@ -97,15 +97,15 @@ const PlaygroundUI = (props: IComponentProps) => {
         <Stack
           direction={"row"}
           alignItems={"center"}
-          paddingX={1}
           justifyContent={"space-between"}
+          overflow={"scroll"}
         >
-          <SelectedPath />
+          <SelectedPath paddingX={1} />
           <FormatCode />
         </Stack>
 
         <Editor className="flex-1 border-0 border-t border-b border-solid border-gray-300" />
-        <BuildInfo className="min-h-8" />
+        <BuildInfo className="h-8" />
       </Stack>
 
       <DividerBox
