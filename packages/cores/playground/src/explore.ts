@@ -1,14 +1,36 @@
 import { project } from "@simple-playground-web/project";
-import { join, relative, resolve } from "@simple-playground-web/path";
-import { ReplaySubject, Subject } from "rxjs";
+import {
+  insideDir,
+  join,
+  relative,
+  resolve,
+} from "@simple-playground-web/path";
+import { ReplaySubject, Subject, Subscription, filter } from "rxjs";
 // @ts-ignore
 import UndoManager from "undo-manager";
+import { Logger } from "@simple-playground-web/logger";
 
 export class Explore {
   change$ = new Subject<void>();
-  #undoManager = new UndoManager();
+  newFile$ = new ReplaySubject<string>();
 
-  constructor(protected readonly cwd: string) {}
+  #undoManager = new UndoManager();
+  #subscription = new Subscription();
+  #logger: Logger;
+
+  constructor(protected readonly cwd: string) {
+    this.#logger = new Logger(`explore-${cwd}`);
+
+    // event: new file in cwd
+    this.#subscription.add(
+      project.newFile$
+        .pipe(filter((path) => insideDir(path, this.cwd)))
+        .subscribe((path) => {
+          this.#logger.log(`new file ${path}`);
+          this.newFile$.next(path);
+        })
+    );
+  }
   renameSync(oldPath: string, newPath: string) {
     const undo = () => {
       this.change$.next();

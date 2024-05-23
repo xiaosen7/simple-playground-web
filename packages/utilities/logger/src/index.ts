@@ -24,43 +24,36 @@ export class Logger {
   constructor(private namespace: string) {}
 
   #getPrefix = () => `[${kebabCase(this.namespace)}]: `;
+  #getLabelPrefix(label: string) {
+    return `[${kebabCase(this.namespace)} ${label}]: `;
+  }
 
-  log = (...args: any) => {
+  log(...args: any) {
     if (!Logger.#config.log) return;
     console.log(this.#getPrefix(), ...args);
-  };
+  }
 
-  withAsyncFn = <T extends IAnyFunction>(fn: T, name: string = fn.name): T => {
-    const timeLabel = `${this.#getPrefix()}: ${name}`;
-    console.time(timeLabel);
-
-    return afterFnAsync(fn, (result, args) => {
-      this.log("fn: ", name, "args:", args, "result: ", result);
-      console.timeEnd(timeLabel);
-    }) as T;
-  };
-
-  withAsyncFnIgnoreError = <T extends IAnyFunction>(fn: T): T =>
-    afterFnAsync(
-      (...args) => Promise.resolve(fn(...args)).catch((error) => error),
-      (result, args) =>
-        this.log("fn: ", fn.name, "args:", args, "result: ", result)
-    ) as T;
-
-  withFn = <T extends IAnyFunction>(fn: T): T =>
-    afterRun(fn, (result, args) =>
-      this.log("fn: ", fn.name, "args:", args, "result: ", result)
-    ) as T;
-
-  time = (label: string) => {
+  time(label: string) {
     if (!Logger.#config.time) return;
-    console.time(`${this.#getPrefix()}: ${label}`);
-  };
+    console.time(this.#getLabelPrefix(label));
+  }
 
-  timeEnd = (label: string) => {
+  timeEnd(label: string) {
     if (!Logger.#config.time) return;
-    console.timeEnd(`${this.#getPrefix()}: ${label}`);
-  };
+    console.timeEnd(this.#getLabelPrefix(label));
+  }
+
+  async timeAsyncFn<TResult>(fn: () => Promise<TResult>, label = fn.name) {
+    this.time(label);
+    try {
+      const result = await fn();
+      this.timeEnd(label);
+      return result;
+    } catch (error) {
+      this.timeEnd(label);
+      throw error;
+    }
+  }
 }
 
 /**

@@ -97,7 +97,6 @@ export class Playground {
   selectedPath$ = new ReplaySubject<string>();
   // @ts-ignore
   buildResult$ = new BehaviorSubject<IBuildResult | undefined>(undefined);
-  newFile$ = new ReplaySubject<string>();
 
   #logger: Logger;
   #subscription = new Subscription();
@@ -131,13 +130,13 @@ export class Playground {
         : "",
     };
 
+    this.explore = new Explore(this.#options.cwd);
     this.id = this.#options.cwd;
     this.cwd = this.#options.cwd;
 
-    this.explore = new Explore(this.#options.cwd);
-    this.#logger = new Logger(this.id);
+    this.#logger = new Logger(`playground-${this.id}`);
 
-    const newFileOrExplore$ = merge(this.newFile$, this.explore.change$);
+    const fs$ = merge(this.explore.newFile$, this.explore.change$);
 
     // auto build when content change
     this.#subscription.add(
@@ -155,7 +154,7 @@ export class Playground {
 
     // render code in editor when there is a new entry file
     this.#subscription.add(
-      this.newFile$
+      this.explore.newFile$
         .pipe(filter((value) => value === this.#options.entry))
         .subscribe(() => {
           this.editor.renderPath(this.#options.entry);
@@ -165,19 +164,19 @@ export class Playground {
     // auto render code in editor when selected path changes
     this.#subscription.add(
       this.selectedPath$.subscribe((path) => {
-        this.#logger.log("selectedPath$", path, project.fs.data);
+        this.#logger.log("selectedPath$", path);
         this.editor.renderPath(this.explore.resolve(path));
       })
     );
 
     // build
     this.#subscription.add(
-      newFileOrExplore$.pipe(debounceTime(200)).subscribe(() => this.build())
+      fs$.pipe(debounceTime(200)).subscribe(() => this.build())
     );
 
     // directory tree paths
     this.#subscription.add(
-      newFileOrExplore$.pipe(debounceTime(200)).subscribe(() => {
+      fs$.pipe(debounceTime(200)).subscribe(() => {
         const paths = project.fs
           .globSync(this.#options.directoryTreePathsPattern, {
             onlyFiles: false,
@@ -189,19 +188,9 @@ export class Playground {
       })
     );
 
-    // event: new file in cwd
-    this.#subscription.add(
-      project.newFile$
-        .pipe(filter((path) => insideDir(path, this.#options.cwd)))
-        .subscribe((path) => {
-          this.#logger.log(`new file ${path}`);
-          this.newFile$.next(path);
-        })
-    );
-
     // entry
     this.#subscription.add(
-      this.newFile$.subscribe((path) => {
+      this.explore.newFile$.subscribe((path) => {
         if (!this.#options.entry) {
           // auto resolve entry
           if (
@@ -224,6 +213,10 @@ export class Playground {
   }
 
   async build() {
+    this.#logger.timeAsyncFn(() => this.#build(), "build");
+  }
+
+  async #build() {
     this.buildState$.next(EBuildState.LoadingEsbuildWasm);
     this.#logger.log("loading esbuild.wasm...");
     await bundler.load();
