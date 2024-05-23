@@ -4,6 +4,6 @@
   "dependencies": {
     "@simple-playground-web/types": "workspace:^"
   },
-  "version": "0.0.36",
+  "version": "0.0.38",
   "main": "src/index.ts"
 }

@@ -9,7 +9,7 @@
     "picomatch-browser": "^2.2.6",
     "util": "^0.12.5"
   },
-  "version": "0.0.36",
+  "version": "0.0.38",
   "main": "src/index.ts",
   "devDependencies": {
     "@types/micromatch": "^4.0.7",
