@@ -81,8 +81,6 @@ function Console(props: IConsoleStreamProps) {
     );
   }, []);
 
-  useSubs(playground.previewer.error$, console.log);
-
   useSubs(console$, (value) => {
     const { name, value: logArgs } = value;
     const existingLogs = nameToLogsMap.current.get(name) ?? [];

@@ -3,12 +3,32 @@ import { kebabCase } from "change-case";
 type IAnyFunction = IFunction;
 type IFunction<P extends any[] = any, R extends any = any> = (...args: P) => R;
 
+interface IConfig {
+  log: boolean;
+  time: boolean;
+}
+const DEFAULT_CONFIG = {
+  log: true,
+  time: true,
+} as const satisfies IConfig;
 export class Logger {
+  static #config: IConfig = DEFAULT_CONFIG;
+
+  static setConfig(config: Partial<IConfig>) {
+    Logger.#config = {
+      ...Logger.#config,
+      ...config,
+    };
+  }
+
   constructor(private namespace: string) {}
 
   #getPrefix = () => `[${kebabCase(this.namespace)}]: `;
 
-  log = (...args: any) => console.log(`${this.#getPrefix()}`, ...args);
+  log = (...args: any) => {
+    if (!Logger.#config.log) return;
+    console.log(this.#getPrefix(), ...args);
+  };
 
   withAsyncFn = <T extends IAnyFunction>(fn: T, name: string = fn.name): T => {
     const timeLabel = `${this.#getPrefix()}: ${name}`;
@@ -33,10 +53,12 @@ export class Logger {
     ) as T;
 
   time = (label: string) => {
+    if (!Logger.#config.time) return;
     console.time(`${this.#getPrefix()}: ${label}`);
   };
 
   timeEnd = (label: string) => {
+    if (!Logger.#config.time) return;
     console.timeEnd(`${this.#getPrefix()}: ${label}`);
   };
 }

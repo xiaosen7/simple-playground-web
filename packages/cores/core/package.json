@@ -3,6 +3,7 @@
   "description": "Core models",
   "dependencies": {
     "@simple-playground-web/bundler": "workspace:^",
+    "@simple-playground-web/logger": "workspace:^",
     "@simple-playground-web/playground": "workspace:^",
     "@simple-playground-web/project": "workspace:^"
   },

@@ -27,7 +27,6 @@ export const RuntimeInfo = () => {
 
   React.useEffect(() => {
     const existingCode = playground.explore.readFileSync("index.tsx", "utf-8");
-    console.log({ existingCode });
 
     playground.explore.writeFileSync(
       "index.tsx",

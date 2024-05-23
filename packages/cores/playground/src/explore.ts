@@ -115,6 +115,10 @@ export class Explore {
     return relative(this.cwd, path);
   }
 
+  existsSync(path: string) {
+    return project.fs.existsSync(resolve(this.cwd, path));
+  }
+
   undo() {
     this.#undoManager.undo();
   }

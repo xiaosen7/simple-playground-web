@@ -27,7 +27,13 @@ export function Explore(props: IDirectoryTreeProps) {
   const selectedPath = useObservable(playground.selectedPath$);
 
   const items = useMemo(
-    () => pathsToItems(paths, (path) => playground.explore.isDirectory(path)),
+    () =>
+      pathsToItems(
+        paths,
+        (path) =>
+          playground.explore.existsSync(path) &&
+          playground.explore.isDirectory(path)
+      ),
     [paths]
   );
 

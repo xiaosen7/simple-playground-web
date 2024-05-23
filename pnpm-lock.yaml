@@ -191,6 +191,9 @@ importers:
       '@simple-playground-web/bundler':
         specifier: workspace:^
         version: link:../bundler
+      '@simple-playground-web/logger':
+        specifier: workspace:^
+        version: link:../../utilities/logger
       '@simple-playground-web/playground':
         specifier: workspace:^
         version: link:../playground

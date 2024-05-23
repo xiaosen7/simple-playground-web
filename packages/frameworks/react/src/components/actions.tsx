@@ -41,7 +41,6 @@ interface IActionProps extends IComponentProps {
  * @returns
  */
 export function Action(props: IActionProps) {
-  console.log({ props });
   const { Icon, title, className, onClick, style, disabled } = props;
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
@@ -299,7 +298,6 @@ export const Redo: IActionComponent = (props: IComponentProps) => {
   const disabled = !hasRedo;
   useSubsUpdate(playground.explore.change$);
 
-  console.log({ disabled, hasRedo });
   return (
     <Action
       disabled={disabled}
@@ -317,7 +315,6 @@ export const Undo: IActionComponent = (props: IComponentProps) => {
   const disabled = !hasUndo;
   useSubsUpdate(playground.explore.change$);
 
-  console.log({ disabled, hasRedo: hasUndo });
   return (
     <Action
       disabled={disabled}

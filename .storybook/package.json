@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "pnpm template && storybook dev -p 6006 --config-dir .",
     "build": "pnpm template &&  storybook build --config-dir .",
-    "template": "pnpm gen-template-dev ../template --outFile ./public/template.json",
+    "template": "pnpm gen-template ../template --outFile ./public/template.json",
     "deploy": "pnpm build && touch ./storybook-static/.nojekyll && gh-pages -d ./storybook-static -t true"
   },
   "keywords": [],
