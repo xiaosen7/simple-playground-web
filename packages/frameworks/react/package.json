@@ -1,7 +1,7 @@
 {
   "name": "@simple-playground-web/react",
   "description": "The playground ui library of react framework",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "dependencies": {
     "@mui/icons-material": "^5.15.18",
     "@mui/material": "^5.15.17",
