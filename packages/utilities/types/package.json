@@ -1,6 +1,6 @@
 {
   "name": "@simple-playground-web/types",
   "description": "Common types",
-  "version": "0.0.34",
+  "version": "0.0.35",
   "main": "src/index.ts"
 }
