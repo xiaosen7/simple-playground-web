@@ -14,7 +14,7 @@
     "@mui/material": "^5.15.17",
     "@simple-playground-web/core": "latest",
     "@simple-playground-web/react": "latest",
-    "@simple-playground-web/gen-template": "latest",
+    "@simple-playground-web/gen-template": "workspace:^",
     "buffer": "^6.0.3",
     "monaco-editor": "^0.48.0",
     "process": "^0.11.10",

@@ -1,5 +1,5 @@
 import { readFile, writeFile, mkdir } from "fs/promises";
-import { join, resolve } from "path";
+import { join, resolve, basename } from "path";
 import { DtsRollup } from "@simple-playground-web/dts-rollup";
 import fg from "fast-glob";
 import { Command } from "commander";
@@ -46,14 +46,27 @@ async function execute({
   extraExternals?: string[];
   skipExternals?: string[];
 }): Promise<void> {
-  const srcDir = join(root, "src");
-  const extraCopyPattern = ["!dist"];
+  await mkdir(join(outDir, "externals"));
+  const { code: externalCode, externals } = await buildExternals(
+    root,
+    join(outDir, "externals"),
+    extraExternals,
+    skipExternals
+  );
 
-  const projectOutDir = join(outDir, "template");
+  const projectOutDir = join(outDir, "project");
+  await cpy(["./**/*", "./*", "!node_modules"], projectOutDir, {
+    cwd: root,
+    filter(file) {
+      return !file.path.includes(outDir) && !(file.path === outFile);
+    },
+  });
+
   const dtsRollup = new DtsRollup({
-    entries: await fg(["**/*"], {
+    entries: await fg(["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"], {
       absolute: true,
-      cwd: srcDir,
+      cwd: root,
+      ignore: [basename(outDir), "node_modules"],
     }),
     ignoreExternals: skipExternals,
     outDir: projectOutDir,
@@ -61,24 +74,6 @@ async function execute({
     extraExternals,
   });
   await dtsRollup.run();
-  await cpy(
-    ["./**/*", "./*", "!node_modules", "!src", ...extraCopyPattern],
-    projectOutDir,
-    {
-      cwd: root,
-      filter(file) {
-        return !file.path.includes(outDir) && !(file.path === outFile);
-      },
-    }
-  );
-
-  await mkdir(join(outDir, "externals"));
-  const { code: externalCode, externals } = await buildExternals(
-    srcDir,
-    join(outDir, "externals"),
-    extraExternals,
-    skipExternals
-  );
 
   const json = {
     files: {

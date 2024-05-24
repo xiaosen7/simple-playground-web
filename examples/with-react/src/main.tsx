@@ -13,5 +13,5 @@ fetch("/template.json")
   .then((template) => project.setTemplate(template));
 
 createRoot(document.getElementById("root")!).render(
-  <Playground style={{ height: "100vh" }} cwd="/src/playgrounds/material" />
+  <Playground style={{ height: "100vh" }} cwd="/mui" />
 );

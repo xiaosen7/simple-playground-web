@@ -106,15 +106,6 @@ export class DtsRollup {
       this.#updateMap(entrySourceFile, externals, project);
     });
 
-    this.#updateMap(
-      project.createSourceFile(
-        join(outDir, "extra-externals.d.ts"),
-        extraExternals.map((name) => `import "${name}"`).join("\n")
-      ),
-      externals,
-      project
-    );
-
     let count = this.#sourceFileMap.size;
     console.log(
       `Total ${count} source files, node modules: ${this.#nodeModulesCache.size}.`
@@ -154,9 +145,9 @@ export class DtsRollup {
         await writeFile(outFilePath, sourceFile.getFullText(), "utf8");
       }
     );
-    logUpdate.done();
 
     await tasks.reduce((task, next) => task.then(next), Promise.resolve());
+    logUpdate.done();
 
     console.log(
       `Successfully generate ${count} files${
@@ -170,39 +161,36 @@ export class DtsRollup {
     const { importDeclarations, importSourceFiles } =
       this.#sourceFileMap.get(sourceFile)!;
     importDeclarations.forEach((declaration, index) => {
-      if (
-        declaration.isModuleSpecifierRelative() &&
-        !declaration.getModuleSpecifierValue()?.includes("node_modules")
-      ) {
-        return;
-      }
-
+      // if (
+      //   declaration.isModuleSpecifierRelative() &&
+      //   !declaration.getModuleSpecifierValue()?.includes("node_modules")
+      // ) {
+      //   return;
+      // }
       // 仅导入语句是三方包的，类似 import React from 'react'
-      const moduleSourceFile = importSourceFiles[index];
-      const moduleOutFilePath = this.#getOutFilePath(moduleSourceFile);
-      const dummyFilePath = `${this.#getNodeModuleOutDir(
-        declaration.getModuleSpecifierValue()!
-      )}.d.ts`;
-      if (!existsSync(dummyFilePath)) {
-        ensureDirSync(dirname(dummyFilePath));
-        writeFileSync(
-          dummyFilePath,
-          dedent`export * from "${getRelativeImportPath(
-            dirname(dummyFilePath),
-            moduleOutFilePath
-          )}";
-        export { default } from "${getRelativeImportPath(
-          dirname(dummyFilePath),
-          moduleOutFilePath
-        )}"`
-        );
-      }
-
+      // const moduleSourceFile = importSourceFiles[index];
+      // const moduleOutFilePath = this.#getOutFilePath(moduleSourceFile);
+      // const dummyFilePath = `${this.#getNodeModuleOutDir(
+      //   declaration.getModuleSpecifierValue()!
+      // )}.d.ts`;
+      // if (!existsSync(dummyFilePath)) {
+      //   ensureDirSync(dirname(dummyFilePath));
+      //   writeFileSync(
+      //     dummyFilePath,
+      //     dedent`export * from "${getRelativeImportPath(
+      //       dirname(dummyFilePath),
+      //       moduleOutFilePath
+      //     )}";
+      //   export { default } from "${getRelativeImportPath(
+      //     dirname(dummyFilePath),
+      //     moduleOutFilePath
+      //   )}"`
+      //   );
+      // }
       // const moduleSpecifierValue = getRelativeImportPath(
       //   dirname(sourceOutFilePath),
       //   moduleOutFilePath
       // );
-
       // declaration.setModuleSpecifier(moduleSpecifierValue);
     });
   }
