@@ -28,6 +28,8 @@ export default class extends Script<{}> {
     "构建，发布，更新版本号，生成 changelog，生成 git tag, 发布到 git";
 
   async execute(): Promise<void> {
+    await buildPackages();
+    return;
     const version = await readFile(VERSION_FILE, "utf-8");
     const tag = `release/v${version}`;
 
@@ -77,6 +79,7 @@ export default class extends Script<{}> {
         pkgs.map(async (project) => {
           //bin-dev/index.ts
           const bin = project.manifest.bin;
+          const isBrowser = !project.dir.includes("libs");
           if (bin && isObject(bin)) {
             const [name, path] = Object.entries(bin).filter(([name, path]) =>
               path.includes("bin-dev/index.ts")
@@ -105,6 +108,7 @@ export default class extends Script<{}> {
             devDependencies: undefined,
             repository,
             bin,
+            platform: isBrowser ? "browser" : "node",
           });
         })
       );
@@ -159,7 +163,7 @@ async function buildPackages() {
 
     const cwd = process.cwd();
     process.chdir(project.dir);
-
+    const isBrowser = !project.dir.includes("libs");
     await build({
       entry: [join(project.dir, "src", "index.ts")],
       outDir: join(project.dir, "dist"),
@@ -173,7 +177,12 @@ async function buildPackages() {
       ],
       legacyOutput: true,
       dts: true,
-      platform: project.dir.includes("libs") ? "node" : "browser",
+      platform: isBrowser ? "browser" : "node",
+      define: isBrowser
+        ? {
+            "process.browser": JSON.stringify(true),
+          }
+        : undefined,
     });
 
     process.chdir(cwd);
