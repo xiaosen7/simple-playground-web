@@ -5,13 +5,12 @@
     "@simple-playground-web/types": "workspace:^",
     "micromatch": "^4.0.5",
     "minimatch": "^9.0.4",
-    "picomatch": "^4.0.2",
-    "picomatch-browser": "^2.2.6",
-    "util": "^0.12.5"
+    "picomatch-browser": "^2.2.6"
   },
   "version": "0.0.42",
   "main": "src/index.ts",
   "devDependencies": {
+    "picomatch": "^4.0.2",
     "@types/micromatch": "^4.0.7",
     "@types/picomatch": "^2.3.3"
   }

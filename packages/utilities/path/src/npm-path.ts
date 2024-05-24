@@ -1,4 +1,10 @@
-import util from "util";
+function isString(value: any) {
+  return typeof value === "string";
+}
+
+function isObject(value: any) {
+  return value && typeof value === "object";
+}
 
 // resolves . and .. elements in a path array with directory names there
 // must be no slashes or device names (c:\) in the array
@@ -84,7 +90,7 @@ export const join = function (...paths: string[]) {
   var path = "";
   for (var i = 0; i < paths.length; i++) {
     var segment = paths[i];
-    if (!util.isString(segment)) {
+    if (!isString(segment)) {
       throw new TypeError("Arguments to path.join must be strings");
     }
     if (segment) {
@@ -162,7 +168,7 @@ export const extname = function (path: string) {
 };
 
 export const format = function (pathObject: any) {
-  if (!util.isObject(pathObject)) {
+  if (!isObject(pathObject)) {
     throw new TypeError(
       "Parameter 'pathObject' must be an object, not " + typeof pathObject
     );
@@ -170,7 +176,7 @@ export const format = function (pathObject: any) {
 
   var root = pathObject.root || "";
 
-  if (!util.isString(root)) {
+  if (!isString(root)) {
     throw new TypeError(
       "'pathObject.root' must be a string or undefined, not " +
         typeof pathObject.root
@@ -183,7 +189,7 @@ export const format = function (pathObject: any) {
 };
 
 export const parse = function (pathString: string) {
-  if (!util.isString(pathString)) {
+  if (!isString(pathString)) {
     throw new TypeError(
       "Parameter 'pathString' must be a string, not " + typeof pathString
     );
