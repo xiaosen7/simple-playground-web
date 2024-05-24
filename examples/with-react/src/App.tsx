@@ -1,5 +1,7 @@
 import { bundler, project, Logger } from "@simple-playground-web/core";
+import * as core from "@simple-playground-web/core";
 import { Playground } from "@simple-playground-web/react";
+import * as react from "@simple-playground-web/react";
 import "@simple-playground-web/react/dist/esm/index.css";
 
 Logger.setConfig({
@@ -15,5 +17,13 @@ bundler.setWasmUrl(
 );
 
 export default function App() {
-  return <Playground style={{ height: "100vh" }} cwd="/src" />;
+  return (
+    <Playground
+      globalExternals={{
+        process,
+      }}
+      style={{ height: "100vh" }}
+      cwd="/src/playgrounds/playground"
+    />
+  );
 }

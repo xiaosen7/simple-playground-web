@@ -28,6 +28,7 @@ export default class extends Script<{}> {
     "构建，发布，更新版本号，生成 changelog，生成 git tag, 发布到 git";
 
   async execute(): Promise<void> {
+    await buildPackages();
     const version = await readFile(VERSION_FILE, "utf-8");
     const tag = `release/v${version}`;
 
@@ -74,31 +75,35 @@ export default class extends Script<{}> {
         ),
       };
       await Promise.all(
-        pkgs.map(async (x) => {
+        pkgs.map(async (project) => {
           //bin-dev/index.ts
-          const bin = x.manifest.bin;
+          const bin = project.manifest.bin;
           if (bin && isObject(bin)) {
             const [name, path] = Object.entries(bin).filter(([name, path]) =>
               path.includes("bin-dev/index.ts")
             )[0];
             if (name && path) {
-              await ensureFile(join(x.dir, "bin", "index.mjs"));
+              await ensureFile(join(project.dir, "bin", "index.mjs"));
               await writeFile(
-                join(x.dir, "bin", "index.mjs"),
+                join(project.dir, "bin", "index.mjs"),
                 `#!/usr/bin/env node
-              import "../dist/index.mjs";
+              import "../dist/esm/index.js";
               `
               );
               bin[name] = "./bin/index.mjs";
             }
           }
 
-          await x.writeProjectManifest({
-            ...x.manifest,
+          await project.writeProjectManifest({
+            ...project.manifest,
             version: version,
             // @ts-ignore
-            type: "module",
-            main: "dist/esm/index.js",
+            type: project.manifest.type || "module",
+            main:
+              // @ts-ignore
+              project.manifest.type === "commonjs"
+                ? "dist/index.js"
+                : "dist/esm/index.js",
             module: "dist/esm/index.js",
             types: "dist/index.d.mts",
             files: ["dist"],
@@ -165,7 +170,7 @@ async function buildPackages() {
       outDir: join(project.dir, "dist"),
       silent: true,
       clean: true,
-      format: ["esm"],
+      format: ["esm", "cjs"],
       tsconfig: join(project.dir, "tsconfig.json"),
       external: [
         ...Object.keys(project.manifest.dependencies ?? {}),
@@ -173,6 +178,7 @@ async function buildPackages() {
       ],
       legacyOutput: true,
       dts: true,
+      platform: "browser",
     });
 
     process.chdir(cwd);

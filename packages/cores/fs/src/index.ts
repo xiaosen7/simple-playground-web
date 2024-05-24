@@ -6,9 +6,12 @@ import {
   dirname,
   relative,
 } from "@simple-playground-web/path";
+import { Buffer } from "buffer";
 
 // @ts-ignore
 import MemoryFileSystemError from "memory-fs/lib/MemoryFileSystemError";
+
+globalThis.Buffer = globalThis.Buffer || Buffer;
 
 export enum EFsEventType {
   Change = "change",

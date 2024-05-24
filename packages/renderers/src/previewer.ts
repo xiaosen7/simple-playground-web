@@ -7,6 +7,7 @@ import {
 import { ISafeAny } from "@simple-playground-web/types";
 import { Observable, Subject, Subscription, fromEvent } from "rxjs";
 import { createConsole } from "./console";
+import { Logger } from "@simple-playground-web/logger";
 
 /**
  * 预览的可以改变资源，代码，全局变量
@@ -48,6 +49,7 @@ export class Previewer {
     `<iframe style="border: none; width: 100%; height: 100%"></iframe>`
   ) as HTMLIFrameElement;
   #window: Window | null = null; // If this.#window is null, it means the iframe hasn't loaded yet.
+  #logger = new Logger("previewer");
 
   #sources: ISources = {
     scripts: [],
@@ -104,6 +106,7 @@ export class Previewer {
     // sources
 
     const { globals, scripts, styles, html } = this.#sources;
+    this.#logger.log({ globals });
 
     // html
     this.#sourceReferences.html.remove();

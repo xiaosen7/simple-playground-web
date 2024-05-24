@@ -19,6 +19,7 @@ cli
     "--extraExternals [extraExternals...]",
     "Template externals, this cli will scan source files to get external node modules and build them, you can add extra externals manually"
   )
+  .option("--skipExternals [skipExternals...]", "Skip bundling externals.")
   .action((dir = ".", options) => {
     dir = resolve(dir);
     const outDir = temp.mkdirSync({
@@ -36,12 +37,14 @@ async function execute({
   root,
   outDir,
   outFile,
-  extraExternals,
+  extraExternals = [],
+  skipExternals = [],
 }: {
   root: string;
   outDir: string;
   outFile: string;
   extraExternals?: string[];
+  skipExternals?: string[];
 }): Promise<void> {
   const srcDir = join(root, "src");
   const extraCopyPattern = ["!dist"];
@@ -52,7 +55,7 @@ async function execute({
       absolute: true,
       cwd: srcDir,
     }),
-    ignoreExternals: [],
+    ignoreExternals: skipExternals,
     outDir: projectOutDir,
     rootDir: root,
     extraExternals,
@@ -70,10 +73,11 @@ async function execute({
   );
 
   await mkdir(join(outDir, "externals"));
-  const externalCode = await buildExternals(
+  const { code: externalCode, externals } = await buildExternals(
     srcDir,
     join(outDir, "externals"),
-    extraExternals
+    extraExternals,
+    skipExternals
   );
 
   const json = {
@@ -83,6 +87,7 @@ async function execute({
 
     externals: {
       cjsCode: externalCode,
+      externals,
     },
   };
 
@@ -113,13 +118,14 @@ async function dirToJson(
 async function buildExternals(
   scanSrcDir: string,
   outDir: string,
-  extraExternals: string[] = []
+  extraExternals: string[] = [],
+  skipExternals: string[] = []
 ) {
   const entryFile = join(outDir, "index.ts");
   const outFile = join(outDir, "index.js");
   const externals = [
     ...new Set([...(await scanExternals(scanSrcDir)), ...extraExternals]),
-  ];
+  ].filter((x) => !skipExternals.includes(x));
   await writeFile(
     entryFile,
     `${externals.map((name, index) => `import * as $${index} from "${name}";`).join("\n")}
@@ -139,7 +145,6 @@ export default modules;
     minify: true,
     outfile: outFile,
     loader: {
-      ".svg": "dataurl",
       ".js": "js",
       ".json": "json",
       ".css": "css",
@@ -149,10 +154,19 @@ export default modules;
       ".text": "text",
       ".jpg": "base64",
       ".webp": "file",
+      ".svg": "dataurl",
+      ".ttf": "dataurl",
+      ".eot": "dataurl",
+      ".woff": "dataurl",
+      ".woff2": "dataurl",
+      ".png": "dataurl",
+    },
+    define: {
+      "process.env.NODE_ENV": '"production"',
     },
   });
 
-  return readFile(outFile, "utf-8");
+  return { code: await readFile(outFile, "utf-8"), externals };
 }
 
 async function scanExternals(srcDir: string) {
@@ -166,9 +180,13 @@ async function scanExternals(srcDir: string) {
   paths.forEach((path) => {
     const sourceFile = project.addSourceFileAtPath(path);
     sourceFile.getImportDeclarations().forEach((dec) => {
-      if (dec.getModuleSpecifierSourceFile()?.isInNodeModules()) {
+      if (
+        dec.getModuleSpecifierSourceFile()?.isInNodeModules() ||
+        /^@?[a-zA-Z]/.test(dec.getModuleSpecifierValue())
+      ) {
         externals.add(dec.getModuleSpecifierValue());
       }
+      dec.getModuleSpecifierSourceFile()?.getFilePath();
     });
   });
 

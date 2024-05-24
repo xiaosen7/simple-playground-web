@@ -2,8 +2,10 @@ import * as monaco from "monaco-editor";
 import { Logger } from "@simple-playground-web/logger";
 import { basename, createFilterPattern } from "@simple-playground-web/path";
 import { ReplaySubject } from "rxjs";
-import { EFsEventType, FS } from "@simple-playground-web/fs";
+import * as fs from "@simple-playground-web/fs";
 import { IProjectTemplate } from "./template";
+
+const { EFsEventType, FS } = fs;
 
 export * from "./template";
 
