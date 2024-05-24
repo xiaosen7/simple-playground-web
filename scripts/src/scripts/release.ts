@@ -177,7 +177,7 @@ async function buildPackages() {
       ],
       legacyOutput: true,
       dts: true,
-      platform: "browser",
+      platform: project.dir.includes("libs") ? "node" : "browser",
     });
 
     process.chdir(cwd);
