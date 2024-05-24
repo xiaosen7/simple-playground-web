@@ -15,7 +15,7 @@ export function createConsole() {
 
     set(memo, methodName, (...args: any[]) => {
       memo[`${methodName}$`].next(args);
-      window.console[methodName];
+      window.console[methodName](...args);
     });
 
     return memo;
