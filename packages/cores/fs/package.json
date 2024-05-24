@@ -1,7 +1,7 @@
 {
   "name": "@simple-playground-web/fs",
   "description": "File system implementation in web",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "main": "src/index.ts",
   "devDependencies": {
     "@types/memory-fs": "^0.3.7",
