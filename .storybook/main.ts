@@ -7,8 +7,7 @@ import { findWorkspacePackages } from "@pnpm/workspace.find-packages";
 
 const config: StorybookConfig = {
   stories: [
-    "./storybook-examples/**/*.mdx",
-    "./storybook-examples/**/*.stories.@(js|jsx|mjs|ts|tsx)",
+    "../packages/frameworks/react/src/components/playground.stories.tsx",
     "../packages/frameworks/react/src/**/*.stories.tsx",
   ],
   addons: [

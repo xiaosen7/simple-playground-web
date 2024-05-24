@@ -1,31 +1,34 @@
 # simple-playground-web
 
-## 项目说明
+A web playground library can be used without server api.
+
+## Packages
 
 <!-- workspace packages descriptions start -->
 
-| 包名                              | 目录                                                                       | 描述                                                    |
-| :-------------------------------- | :------------------------------------------------------------------------- | :------------------------------------------------------ |
-| @simple-playground-web/storybook  | [./.storybook](.storybook/README.md)                                       |                                                         |
-| @simple-playground-web/bundler    | [./packages/cores/bundler](packages/cores/bundler/README.md)               | The web bundler                                         |
-| @simple-playground-web/core       | [./packages/cores/core](packages/cores/core/README.md)                     | Core models                                             |
-| @simple-playground-web/fs         | [./packages/cores/fs](packages/cores/fs/README.md)                         | File system implementation in web                       |
-| @simple-playground-web/playground | [./packages/cores/playground](packages/cores/playground/README.md)         | Playground model                                        |
-| @simple-playground-web/project    | [./packages/cores/project](packages/cores/project/README.md)               | Project model                                           |
-| @simple-playground-web/react      | [./packages/frameworks/react](packages/frameworks/react/README.md)         | The playground ui library of react framework            |
-| @simple-playground-web/renderers  | [./packages/renderers](packages/renderers/README.md)                       | Renderers                                               |
-| @simple-playground-web/dom        | [./packages/utilities/dom](packages/utilities/dom/README.md)               | Dom utilities                                           |
-| @simple-playground-web/dts-rollup | [./packages/utilities/dts-rollup](packages/utilities/dts-rollup/README.md) | Collect all referenced _.d.ts files of _.ts entry files |
-| @simple-playground-web/logger     | [./packages/utilities/logger](packages/utilities/logger/README.md)         | Logger utilities                                        |
-| @simple-playground-web/path       | [./packages/utilities/path](packages/utilities/path/README.md)             | Path utilities for browser                              |
-| @simple-playground-web/types      | [./packages/utilities/types](packages/utilities/types/README.md)           | Common types                                            |
-| @simple-playground-web/scripts    | [./scripts](scripts/README.md)                                             | Internal scripts                                        |
-| template                          | [./template](template/README.md)                                           | Template of website                                     |
-| website                           | [./website](website/README.md)                                             | Website                                                 |
+| Package name                        | Path                                                                 | Description                                             |
+| :---------------------------------- | :------------------------------------------------------------------- | :------------------------------------------------------ |
+| @simple-playground-web/storybook    | [./.storybook](.storybook/README.md)                                 |                                                         |
+| with-react                          | [./examples/with-react](examples/with-react/README.md)               |                                                         |
+| @simple-playground-web/bundler      | [./packages/cores/bundler](packages/cores/bundler/README.md)         | The web bundler                                         |
+| @simple-playground-web/core         | [./packages/cores/core](packages/cores/core/README.md)               | Core models                                             |
+| @simple-playground-web/fs           | [./packages/cores/fs](packages/cores/fs/README.md)                   | File system implementation in web                       |
+| @simple-playground-web/playground   | [./packages/cores/playground](packages/cores/playground/README.md)   | Playground model                                        |
+| @simple-playground-web/project      | [./packages/cores/project](packages/cores/project/README.md)         | Project model                                           |
+| @simple-playground-web/react        | [./packages/frameworks/react](packages/frameworks/react/README.md)   | The playground ui library of react framework            |
+| @simple-playground-web/dts-rollup   | [./packages/libs/dts-rollup](packages/libs/dts-rollup/README.md)     | Collect all referenced _.d.ts files of _.ts entry files |
+| @simple-playground-web/gen-template | [./packages/libs/gen-template](packages/libs/gen-template/README.md) | Cli for generating template.json from a directory       |
+| @simple-playground-web/renderers    | [./packages/renderers](packages/renderers/README.md)                 | Renderers                                               |
+| @simple-playground-web/dom          | [./packages/utilities/dom](packages/utilities/dom/README.md)         | Dom utilities                                           |
+| @simple-playground-web/logger       | [./packages/utilities/logger](packages/utilities/logger/README.md)   | Logger utilities                                        |
+| @simple-playground-web/path         | [./packages/utilities/path](packages/utilities/path/README.md)       | Path utilities for browser                              |
+| @simple-playground-web/types        | [./packages/utilities/types](packages/utilities/types/README.md)     | Common types                                            |
+| @simple-playground-web/scripts      | [./scripts](scripts/README.md)                                       | Internal scripts                                        |
+| template                            | [./template](template/README.md)                                     | Template of website                                     |
 
 <!-- workspace packages descriptions end -->
 
-## 脚本说明
+## Scripts
 
 <!-- package scripts descriptions start-->
 
@@ -41,33 +44,31 @@
 
 ## Frameworks
 
+You can see `examples` folder for more info.
+
 ### React
 
 Installation
 
 ```bash
-npm i process buffer @simple-playground-web/core @simple-playground-web/react
+npm i @simple-playground-web/core @simple-playground-web/react
 ```
 
 Usage
 
 ```tsx
-import process from "process/browser";
-import { Buffer } from "buffer";
-import { bundler, project } from "@simple-playground-web/core";
+import { project } from "@simple-playground-web/core";
 import { Playground } from "@simple-playground-web/react";
 import "@simple-playground-web/react/dist/index.css";
-
-window.process = process;
-window.Buffer = Buffer;
 
 project.setTemplate({
   files: {
     "/index.ts": "console.log('hello world');",
   },
+  externals: {
+    cjsCode: "",
+  },
 });
-
-bundler.setWasmUrl("/esbuild.wasm");
 
 <Playground cwd="/" />;
 ```

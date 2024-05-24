@@ -1,6 +1,6 @@
 {
   "name": "@simple-playground-web/gen-template",
-  "description": "Cli for generating template.json",
+  "description": "Cli for generating template.json from a directory",
   "version": "0.0.0",
   "main": "src/index.ts",
   "bin": {
