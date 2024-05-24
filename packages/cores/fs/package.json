@@ -1,13 +1,13 @@
 {
   "name": "@simple-playground-web/fs",
   "description": "File system implementation in web",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "main": "src/index.ts",
   "dependencies": {
-    "buffer": "^6.0.3",
     "@simple-playground-web/path": "workspace:^",
     "@simple-playground-web/types": "workspace:^",
     "@types/memory-fs": "^0.3.7",
+    "buffer": "^6.0.3",
     "errno": "^1.0.0",
     "events": "^3.3.0",
     "memory-fs": "^0.5.0",
