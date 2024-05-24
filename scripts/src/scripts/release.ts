@@ -97,12 +97,8 @@ export default class extends Script<{}> {
             ...project.manifest,
             version: version,
             // @ts-ignore
-            type: project.manifest.type || "module",
-            main:
-              // @ts-ignore
-              project.manifest.type === "commonjs"
-                ? "dist/index.js"
-                : "dist/esm/index.js",
+            type: "module",
+            main: "dist/esm/index.js",
             module: "dist/esm/index.js",
             types: "dist/index.d.mts",
             files: ["dist"],
@@ -169,7 +165,7 @@ async function buildPackages() {
       outDir: join(project.dir, "dist"),
       silent: true,
       clean: true,
-      format: ["esm", "cjs"],
+      format: ["esm"],
       tsconfig: join(project.dir, "tsconfig.json"),
       external: [
         ...Object.keys(project.manifest.dependencies ?? {}),
