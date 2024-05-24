@@ -1,0 +1,5 @@
+{
+  "dev": "Start development server",
+  "build": "Build",
+  "template": "Generate ./public/template.json from template directory"
+}
