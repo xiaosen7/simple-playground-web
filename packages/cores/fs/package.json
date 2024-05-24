@@ -1,7 +1,7 @@
 {
   "name": "@simple-playground-web/fs",
   "description": "File system implementation in web",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "main": "src/index.ts",
   "dependencies": {
     "@simple-playground-web/path": "workspace:^",

@@ -12,7 +12,7 @@
   "peerDependencies": {
     "esbuild-wasm": "^0.20.2"
   },
-  "version": "0.0.39",
+  "version": "0.0.40",
   "main": "src/index.ts",
   "devDependencies": {
     "@types/lodash-es": "^4.17.12"
