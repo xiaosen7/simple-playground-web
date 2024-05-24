@@ -28,8 +28,6 @@ export default class extends Script<{}> {
     "构建，发布，更新版本号，生成 changelog，生成 git tag, 发布到 git";
 
   async execute(): Promise<void> {
-    await buildPackages();
-    return;
     const version = await readFile(VERSION_FILE, "utf-8");
     const tag = `release/v${version}`;
 
