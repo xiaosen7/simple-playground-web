@@ -7,7 +7,7 @@
     "minimatch": "^9.0.4",
     "picomatch-browser": "^2.2.6"
   },
-  "version": "0.0.43",
+  "version": "0.0.0",
   "main": "src/index.ts",
   "devDependencies": {
     "@types/micromatch": "^4.0.7",

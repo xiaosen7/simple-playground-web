@@ -29,19 +29,18 @@ export interface IBuildOptions {
 }
 
 class Bundler {
-  #esbuildWasmUrl?: string;
+  #esbuildWasmUrl: string =
+    "https://cdn.jsdelivr.net/npm/esbuild-wasm@0.20.2/esbuild.wasm";
   #globalExternals: Record<string, any> = {};
   #logger = new Logger("Bundler");
 
   constructor() {}
 
+  /**
+   * You can set the esbuild wasm url manually, if you don't want to use the default one: "https://cdn.jsdelivr.net/npm/esbuild-wasm@0.20.2/esbuild.wasm"
+   * @param esbuildWasmUrl
+   */
   setWasmUrl = (esbuildWasmUrl: string) => {
-    if (this.#esbuildWasmUrl) {
-      console.warn(
-        "You should not set esbuild.wasm url twice, because it will only load once."
-      );
-    }
-
     this.#esbuildWasmUrl = esbuildWasmUrl;
   };
 
@@ -82,7 +81,7 @@ class Bundler {
   load = once(async () => {
     if (!this.#esbuildWasmUrl) {
       throw new Error(
-        "You must set esbuild wasm url by method setWasmUrl(esbuildWasmUrl: string)"
+        "You must set esbuild wasm url by method bundler.setWasmUrl(esbuildWasmUrl: string)"
       );
     }
 

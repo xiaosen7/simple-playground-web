@@ -39,14 +39,6 @@ export default class extends Script<{}> {
         excludeRoot: true,
         patterns: ["packages/**/*"],
       });
-      await Promise.all(
-        pkgs.map((x) =>
-          x.writeProjectManifest({
-            ...x.manifest,
-            version: version,
-          })
-        )
-      );
 
       await buildPackages();
 

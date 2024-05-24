@@ -118,14 +118,14 @@ importers:
         specifier: ^5.15.17
         version: 5.15.17(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@types/react@18.2.79)(react-dom@18.2.0)(react@18.2.0)
       '@simple-playground-web/core':
-        specifier: workspace:^
-        version: link:../../packages/cores/core
+        specifier: latest
+        version: 0.0.43(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
       '@simple-playground-web/gen-template':
-        specifier: workspace:^
-        version: link:../../packages/libs/gen-template
+        specifier: latest
+        version: 0.0.43
       '@simple-playground-web/react':
-        specifier: workspace:^
-        version: link:../../packages/frameworks/react
+        specifier: latest
+        version: 0.0.43(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@types/react@18.2.79)(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -203,19 +203,22 @@ importers:
 
   packages/cores/fs:
     dependencies:
-      buffer:
-        specifier: ^6.0.3
-        version: 6.0.3
-    devDependencies:
       '@simple-playground-web/path':
         specifier: workspace:^
         version: link:../../utilities/path
       '@simple-playground-web/types':
         specifier: workspace:^
         version: link:../../utilities/types
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
       '@types/memory-fs':
         specifier: ^0.3.7
         version: 0.3.7
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
       errno:
         specifier: ^1.0.0
         version: 1.0.0
@@ -225,9 +228,6 @@ importers:
       memory-fs:
         specifier: ^0.5.0
         version: 0.5.0
-      rxjs:
-        specifier: ^7.8.1
-        version: 7.8.1
 
   packages/cores/playground:
     dependencies:
@@ -478,15 +478,9 @@ importers:
       minimatch:
         specifier: ^9.0.4
         version: 9.0.4
-      picomatch:
-        specifier: ^4.0.2
-        version: 4.0.2
       picomatch-browser:
         specifier: ^2.2.6
         version: 2.2.6
-      util:
-        specifier: ^0.12.5
-        version: 0.12.5
     devDependencies:
       '@types/micromatch':
         specifier: ^4.0.7
@@ -494,6 +488,9 @@ importers:
       '@types/picomatch':
         specifier: ^2.3.3
         version: 2.3.3
+      picomatch:
+        specifier: ^4.0.2
+        version: 4.0.2
 
   packages/utilities/types: {}
 
@@ -3693,6 +3690,174 @@ packages:
     requiresBuild: true
     optional: true
 
+  /@simple-playground-web/bundler@0.0.43(esbuild-wasm@0.20.2):
+    resolution: {integrity: sha512-UI6xzScRF3JsO8CAxke0Fv1GnHRy1qmZMsmFfuJ446ZS8fUb2u2Ob8U4gJNCQTd+K1MaaSYEup5+ZbRnErpLwA==}
+    peerDependencies:
+      esbuild-wasm: ^0.20.2
+    dependencies:
+      '@simple-playground-web/logger': 0.0.43
+      '@simple-playground-web/path': 0.0.43
+      '@simple-playground-web/types': 0.0.43
+      esbuild-wasm: 0.20.2
+      lodash-es: 4.17.21
+      rxjs: 7.8.1
+      type-fest: 4.18.2
+    dev: false
+
+  /@simple-playground-web/core@0.0.43(esbuild-wasm@0.20.2)(monaco-editor@0.48.0):
+    resolution: {integrity: sha512-6kqsDfkU6qruyyBAyjarp2jfizTX4EL1GqZ5xWqs5GqrXbGjRY/T+XFQIn6Q0x11FSvd0ZBAqJbuE6XA8D+39w==}
+    dependencies:
+      '@simple-playground-web/bundler': 0.0.43(esbuild-wasm@0.20.2)
+      '@simple-playground-web/logger': 0.0.43
+      '@simple-playground-web/playground': 0.0.43(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
+      '@simple-playground-web/project': 0.0.43(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
+    transitivePeerDependencies:
+      - esbuild-wasm
+      - monaco-editor
+    dev: false
+
+  /@simple-playground-web/dom@0.0.43:
+    resolution: {integrity: sha512-3pNUoHXbnNI+xVuVagLU72YkWXOJhGiHK+x1OEkpXfqHcOcgi05im4+57+A87jm3M/LOL5OYeHuqjJdiXLAObQ==}
+    dependencies:
+      '@simple-playground-web/types': 0.0.43
+    dev: false
+
+  /@simple-playground-web/dts-rollup@0.0.43:
+    resolution: {integrity: sha512-sRUE45pEm9xKBs2g1t+Y3S3GTN6C56n7GTppN6Iv4r/xg1dRlUmdDaYBFthIVVt0pIzgr54EAcEkwSkAVOz28A==}
+    dependencies:
+      '@pnpm/types': 9.4.2
+      '@types/fs-extra': 11.0.4
+      '@types/lodash-es': 4.17.12
+      find-up: 7.0.0
+      fs-extra: 11.2.0
+      lodash-es: 4.17.21
+      log-update: 6.0.0
+      ts-dedent: 2.2.0
+      ts-morph: 22.0.0
+    dev: false
+
+  /@simple-playground-web/fs@0.0.43:
+    resolution: {integrity: sha512-CNf/bRHtNym4B1nqnyp+J+h5+NqVgaZrkjsThKRG8KxMMRMY+xJgMoBosl64TlQEU3F8nbmPK8Jk58wFaOtTog==}
+    dependencies:
+      '@simple-playground-web/path': 0.0.43
+      '@simple-playground-web/types': 0.0.43
+      rxjs: 7.8.1
+    dev: false
+
+  /@simple-playground-web/gen-template@0.0.43:
+    resolution: {integrity: sha512-+WDAtnf9UIHzIR157kwEjp//TJtUKXZ6MEZ5/AKUThFa3CZU+REvb3YnnXMIt3mwVZ7mKbELo6GmFaYEkexEUg==}
+    hasBin: true
+    dependencies:
+      '@simple-playground-web/dts-rollup': 0.0.43
+      commander: 12.0.0
+      cpy: 11.0.1
+      esbuild: 0.21.3
+      fast-glob: 3.3.2
+      temp: 0.9.4
+      ts-morph: 22.0.0
+    dev: false
+
+  /@simple-playground-web/logger@0.0.43:
+    resolution: {integrity: sha512-j9/AjzcXSJzEuEoPMHsiO+d1W3VP1TyyGx5vCALKFPNARer0v1JmI7CcZSbqNyAD74c2utmIyKR45z2G5Wzttg==}
+    dependencies:
+      change-case: 5.4.4
+    dev: false
+
+  /@simple-playground-web/path@0.0.43:
+    resolution: {integrity: sha512-q5NreOn8D7Lpz7KsM06ckN8sgS1ldGk16VUaupABP4c1k4SZZJaDqt8yBnMOHPdIrask+XEcnN8ZuIb5wTyw1w==}
+    dependencies:
+      '@simple-playground-web/types': 0.0.43
+      micromatch: 4.0.5
+      minimatch: 9.0.4
+      picomatch-browser: 2.2.6
+    dev: false
+
+  /@simple-playground-web/playground@0.0.43(esbuild-wasm@0.20.2)(monaco-editor@0.48.0):
+    resolution: {integrity: sha512-/73cNcEItt+AQVR3/Mw3nUXrQ7Wj9zUs+GyjpG+I3w9xS3ijjB+313MEgI/oPNLTR0qay0F3twq2SYDRrGbYVQ==}
+    dependencies:
+      '@simple-playground-web/bundler': 0.0.43(esbuild-wasm@0.20.2)
+      '@simple-playground-web/logger': 0.0.43
+      '@simple-playground-web/path': 0.0.43
+      '@simple-playground-web/project': 0.0.43(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
+      '@simple-playground-web/renderers': 0.0.43
+      lodash-es: 4.17.21
+      rxjs: 7.8.1
+      type-fest: 4.18.2
+      undo-manager: 1.1.1
+    transitivePeerDependencies:
+      - esbuild-wasm
+      - monaco-editor
+    dev: false
+
+  /@simple-playground-web/project@0.0.43(esbuild-wasm@0.20.2)(monaco-editor@0.48.0):
+    resolution: {integrity: sha512-uTdG7fXiFezxdtIfmdbkzI8ld8tEg8rw/3ZAGHu2TF/R/KawyGeThMTXyVWGTpNIPYswnyTk+ZbP24fp2F524g==}
+    peerDependencies:
+      monaco-editor: ^0.48.0
+    dependencies:
+      '@simple-playground-web/bundler': 0.0.43(esbuild-wasm@0.20.2)
+      '@simple-playground-web/fs': 0.0.43
+      '@simple-playground-web/logger': 0.0.43
+      '@simple-playground-web/path': 0.0.43
+      '@simple-playground-web/types': 0.0.43
+      minimatch: 9.0.4
+      monaco-editor: 0.48.0
+      rxjs: 7.8.1
+    transitivePeerDependencies:
+      - esbuild-wasm
+    dev: false
+
+  /@simple-playground-web/react@0.0.43(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@types/react@18.2.79)(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-zMx0AW1EYVRfGUTpm8dHEVzvLHDwP0fxQ734HUINnOhuipz4TY9jZsEIRVlAJDeC3BzCh2/rKGxp0pMAO8NnVw==}
+    peerDependencies:
+      react: '>=16.8.0'
+    dependencies:
+      '@mui/icons-material': 5.15.18(@mui/material@5.15.17)(@types/react@18.2.79)(react@18.2.0)
+      '@mui/material': 5.15.17(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@types/react@18.2.79)(react-dom@18.2.0)(react@18.2.0)
+      '@mui/x-tree-view': 7.3.1(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@mui/material@5.15.17)(@types/react@18.2.79)(react-dom@18.2.0)(react@18.2.0)
+      '@simple-playground-web/bundler': 0.0.43(esbuild-wasm@0.20.2)
+      '@simple-playground-web/path': 0.0.43
+      '@simple-playground-web/playground': 0.0.43(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
+      '@simple-playground-web/project': 0.0.43(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
+      '@simple-playground-web/renderers': 0.0.43
+      ahooks: 3.7.11(react@18.2.0)
+      autoprefixer: 10.4.19(postcss@8.4.38)
+      classnames: 2.5.1
+      lodash-es: 4.17.21
+      minimatch: 9.0.4
+      postcss: 8.4.38
+      prettier: 3.2.5
+      rc-dock: 3.2.19(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      react-accessible-treeview: 2.9.0(classnames@2.5.1)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
+      react-icons: 5.1.0(react@18.2.0)
+      rxjs: 7.8.1
+      tailwindcss: 3.4.3
+    transitivePeerDependencies:
+      - '@emotion/react'
+      - '@emotion/styled'
+      - '@types/react'
+      - esbuild-wasm
+      - monaco-editor
+      - prop-types
+      - react-dom
+      - ts-node
+    dev: false
+
+  /@simple-playground-web/renderers@0.0.43:
+    resolution: {integrity: sha512-tAZrg0AU9Q2l8sxq7SwD1AHY1zLU/3gbtYg+KMsbFM9Ii/ZeRIwuMt9Ox0wPks0H/BnjmFsJLKpAQm9WAJnUeQ==}
+    dependencies:
+      '@simple-playground-web/dom': 0.0.43
+      '@simple-playground-web/logger': 0.0.43
+      '@simple-playground-web/types': 0.0.43
+      lodash-es: 4.17.21
+      monaco-editor: 0.48.0
+      rxjs: 7.8.1
+    dev: false
+
+  /@simple-playground-web/types@0.0.43:
+    resolution: {integrity: sha512-jI+DLYYMQXcu9+kppqZVLq4/lLPo+1i+ovFddbxr2pW3K01Wed3o2P39wesZf7+GvbjypaqmEE1aiLdt7Dv+Rg==}
+    dev: false
+
   /@sinclair/typebox@0.27.8:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
     dev: true
@@ -5379,6 +5544,7 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       possible-typed-array-names: 1.0.0
+    dev: true
 
   /babel-core@7.0.0-bridge.0(@babel/core@7.24.5):
     resolution: {integrity: sha512-poPX9mZH/5CSanm50Q+1toVci6pv5KSRv/5TWCwtzQS5XEwn40BcCrgIeMFWP9CKKIniKXNxoIOnOq4VVlGXhg==}
@@ -5570,7 +5736,6 @@ packages:
     dependencies:
       base64-js: 1.5.1
       ieee754: 1.2.1
-    dev: false
 
   /builtins@5.1.0:
     resolution: {integrity: sha512-SW9lzGTLvWTP1AY8xeAMZimqDrIaSdLQUcVr9DMef51niJ022Ri87SwRRKYm4A6iHfkPaiVUu/Duw2Wc4J7kKg==}
@@ -6905,6 +7070,7 @@ packages:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
     dependencies:
       is-callable: 1.2.7
+    dev: true
 
   /foreground-child@3.1.1:
     resolution: {integrity: sha512-TMKDUnIte6bfb5nWv7V/caI169OHgvwjb7V4WkeUvbQQdjr5rWKqHFiKWb/fcOwB+CzBT+qbWjvj+DVwRskpIg==}
@@ -7237,6 +7403,7 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       has-symbols: 1.0.3
+    dev: true
 
   /hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
@@ -7423,6 +7590,7 @@ packages:
     dependencies:
       call-bind: 1.0.7
       has-tostringtag: 1.0.2
+    dev: true
 
   /is-array-buffer@3.0.4:
     resolution: {integrity: sha512-wcjaerHw0ydZwfhiKbXJWLDY8A7yV7KhjQOpb83hGgGfId/aQa4TOvwyzn2PuswW2gPCYEL/nEAiSVpdOj1lXw==}
@@ -7458,6 +7626,7 @@ packages:
   /is-callable@1.2.7:
     resolution: {integrity: sha512-1BC0BVFhS/p0qtw6enp8e+8OD0UrK0oFLztSjNzhcKA3WDuJxxAPXzPuPtKkjEY9UUoEWlX/8fgKeu2S8i9JTA==}
     engines: {node: '>= 0.4'}
+    dev: true
 
   /is-core-module@2.13.1:
     resolution: {integrity: sha512-hHrIjvZsftOsvKSn2TRYl63zvxsgE0K+0mYMoH6gD4omR5IWB2KynivBQczo3+wF1cCkjzvptnI9Q0sPU66ilw==}
@@ -7501,6 +7670,7 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       has-tostringtag: 1.0.2
+    dev: true
 
   /is-glob@4.0.3:
     resolution: {integrity: sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==}
@@ -7632,6 +7802,7 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       which-typed-array: 1.1.15
+    dev: true
 
   /is-unicode-supported@0.1.0:
     resolution: {integrity: sha512-knxG2q4UC3u8stRGyAVJCOdxFmv5DZiRcdlIaAQXAbSfJya+OhopNotLQrstBhququ4ZpuKbDc/8S6mgXgPFPw==}
@@ -8685,7 +8856,7 @@ packages:
   /picomatch@4.0.2:
     resolution: {integrity: sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg==}
     engines: {node: '>=12'}
-    dev: false
+    dev: true
 
   /pify@2.3.0:
     resolution: {integrity: sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==}
@@ -8750,6 +8921,7 @@ packages:
   /possible-typed-array-names@1.0.0:
     resolution: {integrity: sha512-d7Uw+eZoloe0EHDIYoe+bQ5WXnGMOpmiZFTuMWCwpjzzkL2nTjcKiAk4hh8TjnGye2TwWOk3UXucZ+3rbmBa8Q==}
     engines: {node: '>= 0.4'}
+    dev: true
 
   /postcss-import@15.1.0(postcss@8.4.38):
     resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
@@ -10497,6 +10669,7 @@ packages:
       is-generator-function: 1.0.10
       is-typed-array: 1.1.13
       which-typed-array: 1.1.15
+    dev: true
 
   /utils-merge@1.0.1:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
@@ -10736,6 +10909,7 @@ packages:
       for-each: 0.3.3
       gopd: 1.0.1
       has-tostringtag: 1.0.2
+    dev: true
 
   /which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
