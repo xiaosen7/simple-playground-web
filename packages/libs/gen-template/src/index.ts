@@ -168,6 +168,7 @@ async function scanExternals(srcDir: string) {
   const paths = await fg(["**/*"], {
     cwd: srcDir,
     absolute: true,
+    ignore: ["node_modules"],
   });
   const project = new Project();
 
