@@ -5,7 +5,6 @@ import { findUpSync } from "find-up";
 import fsx from "fs-extra";
 import logUpdate from "log-update";
 import { Project } from "ts-morph";
-import type { PackageManifest } from "@pnpm/types";
 
 import { getRelativeImportPath } from "./path";
 
@@ -16,6 +15,8 @@ import type {
 } from "ts-morph";
 import { pick } from "lodash-es";
 import { dedent } from "ts-dedent";
+import { DtsSourceFile, DtsSourceFileCollector } from "./dts-source-file";
+import { getNodeModulePackageJson } from "./package-manifest";
 
 const {
   ensureDir,
@@ -59,20 +60,8 @@ export class DtsRollup {
   #project: Project;
   #options: IDtsRollupOptions;
 
-  #sourceFileMap = new Map<
-    SourceFile,
-    {
-      importDeclarations: (ExportDeclaration | ImportDeclaration)[];
-      importSourceFiles: SourceFile[];
-      packageManifest: PackageManifest;
-      packageJsonPath: string;
-    }
-  >();
-  /**
-   * name to package.json map
-   */
-  #nodeModulesCache = new Map<string, PackageManifest>();
   #nodeModulesOutDir: string;
+  #dtsSourceFileCollector: DtsSourceFileCollector;
 
   constructor(options: IDtsRollupOptions) {
     this.#options = options;
@@ -88,6 +77,10 @@ export class DtsRollup {
       options.outDir,
       this.#options.nodeModules?.dirname ?? "node_modules"
     );
+
+    this.#dtsSourceFileCollector = new DtsSourceFileCollector({
+      checkVersion: !options.nodeModules?.allowMultipleVersionModules,
+    });
   }
 
   async run() {
@@ -103,48 +96,63 @@ export class DtsRollup {
 
     entries.forEach((entry) => {
       const entrySourceFile = project.addSourceFileAtPath(entry);
-      this.#updateMap(entrySourceFile, externals, project);
+      this.#dtsSourceFileCollector.recursivelyAddSourceFile(entrySourceFile);
     });
 
-    let count = this.#sourceFileMap.size;
-    console.log(
-      `Total ${count} source files, node modules: ${this.#nodeModulesCache.size}.`
-    );
+    let count = this.#dtsSourceFileCollector.getCount();
+    console.log(`Total ${count} source files.`);
 
     const packageJsonOutFields =
       this.#options.nodeModules?.writePackageJsonFields ?? [];
-    const tasks = Array.from(this.#sourceFileMap.keys()).map(
-      (sourceFile, index) => async () => {
-        logUpdate(`process: ${index + 1}/${this.#sourceFileMap.size}`);
-        this.#modifyImportPaths(sourceFile);
+    const tasks = this.#dtsSourceFileCollector
+      .getDtsSourceFiles()
+      .map((dtsSourceFile, index) => async () => {
+        logUpdate(
+          `processing(${index + 1}/${count}): ${dtsSourceFile.getFilePath()}`
+        );
 
         // write package json
-        if (sourceFile.isInNodeModules() && packageJsonOutFields.length > 0) {
-          const { packageManifest } = this.#sourceFileMap.get(sourceFile)!;
-          const packageJsonOutPath = join(
-            this.#getNodeModuleOutDir(
-              packageManifest.name,
-              packageManifest.version
-            ),
-            "package.json"
+        // if (packageJsonOutFields.length > 0) {
+        //   const { manifest: packageManifest } = dtsSourceFile.getPackageJson();
+        //   const packageJsonOutPath = join(
+        //     this.#getNodeModuleOutDir(
+        //       packageManifest.name,
+        //       packageManifest.version
+        //     ),
+        //     "package.json"
+        //   );
+        //   await ensureDir(dirname(packageJsonOutPath));
+        //   if (!(await exists(packageJsonOutPath))) {
+        //     count++;
+        //     const packageOutManifest = pick(
+        //       packageManifest,
+        //       packageJsonOutFields
+        //     );
+        //     await writeJSON(packageJsonOutPath, packageOutManifest);
+        //   }
+        // }
+
+        // write source file
+        const outFilePath = this.#getOutFilePath(dtsSourceFile);
+        if (dtsSourceFile.isNodeModuleMainFile()) {
+          const {
+            manifest: { name, version },
+            path: packageJsonPath,
+          } = dtsSourceFile.getPackageJson();
+          const packagePath = dirname(packageJsonPath);
+          const normalOutFilePath = join(
+            this.#getNodeModuleOutDir(name, version),
+            relative(packagePath, dtsSourceFile.getFilePath())
           );
-          await ensureDir(dirname(packageJsonOutPath));
-          if (!(await exists(packageJsonOutPath))) {
-            count++;
-            const packageOutManifest = pick(
-              packageManifest,
-              packageJsonOutFields
-            );
-            await writeJSON(packageJsonOutPath, packageOutManifest);
+
+          if (outFilePath !== normalOutFilePath) {
+            this.#modifyImportPaths(dtsSourceFile);
           }
         }
 
-        // write source file
-        const outFilePath = this.#getOutFilePath(sourceFile);
         await ensureDir(dirname(outFilePath));
-        await writeFile(outFilePath, sourceFile.getFullText(), "utf8");
-      }
-    );
+        await writeFile(outFilePath, dtsSourceFile.getFullText(), "utf8");
+      });
 
     await tasks.reduce((task, next) => task.then(next), Promise.resolve());
     logUpdate.done();
@@ -156,146 +164,29 @@ export class DtsRollup {
     );
   }
 
-  #modifyImportPaths(sourceFile: SourceFile) {
-    const sourceOutFilePath = this.#getOutFilePath(sourceFile);
-    const { importDeclarations, importSourceFiles } =
-      this.#sourceFileMap.get(sourceFile)!;
+  #modifyImportPaths(dtsSourceFile: DtsSourceFile) {
+    const sourceOutFilePath = this.#getOutFilePath(dtsSourceFile);
+    const importDeclarations = dtsSourceFile.getImportAndExportDeclarations();
     importDeclarations.forEach((declaration, index) => {
-      // if (
-      //   declaration.isModuleSpecifierRelative() &&
-      //   !declaration.getModuleSpecifierValue()?.includes("node_modules")
-      // ) {
-      //   return;
-      // }
-      // 仅导入语句是三方包的，类似 import React from 'react'
-      // const moduleSourceFile = importSourceFiles[index];
-      // const moduleOutFilePath = this.#getOutFilePath(moduleSourceFile);
-      // const dummyFilePath = `${this.#getNodeModuleOutDir(
-      //   declaration.getModuleSpecifierValue()!
-      // )}.d.ts`;
-      // if (!existsSync(dummyFilePath)) {
-      //   ensureDirSync(dirname(dummyFilePath));
-      //   writeFileSync(
-      //     dummyFilePath,
-      //     dedent`export * from "${getRelativeImportPath(
-      //       dirname(dummyFilePath),
-      //       moduleOutFilePath
-      //     )}";
-      //   export { default } from "${getRelativeImportPath(
-      //     dirname(dummyFilePath),
-      //     moduleOutFilePath
-      //   )}"`
-      //   );
-      // }
-      // const moduleSpecifierValue = getRelativeImportPath(
-      //   dirname(sourceOutFilePath),
-      //   moduleOutFilePath
-      // );
-      // declaration.setModuleSpecifier(moduleSpecifierValue);
-    });
-  }
+      if (!declaration.isModuleSpecifierRelative()) {
+        return;
+      }
 
-  /**
-   * 从入口文件开始递归调用更新 sourceFileMap 和 nodeModulesMap
-   * @param sourceFile
-   * @param externals
-   * @param project
-   * @returns
-   */
-  #updateMap(sourceFile: SourceFile, externals: string[], project: Project) {
-    if (this.#sourceFileMap.has(sourceFile)) {
-      return;
-    }
+      const sourceFile = declaration.getModuleSpecifierSourceFile();
 
-    // package.json
-    const { manifest, path: packageJsonPath } = resolvePackageManifest(
-      sourceFile.getFilePath()
-    );
-    const { name, version } = manifest;
-    if (!this.#nodeModulesCache.has(name)) {
-      this.#nodeModulesCache.set(name, manifest);
-    }
+      const dtsSourceFile =
+        this.#dtsSourceFileCollector.getDtsSourceFileBySourceFile(sourceFile!);
+      if (!dtsSourceFile) {
+        return;
+      }
 
-    // version conflict check
-    const existingVersion = this.#nodeModulesCache.get(name)!.version;
-    if (
-      existingVersion !== manifest.version &&
-      !this.#options.nodeModules?.allowMultipleVersionModules?.has(name)
-    ) {
-      throw new Error(
-        dedent`The version of ${name} is not consistent, current version: ${version}, existing version: ${existingVersion}. 
-        You may need to set resolutions in package.json like \`${name}: x.y.z\` and reinstall.`
+      const moduleOutFilePath = this.#getOutFilePath(dtsSourceFile);
+      const moduleSpecifierValue = getRelativeImportPath(
+        dirname(sourceOutFilePath),
+        moduleOutFilePath
       );
-    }
-
-    // update sourceFileMap
-    const { importDeclarations, importSourceFiles, referenceSourceFiles } =
-      this.#analyzeSourceFile(sourceFile, externals, project);
-    this.#sourceFileMap.set(sourceFile, {
-      importDeclarations,
-      importSourceFiles,
-      /**
-       * 不使用 manifest，是因为使用缓存里的，可以引用同一个内存地址
-       */
-      packageManifest: this.#nodeModulesCache.get(name)!,
-      packageJsonPath,
+      declaration.setModuleSpecifier(moduleSpecifierValue);
     });
-
-    // recurse
-    [...importSourceFiles, ...referenceSourceFiles].forEach((file) => {
-      this.#updateMap(file, externals, project);
-    });
-  }
-
-  #analyzeSourceFile(
-    sourceFile: SourceFile,
-    externals: string[],
-    project: Project
-  ) {
-    /**
-     * import 语句的 所有 sourceFile
-     */
-    const importDeclarations = [
-      ...sourceFile.getExportDeclarations(),
-      ...sourceFile.getImportDeclarations(),
-    ].filter((x) => {
-      return (
-        x.getModuleSpecifierValue() &&
-        !externals.includes(x.getModuleSpecifierValue()!) &&
-        x.getModuleSpecifierSourceFile()
-      );
-    });
-    const importSourceFiles = importDeclarations.map((x) =>
-      x.getModuleSpecifierSourceFileOrThrow()
-    );
-
-    /**
-     *  `/// <reference />` 语句的所有 sourceFile
-     */
-    const referenceSourceFiles = [
-      ...sourceFile.getLibReferenceDirectives(),
-      ...sourceFile.getPathReferenceDirectives(),
-      ...sourceFile.getTypeReferenceDirectives(),
-    ]
-      .map((fileReference) => {
-        if (externals.includes(fileReference.getFileName())) {
-          return undefined;
-        }
-
-        const file = project.addSourceFileAtPathIfExists(
-          join(dirname(sourceFile.getFilePath()), fileReference.getFileName())
-        );
-        if (!file) {
-          console.warn(
-            "Reference file not found: " + fileReference.getFileName()
-          );
-        }
-
-        return file;
-      })
-      .filter(Boolean) as SourceFile[];
-
-    return { referenceSourceFiles, importSourceFiles, importDeclarations };
   }
 
   #getNodeModuleOutDir(name: string, version?: string) {
@@ -308,22 +199,22 @@ export class DtsRollup {
     );
   }
 
-  #getOutFilePath(sourceFile: SourceFile) {
+  #getOutFilePath(dtsSourceFile: DtsSourceFile) {
     const { rootDir, outDir } = this.#options;
-    const filePath = sourceFile.getFilePath();
+    const filePath = dtsSourceFile.getFilePath();
     const relativeToRootPath = relative(rootDir, filePath);
     const isOutside = relative(rootDir, filePath).startsWith("..");
 
-    if (sourceFile.isInNodeModules()) {
+    if (dtsSourceFile.isInNodeModules()) {
       const {
-        packageManifest: { name, version },
-        packageJsonPath,
-      } = this.#sourceFileMap.get(sourceFile)!;
-      const packagePath = dirname(packageJsonPath);
-
-      if (!name) {
-        debugger;
+        manifest: { name, version },
+        path: packageJsonPath,
+      } = dtsSourceFile.getPackageJson();
+      if (dtsSourceFile.isNodeModuleMainFile()) {
+        return join(this.#getNodeModuleOutDir(name, version), "index.d.ts");
       }
+
+      const packagePath = dirname(packageJsonPath);
       return join(
         this.#getNodeModuleOutDir(name, version),
         relative(packagePath, filePath)
@@ -333,7 +224,7 @@ export class DtsRollup {
     if (isOutside) {
       return join(
         outDir,
-        "node_modules",
+        this.#options.nodeModules?.dirname ?? "node_modules",
         "__outside__",
         relativeToRootPath.replaceAll("../", "__/")
       );
@@ -341,24 +232,4 @@ export class DtsRollup {
 
     return join(outDir, relativeToRootPath);
   }
-}
-
-function resolvePackageManifest(filePath: string) {
-  const packageJsonPath = findUpSync("package.json", {
-    cwd: dirname(filePath),
-  });
-
-  if (!packageJsonPath) {
-    throw new Error(`Can't find package.json for ${filePath}`);
-  }
-
-  const manifest = readJSONSync(packageJsonPath) as PackageManifest;
-  if (!manifest.name) {
-    return resolvePackageManifest(dirname(packageJsonPath));
-  }
-
-  return {
-    path: packageJsonPath,
-    manifest,
-  };
 }

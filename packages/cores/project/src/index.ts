@@ -17,7 +17,7 @@ const defaultCompilerOptions: monaco.languages.typescript.CompilerOptions = {
   noEmit: true,
   jsx: monaco.languages.typescript.JsxEmit.React,
   allowSyntheticDefaultImports: true,
-  strict: true,
+  strict: false,
   skipLibCheck: true,
   baseUrl: decodeURIComponent(monaco.Uri.parse(".").toString()),
 };
@@ -40,7 +40,7 @@ class Project {
       defaultCompilerOptions
     );
     monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-      diagnosticCodesToIgnore: [2307], // module not found
+      diagnosticCodesToIgnore: [/* module not found */ 2307, /* jsx */ 2786],
     });
 
     this.fs.watch("/", (event, filename) => {
