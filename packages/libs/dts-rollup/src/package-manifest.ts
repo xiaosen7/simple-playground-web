@@ -11,24 +11,25 @@ import { memoize } from "lodash-es";
 import { PackageJson } from "type-fest";
 import { INodeModulePackageJson } from "./types";
 
-export const getNodeModulePackageJson = memoize(
-  (filePath: string): { path: string; manifest: INodeModulePackageJson } => {
-    const packageJsonPath = findUpSync("package.json", {
-      cwd: dirname(filePath),
-    });
+export const getNodeModulePackageJson: (filePath: string) => {
+  path: string;
+  manifest: INodeModulePackageJson;
+} = memoize((filePath: string) => {
+  const packageJsonPath = findUpSync("package.json", {
+    cwd: dirname(filePath),
+  });
 
-    if (!packageJsonPath) {
-      throw new Error(`Can't find package.json for ${filePath}`);
-    }
-
-    const manifest = fsx.readJSONSync(packageJsonPath);
-    if (!manifest.name) {
-      return getNodeModulePackageJson(dirname(packageJsonPath));
-    }
-
-    return {
-      path: packageJsonPath,
-      manifest: manifest as INodeModulePackageJson,
-    };
+  if (!packageJsonPath) {
+    throw new Error(`Can't find package.json for ${filePath}`);
   }
-);
+
+  const manifest = fsx.readJSONSync(packageJsonPath);
+  if (!manifest.name) {
+    return getNodeModulePackageJson(dirname(packageJsonPath));
+  }
+
+  return {
+    path: packageJsonPath,
+    manifest: manifest as INodeModulePackageJson,
+  };
+});
