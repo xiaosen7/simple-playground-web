@@ -15,7 +15,7 @@ import { Previewer } from "./previewer";
 import { usePlayground } from "../hooks/playground";
 import { omit } from "lodash-es";
 import { PlaygroundContext } from "../context";
-import { Paper, Stack, Typography } from "@mui/material";
+import { Button, Paper, Stack, Typography } from "@mui/material";
 import {
   CreateFile,
   CreateFolder,
@@ -33,6 +33,7 @@ import { IComponentProps } from "./types";
 import { project } from "@simple-playground-web/project";
 import { filter } from "rxjs";
 import { SelectedPath } from "./selected-path";
+import { basename, dirname } from "@simple-playground-web/path";
 
 export interface IPlaygroundProps extends IPlaygroundOptions {
   className?: string;
@@ -82,13 +83,23 @@ const PlaygroundUI = (props: IComponentProps) => {
       )}
     >
       <div className="flex flex-col w-1/5 border-0 border-r border-solid border-gray-300">
-        <Stack direction={"row"} alignItems={"center"} overflow={"scroll"}>
-          <Rename />
-          <CreateFile />
-          <CreateFolder />
-          <Delete />
-          <Undo />
-          <Redo />
+        <Stack direction={"row"}>
+          <Button style={{ cursor: "default" }} variant="text">
+            {basename(playground.cwd)}
+          </Button>
+          <Stack
+            direction={"row"}
+            flex={1}
+            alignItems={"center"}
+            overflow={"scroll"}
+          >
+            <Rename />
+            <CreateFile />
+            <CreateFolder />
+            <Delete />
+            <Undo />
+            <Redo />
+          </Stack>
         </Stack>
         <Explore className="border-0 border-t border-solid border-gray-300" />
       </div>

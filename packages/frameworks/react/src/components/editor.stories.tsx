@@ -9,7 +9,7 @@ export default {
   component: Editor,
   decorators: [
     (Story) => (
-      <PlaygroundProviderBuilder cwd="/src/playgrounds/styled">
+      <PlaygroundProviderBuilder cwd="/src/playgrounds/xstate">
         <Story />
       </PlaygroundProviderBuilder>
     ),

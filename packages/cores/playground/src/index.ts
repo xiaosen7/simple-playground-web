@@ -148,7 +148,6 @@ export class Playground {
           }
 
           this.explore.writeFileSync(filePath, value);
-          this.build();
         })
     );
 

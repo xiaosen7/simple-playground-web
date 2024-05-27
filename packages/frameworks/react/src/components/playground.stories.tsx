@@ -36,13 +36,13 @@ export default {
 export const Base = () => (
   <Playground
     style={{ height: "calc(100vh - 40px)" }}
-    cwd="/src/playgrounds/styled"
+    cwd="/src/playgrounds/xstate"
   />
 );
 
 export const CustomLayout = () => {
   return (
-    <PlaygroundProviderBuilder cwd="/src/playgrounds/styled" entry="index.tsx">
+    <PlaygroundProviderBuilder cwd="/src/playgrounds/xstate" entry="index.tsx">
       <DividerBox
         mode="vertical"
         className={"border border-solid border-gray-300"}
@@ -100,8 +100,7 @@ export const CustomLayout = () => {
 export const Multiple = () => {
   return (
     <Grid container spacing={2}>
-      {range(4).map((index) => {
-        const name = index + 1;
+      {["hello-world", "mui", "styled", "xstate"].map((name) => {
         return (
           <Grid height={"50vh"} key={name} item xs={6}>
             <Playground

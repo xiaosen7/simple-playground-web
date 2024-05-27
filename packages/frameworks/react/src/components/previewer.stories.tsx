@@ -13,7 +13,7 @@ export default {
 
 export const Base = () => {
   return (
-    <PlaygroundProviderBuilder cwd="/src/playgrounds/styled">
+    <PlaygroundProviderBuilder cwd="/src/playgrounds/xstate">
       <Previewer />
     </PlaygroundProviderBuilder>
   );
@@ -21,7 +21,7 @@ export const Base = () => {
 
 export const RuntimeInfo = () => {
   const playground = React.useMemo(
-    () => Playground.create({ cwd: "/src/playgrounds/styled" }),
+    () => Playground.create({ cwd: "/src/playgrounds/xstate" }),
     []
   );
 
