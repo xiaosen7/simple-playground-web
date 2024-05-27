@@ -304,6 +304,7 @@ export class Playground {
           function require (name) {
             var value = module.exports[name] || (module.exports.default ? module.exports.default[name] : null);
             if (value) {
+              value.__esModule = true;
               return value;
             }
           

@@ -135,6 +135,7 @@ class Bundler {
         aliasPlugin({
           ...options.alias,
         }),
+        // pluginTransform(input),
         // pluginNodeModules(input),
         ...(options.esbuildOptions?.plugins ?? []),
       ],

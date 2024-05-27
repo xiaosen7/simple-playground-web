@@ -8,7 +8,7 @@ export default {
 };
 
 export const Base = () => (
-  <PlaygroundProviderBuilder cwd="/src/playgrounds/1">
+  <PlaygroundProviderBuilder cwd="/src/playgrounds/styled">
     <BuildInfo />
   </PlaygroundProviderBuilder>
 );

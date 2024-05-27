@@ -10,7 +10,7 @@ export default {
   component: SelectedPath,
   decorators: [
     (Story) => (
-      <PlaygroundProviderBuilder cwd="/src/playgrounds/1">
+      <PlaygroundProviderBuilder cwd="/src/playgrounds/styled">
         <Story />
       </PlaygroundProviderBuilder>
     ),

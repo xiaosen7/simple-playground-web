@@ -18,7 +18,7 @@ export default {
   component: Action,
   decorators: [
     (Story: () => JSX.Element) => (
-      <PlaygroundProviderBuilder cwd="/src/playgrounds/1">
+      <PlaygroundProviderBuilder cwd="/src/playgrounds/styled">
         <Story />
       </PlaygroundProviderBuilder>
     ),

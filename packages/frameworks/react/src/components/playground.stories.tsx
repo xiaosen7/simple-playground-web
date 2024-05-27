@@ -36,13 +36,13 @@ export default {
 export const Base = () => (
   <Playground
     style={{ height: "calc(100vh - 40px)" }}
-    cwd="/src/playgrounds/1"
+    cwd="/src/playgrounds/styled"
   />
 );
 
 export const CustomLayout = () => {
   return (
-    <PlaygroundProviderBuilder cwd="/src/playgrounds/1" entry="index.tsx">
+    <PlaygroundProviderBuilder cwd="/src/playgrounds/styled" entry="index.tsx">
       <DividerBox
         mode="vertical"
         className={"border border-solid border-gray-300"}

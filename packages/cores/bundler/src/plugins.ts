@@ -124,7 +124,7 @@ export const pluginGlobals = (
         return { path: args.path, namespace: "globals" };
       });
 
-      build.onLoad({ filter: /.*/, namespace: "globals" }, (args: ISafeAny) => {
+      build.onLoad({ filter: /.*/, namespace: "globals" }, (args) => {
         const name = args.path;
         const contents = generateExport(globals, name);
 
