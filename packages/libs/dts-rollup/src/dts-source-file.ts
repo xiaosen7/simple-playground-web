@@ -129,7 +129,7 @@ export class DtsSourceFile {
     return this.sourceFile.isInNodeModules();
   }
 
-  getFilePath() {
+  getFilePath(): string {
     return this.sourceFile.getFilePath();
   }
 
