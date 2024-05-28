@@ -20,6 +20,7 @@ import {
   CreateFile,
   CreateFolder,
   Delete,
+  Download,
   FormatCode,
   Redo,
   ReloadPreviewer,
@@ -34,6 +35,7 @@ import { project } from "@simple-playground-web/project";
 import { filter } from "rxjs";
 import { SelectedPath } from "./selected-path";
 import { basename, dirname } from "@simple-playground-web/path";
+import { ExploreMenu, PreviewerMenu } from "./menus";
 
 export interface IPlaygroundProps
   extends IPlaygroundOptions,
@@ -88,25 +90,17 @@ const PlaygroundUI = (props: PlaygroundUIProps) => {
       className={classNames("border border-solid border-gray-300", className)}
     >
       <div className="flex flex-col w-1/5 border-0 border-r border-solid border-gray-300">
-        <Stack direction={"row"} overflow={"auto"}>
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          overflow={"auto"}
+        >
           {renderTitle(
             <Button style={{ cursor: "default" }} variant="text">
               {basename(playground.cwd)}
             </Button>
           )}
-          <Stack
-            direction={"row"}
-            flex={1}
-            alignItems={"center"}
-            overflow={"scroll"}
-          >
-            <Rename />
-            <CreateFile />
-            <CreateFolder />
-            <Delete />
-            <Undo />
-            <Redo />
-          </Stack>
+          <ExploreMenu />
         </Stack>
         <Explore className="border-0 border-t border-solid border-gray-300" />
       </div>

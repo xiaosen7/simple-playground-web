@@ -8,6 +8,7 @@ import {
 import { debounce, isNil, omitBy, set, uniqueId } from "lodash-es";
 import {
   BehaviorSubject,
+  Observable,
   ReplaySubject,
   Subject,
   Subscription,
@@ -24,6 +25,8 @@ import {
 import { OptionalKeysOf } from "type-fest";
 import { Explore } from "./explore";
 import { Logger } from "@simple-playground-web/logger";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 export interface IPlaygroundOptions {
   globalExternals?: Record<string, any>;
@@ -89,6 +92,8 @@ export class Playground {
   previewer = new Previewer();
   explore: Explore;
 
+  fs$: Observable<string | void>;
+  debouncedFs$: Observable<string | void>;
   /**
    * The tree paths relative to cwd
    */
@@ -136,7 +141,8 @@ export class Playground {
 
     this.#logger = new Logger(`playground-${this.id}`);
 
-    const fs$ = merge(this.explore.newFile$, this.explore.change$);
+    this.fs$ = merge(this.explore.newFile$, this.explore.change$);
+    this.debouncedFs$ = this.fs$.pipe(debounceTime(200));
 
     // auto build when content change
     this.#subscription.add(
@@ -169,18 +175,12 @@ export class Playground {
     );
 
     // build
-    this.#subscription.add(
-      fs$.pipe(debounceTime(200)).subscribe(() => this.build())
-    );
+    this.#subscription.add(this.debouncedFs$.subscribe(() => this.build()));
 
     // directory tree paths
     this.#subscription.add(
-      fs$.pipe(debounceTime(200)).subscribe(() => {
-        const paths = project.fs
-          .globSync(this.#options.directoryTreePathsPattern, {
-            onlyFiles: false,
-          })
-          .map((x) => relative(this.#options.cwd, x));
+      this.debouncedFs$.subscribe(() => {
+        const paths = this.getDirectoryTreePaths();
 
         this.#logger.log("directoryTreePaths$", paths);
         this.directoryTreePaths$.next(paths);
@@ -209,6 +209,15 @@ export class Playground {
         }
       })
     );
+  }
+
+  getDirectoryTreePaths() {
+    const paths = project.fs
+      .globSync(this.#options.directoryTreePathsPattern, {
+        onlyFiles: false,
+      })
+      .map((x) => relative(this.#options.cwd, x));
+    return paths;
   }
 
   async build() {
@@ -329,5 +338,20 @@ export class Playground {
 
   getEntryPathRelativeCwd() {
     return this.explore.relative(this.#options.entry);
+  }
+
+  async download() {
+    const zip = new JSZip();
+    const paths = this.getDirectoryTreePaths();
+    paths.forEach((path) => {
+      if (this.explore.isDirectory(path)) {
+        return;
+      }
+
+      zip.file(path, this.explore.readFileSync(path, "utf-8"));
+    });
+    return zip.generateAsync({ type: "blob" }).then(function (content) {
+      saveAs(content, "playground.zip");
+    });
   }
 }

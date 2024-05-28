@@ -26,6 +26,8 @@ import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DownloadIcon from "@mui/icons-material/Download";
+
 import { snakeCase, startCase } from "lodash-es";
 
 interface IActionProps extends IComponentProps {
@@ -98,7 +100,7 @@ export function Action(props: IActionProps) {
   );
 }
 
-type IActionComponent = React.ComponentType<IComponentProps>;
+export type IActionComponent = React.ComponentType<IComponentProps>;
 
 export interface IDialogActionProps extends Omit<IActionProps, "onClick"> {
   renderDialog: (options: {
@@ -353,6 +355,18 @@ export const Delete: IActionComponent = (props: IComponentProps) => {
       }}
       title="Delete"
       Icon={DeleteIcon}
+      {...props}
+    />
+  );
+};
+
+export const Download: IActionComponent = (props) => {
+  const playground = usePlayground();
+  return (
+    <Action
+      onClick={() => playground.download()}
+      title="Download"
+      Icon={DownloadIcon}
       {...props}
     />
   );

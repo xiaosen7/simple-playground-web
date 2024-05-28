@@ -58,7 +58,7 @@ export const Base = () => {
         ]}
       />
 
-      <Playground style={{ height: "calc(100vh - 40px)" }} cwd={cwd} />
+      <Playground style={{ height: "90vh" }} cwd={cwd} />
     </>
   );
 };

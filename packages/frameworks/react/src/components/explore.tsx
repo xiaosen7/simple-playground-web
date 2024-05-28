@@ -6,7 +6,7 @@ import { dirname, join } from "@simple-playground-web/path";
 import { TreeItem } from "@mui/x-tree-view";
 import { VscFolder, VscFolderOpened, VscFile } from "react-icons/vsc";
 import { usePlayground } from "../hooks/playground";
-import { useObservable } from "../hooks";
+import { useObservable, useSubs } from "../hooks";
 import { IComponentProps } from "./types";
 import { debounceTime } from "rxjs";
 import FolderIcon from "@mui/icons-material/Folder";
@@ -23,19 +23,18 @@ export interface IDirectoryTreeProps extends IComponentProps {}
 export function Explore(props: IDirectoryTreeProps) {
   const { className, style } = props;
   const playground = usePlayground();
-  const paths = useObservable(playground.directoryTreePaths$) ?? [];
+
   const selectedPath = useObservable(playground.selectedPath$);
 
-  const items = useMemo(
-    () =>
-      pathsToItems(
-        paths,
+  const items =
+    useObservable(playground.debouncedFs$, () => {
+      return pathsToItems(
+        playground.getDirectoryTreePaths(),
         (path) =>
           playground.explore.existsSync(path) &&
           playground.explore.isDirectory(path)
-      ),
-    [paths]
-  );
+      );
+    }) ?? [];
 
   return (
     <div

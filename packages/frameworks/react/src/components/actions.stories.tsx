@@ -10,6 +10,7 @@ import {
   RequestPreviewerFullScreen,
   Redo,
   Undo,
+  Download,
 } from "./actions";
 import { PlaygroundProviderBuilder } from "../provider";
 import { Stack } from "@mui/material";
@@ -36,5 +37,6 @@ export const Base = () => (
     <Delete />
     <Undo />
     <Redo />
+    <Download />
   </Stack>
 );

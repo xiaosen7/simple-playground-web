@@ -20,9 +20,15 @@ export function useSubsUpdate(observable: Observable<any>) {
   useSubs(observable, update);
 }
 
-export function useObservable<T>(observable: Observable<T>) {
-  const [value, setValue] = useState<T>();
-  useSubs(observable, debounce(setValue));
+export function useObservable<T, V = T>(
+  observable: Observable<T>,
+  mapValue: (value: T) => V = (x) => x as any
+) {
+  const [value, setValue] = useState<V>();
+  useSubs(
+    observable,
+    debounce((v) => setValue(mapValue(v)))
+  );
   return value;
 }
 
