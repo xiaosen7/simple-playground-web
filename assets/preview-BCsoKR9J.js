@@ -1,1 +1,0 @@
-import{p as t,b as o}from"./undomanager-BGoCYxmv.js";import"./iframe-BR2xpY5C.js";import"../sb-preview/runtime.js";import"./_commonjsHelpers-BosuxZz1.js";fetch("./template.json").then(e=>e.json()).then(e=>{t.setTemplate(e)});o.setWasmUrl("./esbuild.wasm");const p={parameters:{controls:{matchers:{color:/(background|color)$/i,date:/Date$/i}}}};export{p as default};
