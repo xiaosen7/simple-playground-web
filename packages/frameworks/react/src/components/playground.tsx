@@ -35,17 +35,20 @@ import { filter } from "rxjs";
 import { SelectedPath } from "./selected-path";
 import { basename, dirname } from "@simple-playground-web/path";
 
-export interface IPlaygroundProps extends IPlaygroundOptions {
-  className?: string;
-  style?: React.CSSProperties;
-}
+export interface IPlaygroundProps
+  extends IPlaygroundOptions,
+    PlaygroundUIProps {}
 export const Playground = React.memo(
   (props: IPlaygroundProps) => {
-    const { className, style } = props;
+    const { className, style, renderTitle, ...builderProps } = props;
 
     return (
-      <PlaygroundProviderBuilder {...omit(props, ["className", "style"])}>
-        <PlaygroundUI className={className} style={style} />
+      <PlaygroundProviderBuilder {...builderProps}>
+        <PlaygroundUI
+          className={className}
+          style={style}
+          renderTitle={renderTitle}
+        />
       </PlaygroundProviderBuilder>
     );
   },
@@ -68,25 +71,29 @@ export const Playground = React.memo(
   }
 );
 
-const PlaygroundUI = (props: IComponentProps) => {
+interface PlaygroundUIProps extends IComponentProps {
+  renderTitle?: (originalNode: React.ReactNode) => React.ReactNode;
+}
+const PlaygroundUI = (props: PlaygroundUIProps) => {
+  const { className, style, renderTitle = (x) => x } = props;
   const playground = usePlayground();
 
   // Do not destroy playground because it may be used in other places
 
   return (
     <DividerBox
+      key={playground.cwd}
       mode="horizontal"
-      style={props.style}
-      className={classNames(
-        "border border-solid border-gray-300",
-        props.className
-      )}
+      style={style}
+      className={classNames("border border-solid border-gray-300", className)}
     >
       <div className="flex flex-col w-1/5 border-0 border-r border-solid border-gray-300">
-        <Stack direction={"row"}>
-          <Button style={{ cursor: "default" }} variant="text">
-            {basename(playground.cwd)}
-          </Button>
+        <Stack direction={"row"} overflow={"auto"}>
+          {renderTitle(
+            <Button style={{ cursor: "default" }} variant="text">
+              {basename(playground.cwd)}
+            </Button>
+          )}
           <Stack
             direction={"row"}
             flex={1}

@@ -2,11 +2,23 @@ import { PackageJson } from "type-fest";
 import { getNodeModulePackageJson } from "./package-manifest";
 import { dedent } from "ts-dedent";
 
+export interface INodeModulesVersionCheckerOptions {
+  ignore?: (packageName: string) => boolean;
+}
+
+/**
+ * Check the version of node modules is consistent
+ */
 export class NodeModulesVersionChecker {
   private cache = new Map<string, PackageJson>();
-  addAndCheckFile(path: string) {
+  constructor(private options: INodeModulesVersionCheckerOptions = {}) {}
+
+  addAndCheckFilePath(path: string) {
     const { manifest } = getNodeModulePackageJson(path);
     const { name, version } = manifest;
+    if (this.options.ignore?.(name)) {
+      return;
+    }
 
     if (!this.cache.has(name)) {
       this.cache.set(name, manifest);

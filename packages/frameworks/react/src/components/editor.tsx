@@ -24,6 +24,8 @@ export function Editor(props: IEditorProps) {
     return () => subs.unsubscribe();
   });
 
+  console.log("render");
+
   return (
     <div
       aria-label="editor"

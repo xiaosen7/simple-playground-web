@@ -11,7 +11,7 @@ export function createConsole() {
   const customConsole = Object.create(window.console);
 
   CONSOLE_STREAM_NAMES.reduce((memo, methodName) => {
-    set(memo, `${methodName}$`, new ReplaySubject<any[]>());
+    set(memo, `${methodName}$`, new Subject<any[]>());
 
     set(memo, methodName, (...args: any[]) => {
       memo[`${methodName}$`].next(args);

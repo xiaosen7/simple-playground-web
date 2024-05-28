@@ -1,15 +1,23 @@
-import { SourceFile } from "ts-morph";
+import { ExportDeclaration, ImportDeclaration, SourceFile } from "ts-morph";
 import { join, dirname } from "path";
 import { getNodeModulePackageJson } from "./package-manifest";
-import { NodeModulesVersionChecker } from "./node-modules";
+import {
+  INodeModulesVersionCheckerOptions,
+  NodeModulesVersionChecker,
+} from "./node-modules";
 
+export interface IDtsSourceFileCollectorOptions {
+  versionChecker?: INodeModulesVersionCheckerOptions;
+}
 export class DtsSourceFileCollector {
   #dtsSourceFileInstanceMap = new Map<SourceFile, DtsSourceFile>();
   #nodeModuleVersionChecker: NodeModulesVersionChecker;
   #sourceFileMap = new Set<SourceFile>();
 
-  constructor(private options: { checkVersion: boolean }) {
-    this.#nodeModuleVersionChecker = new NodeModulesVersionChecker();
+  constructor(options: IDtsSourceFileCollectorOptions = {}) {
+    this.#nodeModuleVersionChecker = new NodeModulesVersionChecker(
+      options.versionChecker
+    );
   }
 
   #getOrCreateDtsSourceFile(sourceFile: SourceFile) {
@@ -31,11 +39,11 @@ export class DtsSourceFileCollector {
 
     const dtsSourceFile = this.#getOrCreateDtsSourceFile(sourceFile);
 
-    if (this.options.checkVersion) {
-      this.#nodeModuleVersionChecker.addAndCheckFile(sourceFile.getFilePath());
-    }
+    this.#nodeModuleVersionChecker.addAndCheckFilePath(
+      sourceFile.getFilePath()
+    );
 
-    dtsSourceFile.getImportAndExportDeclarations().forEach((dec) => {
+    dtsSourceFile.importAndExportDeclarations.forEach((dec) => {
       const sourceFile = dec.getModuleSpecifierSourceFile();
       if (!sourceFile) {
         return;
@@ -50,7 +58,7 @@ export class DtsSourceFileCollector {
       this.recursivelyAddSourceFile(sourceFile);
     });
 
-    dtsSourceFile.getReferenceSourceFiles().forEach((sourceFile) => {
+    dtsSourceFile.referenceSourceFiles.forEach((sourceFile) => {
       this.recursivelyAddSourceFile(sourceFile);
     });
   }
@@ -70,22 +78,26 @@ export class DtsSourceFileCollector {
 
 export class DtsSourceFile {
   #moduleSpecifierValues = new Set<string>();
+  readonly importAndExportDeclarations: (
+    | ExportDeclaration
+    | ImportDeclaration
+  )[];
+  readonly importAndExportSourceFiles: SourceFile[];
+  readonly referenceSourceFiles: SourceFile[];
 
-  constructor(private sourceFile: SourceFile) {}
-
-  getImportAndExportDeclarations() {
-    return [
+  constructor(private sourceFile: SourceFile) {
+    this.importAndExportDeclarations = [
       ...this.sourceFile.getExportDeclarations(),
       ...this.sourceFile.getImportDeclarations(),
     ].filter((x) => {
       return x.getModuleSpecifierValue() && x.getModuleSpecifierSourceFile();
     });
-  }
+    this.importAndExportSourceFiles = this.importAndExportDeclarations.map(
+      (x) => x.getModuleSpecifierSourceFileOrThrow()
+    );
 
-  getReferenceSourceFiles() {
-    const sourceFile = this.sourceFile;
     const project = sourceFile.getProject();
-    return [
+    this.referenceSourceFiles = [
       ...sourceFile.getLibReferenceDirectives(),
       ...sourceFile.getPathReferenceDirectives(),
       ...sourceFile.getTypeReferenceDirectives(),

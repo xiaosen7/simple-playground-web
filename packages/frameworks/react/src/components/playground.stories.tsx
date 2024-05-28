@@ -1,15 +1,18 @@
 import {
+  Autocomplete,
   Badge,
   Box,
   Divider,
   Grid,
   Paper,
+  Select,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import { PlaygroundProviderBuilder } from "../provider";
 import { Playground } from "./playground";
-import React from "react";
+import React, { useState } from "react";
 import { Explore } from "./explore";
 import { Editor } from "./editor";
 import { Previewer } from "./previewer";
@@ -28,17 +31,37 @@ import {
 import { range } from "lodash-es";
 import DockLayout, { DividerBox } from "rc-dock";
 import { SelectedPath } from "./selected-path";
+import { basename } from "@simple-playground-web/path";
 
 export default {
   component: Playground,
 };
 
-export const Base = () => (
-  <Playground
-    style={{ height: "calc(100vh - 40px)" }}
-    cwd="/src/playgrounds/xstate"
-  />
-);
+export const Base = () => {
+  const [cwd, setCwd] = useState("/src/playgrounds/hello-world");
+  return (
+    <>
+      <Autocomplete
+        style={{ margin: "8px", minWidth: "150px" }}
+        size="small"
+        renderInput={(params) => <TextField {...params} label="Playground" />}
+        onChange={(_, cwd) => cwd && setCwd(cwd)}
+        value={cwd}
+        getOptionLabel={(cwd) => basename(cwd)}
+        options={[
+          "/src/playgrounds/hello-world",
+          "/src/playgrounds/mui",
+          "/src/playgrounds/antd",
+          "/src/playgrounds/xstate",
+          "/src/playgrounds/lodash-es",
+          "/src/playgrounds/styled",
+        ]}
+      />
+
+      <Playground style={{ height: "calc(100vh - 40px)" }} cwd={cwd} />
+    </>
+  );
+};
 
 export const CustomLayout = () => {
   return (

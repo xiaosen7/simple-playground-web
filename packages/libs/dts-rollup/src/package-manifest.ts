@@ -8,7 +8,6 @@ import { Project } from "ts-morph";
 
 import { getRelativeImportPath } from "./path";
 import { memoize } from "lodash-es";
-import { PackageJson } from "type-fest";
 import { INodeModulePackageJson } from "./types";
 
 export const getNodeModulePackageJson: (filePath: string) => {

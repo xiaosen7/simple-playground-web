@@ -45,3 +45,4 @@ dist
 .version
 *storybook.log
 /stories
+gen-template-dist

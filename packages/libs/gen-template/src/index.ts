@@ -5,30 +5,72 @@ import fg from "fast-glob";
 import { Command } from "commander";
 import cpy from "cpy";
 import { build } from "esbuild";
+import fsx from "fs-extra";
 
 import { Project } from "ts-morph";
-import temp from "temp";
 
-temp.track();
+process.addListener("unhandledRejection", errorCallback);
+process.addListener("uncaughtException", errorCallback);
 
-const cli = new Command("gen-template");
+const DEFAULT_OUT_DIR_NAME = "gen-template-dist";
+const DEFAULT_OUT_FILE_NAME = "template.json";
+const NAME = "gen-template";
+
+const cli = new Command(NAME);
 cli
-  .argument("[dir]", "Generate template.json from dir")
-  .option("--outFile <outFile>", "Template out file", "./template.json")
+  .argument("[inputDir]", "Generate template.json from directory")
   .option(
-    "--extraExternals [extraExternals...]",
-    "Template externals, this cli will scan source files to get external node modules and build them, you can add extra externals manually"
+    "--outDir <outDir>",
+    `Out dir to place template relative files, defaults to path.join(dir, "${DEFAULT_OUT_DIR_NAME}")`
   )
-  .option("--skipExternals [skipExternals...]", "Skip bundling externals.")
-  .action((dir = ".", options) => {
-    dir = resolve(dir);
-    const outDir = temp.mkdirSync({
-      dir,
-    });
+  .option(
+    "--outFile <outFile>",
+    "Template out file path",
+    `./${DEFAULT_OUT_FILE_NAME}`
+  )
+  .option("--overwrite", "Force overwrite", false)
+  .action(async (inputDir = ".", options) => {
+    inputDir = resolve(inputDir);
+    const outDir = resolve(
+      options.outDir || join(inputDir, DEFAULT_OUT_DIR_NAME)
+    );
+
+    if (!outDir.startsWith(inputDir)) {
+      throw new Error(
+        `outDir ${outDir} must be inside of input directory ${inputDir}`
+      );
+    }
+
+    if (fsx.existsSync(outDir)) {
+      if (!options.overwrite) {
+        throw new Error(
+          `outDir ${outDir} already exists. Use --overwrite to overwrite.`
+        );
+      }
+
+      await fsx.emptyDir(outDir);
+    }
+    await fsx.ensureDir(outDir);
+
     const outFile = resolve(options.outFile);
-    options = { ...options, root: dir, outDir, outFile };
+    if (fsx.existsSync(outFile)) {
+      if (!options.overwrite) {
+        throw new Error(
+          `outFile ${outFile} already exists. Use --overwrite to overwrite.`
+        );
+      }
+
+      await fsx.rm(outFile);
+    }
+
+    options = { ...options, root: inputDir, outDir, outFile };
     execute(options);
   });
+
+cli.addHelpText(
+  "afterAll",
+  `\nExample: ${NAME} ./path/to/template --outFile ./path/to/template.json`
+);
 cli.parse();
 
 type IPathToCode = Record<string, string>;
@@ -68,10 +110,8 @@ async function execute({
       cwd: root,
       ignore: [basename(outDir), "node_modules"],
     }),
-    ignoreExternals: skipExternals,
     outDir: projectOutDir,
     rootDir: root,
-    extraExternals,
   });
   await dtsRollup.run();
 
@@ -187,4 +227,10 @@ async function scanExternals(srcDir: string) {
   });
 
   return externals;
+}
+
+function errorCallback(errorOrReason: Error | unknown) {
+  // @ts-ignore
+  console.error(errorOrReason?.message ?? errorOrReason);
+  process.exit(1);
 }

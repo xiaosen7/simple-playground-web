@@ -17,6 +17,8 @@ import { pick } from "lodash-es";
 import { dedent } from "ts-dedent";
 import { DtsSourceFile, DtsSourceFileCollector } from "./dts-source-file";
 import { getNodeModulePackageJson } from "./package-manifest";
+import { INodeModulesVersionCheckerOptions } from "./node-modules";
+import { PackageJson } from "type-fest";
 
 const {
   ensureDir,
@@ -31,27 +33,17 @@ const {
 export interface IDtsRollupOptions {
   rootDir: string;
   entries: string[];
-  ignoreExternals: string[];
   outDir: string;
   nodeModules?: {
     /**
-     * 生成的 node_modules 文件夹的文件夹名
-     * @default 'node_modules'
-     */
-    dirname?: string;
-    /**
      * 写入的 package.json 字段
      */
-    writePackageJsonFields?: string[];
+    writePackageJsonFields?: (keyof PackageJson)[];
     /**
      * 允许哪些模块有多个版本
      */
-    allowMultipleVersionModules?: Set<string>;
+    versionChecker?: INodeModulesVersionCheckerOptions;
   };
-  /**
-   * extra externals
-   */
-  extraExternals?: string[];
 }
 /**
  * 以 *.ts 入口文件开始，收集所有他依赖的 d.ts 文件到一个文件夹
@@ -73,24 +65,17 @@ export class DtsRollup {
       },
     });
 
-    this.#nodeModulesOutDir = join(
-      options.outDir,
-      this.#options.nodeModules?.dirname ?? "node_modules"
-    );
+    this.#nodeModulesOutDir = join(options.outDir, "node_modules");
 
     this.#dtsSourceFileCollector = new DtsSourceFileCollector({
-      checkVersion: !options.nodeModules?.allowMultipleVersionModules,
+      versionChecker: options.nodeModules?.versionChecker,
     });
   }
 
   async run() {
+    console.time("time");
     const project = this.#project;
-    const {
-      entries,
-      ignoreExternals: externals,
-      outDir,
-      extraExternals = [],
-    } = this.#options;
+    const { entries, outDir } = this.#options;
 
     await ensureDir(outDir);
 
@@ -112,25 +97,24 @@ export class DtsRollup {
         );
 
         // write package json
-        // if (packageJsonOutFields.length > 0) {
-        //   const { manifest: packageManifest } = dtsSourceFile.getPackageJson();
-        //   const packageJsonOutPath = join(
-        //     this.#getNodeModuleOutDir(
-        //       packageManifest.name,
-        //       packageManifest.version
-        //     ),
-        //     "package.json"
-        //   );
-        //   await ensureDir(dirname(packageJsonOutPath));
-        //   if (!(await exists(packageJsonOutPath))) {
-        //     count++;
-        //     const packageOutManifest = pick(
-        //       packageManifest,
-        //       packageJsonOutFields
-        //     );
-        //     await writeJSON(packageJsonOutPath, packageOutManifest);
-        //   }
-        // }
+        if (packageJsonOutFields.length > 0) {
+          const { manifest: packageManifest } = dtsSourceFile.getPackageJson();
+          const packageJsonOutPath = join(
+            this.#getNodeModuleOutDir(
+              packageManifest.name,
+              packageManifest.version
+            ),
+            "package.json"
+          );
+          await ensureDir(dirname(packageJsonOutPath));
+          if (!(await exists(packageJsonOutPath))) {
+            const packageOutManifest = pick(
+              packageManifest,
+              packageJsonOutFields
+            );
+            await writeJSON(packageJsonOutPath, packageOutManifest);
+          }
+        }
 
         // write source file
         const outFilePath = this.#getOutFilePath(dtsSourceFile);
@@ -162,17 +146,22 @@ export class DtsRollup {
         packageJsonOutFields.length > 0 ? " (including package json file)" : ""
       }.`
     );
+    console.timeEnd("time");
   }
 
   #modifyImportPaths(dtsSourceFile: DtsSourceFile) {
     const sourceOutFilePath = this.#getOutFilePath(dtsSourceFile);
-    const importDeclarations = dtsSourceFile.getImportAndExportDeclarations();
+    const importDeclarations = dtsSourceFile.importAndExportDeclarations;
+    const sourceFiles = dtsSourceFile.importAndExportSourceFiles;
     importDeclarations.forEach((declaration, index) => {
       if (!declaration.isModuleSpecifierRelative()) {
         return;
       }
 
-      const sourceFile = declaration.getModuleSpecifierSourceFile();
+      // this will be bad performance
+      // const sourceFile = declaration.getModuleSpecifierSourceFile();
+
+      const sourceFile = sourceFiles[index];
 
       const dtsSourceFile =
         this.#dtsSourceFileCollector.getDtsSourceFileBySourceFile(sourceFile!);
@@ -190,13 +179,7 @@ export class DtsRollup {
   }
 
   #getNodeModuleOutDir(name: string, version?: string) {
-    return join(
-      this.#nodeModulesOutDir,
-      version &&
-        this.#options.nodeModules?.allowMultipleVersionModules?.has(name)
-        ? `${name}-v${version}`
-        : name
-    );
+    return join(this.#nodeModulesOutDir, name);
   }
 
   #getOutFilePath(dtsSourceFile: DtsSourceFile) {
@@ -223,8 +206,7 @@ export class DtsRollup {
 
     if (isOutside) {
       return join(
-        outDir,
-        this.#options.nodeModules?.dirname ?? "node_modules",
+        this.#nodeModulesOutDir,
         "__outside__",
         relativeToRootPath.replaceAll("../", "__/")
       );
