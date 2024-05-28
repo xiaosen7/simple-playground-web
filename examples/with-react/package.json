@@ -6,16 +6,14 @@
   "scripts": {
     "dev": "pnpm template && vite",
     "build": "pnpm template && tsc && vite build",
-    "template": "pnpm gen-template ./template --extraExternals react react/jsx-runtime --outFile ./public/template.json"
+    "template": "pnpm gen-template ./template --outFile ./public/template.json --overwrite"
   },
   "dependencies": {
     "@mui/material": "^5.15.17",
-    "@simple-playground-web/core": "latest",
-    "@simple-playground-web/react": "latest",
-    "@simple-playground-web/gen-template": "latest",
-    "buffer": "^6.0.3",
+    "@simple-playground-web/core": "^0.0.51",
+    "@simple-playground-web/gen-template": "^0.0.51",
+    "@simple-playground-web/react": "^0.0.51",
     "monaco-editor": "^0.48.0",
-    "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

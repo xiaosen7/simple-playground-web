@@ -1,5 +1,5 @@
-import "./workers";
-import { bundler, project, Logger } from "@simple-playground-web/core";
+import "./workers"; // this import should be first
+import { project, Logger } from "@simple-playground-web/core";
 import { Playground } from "@simple-playground-web/react";
 import "@simple-playground-web/react/dist/esm/index.css";
 import { createRoot } from "react-dom/client";
@@ -13,5 +13,5 @@ fetch("/template.json")
   .then((template) => project.setTemplate(template));
 
 createRoot(document.getElementById("root")!).render(
-  <Playground style={{ height: "100vh" }} cwd="/mui" />
+  <Playground style={{ height: "98vh" }} cwd="/mui" />
 );

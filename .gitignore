@@ -46,3 +46,4 @@ dist
 *storybook.log
 /stories
 gen-template-dist
+template.json

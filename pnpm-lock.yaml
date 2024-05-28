@@ -107,7 +107,7 @@ importers:
         version: 5.4.5
       vite-plugin-monaco-editor:
         specifier: ^1.1.0
-        version: 1.1.0(monaco-editor@0.48.0)
+        version: 1.1.0(monaco-editor@0.49.0)
       vite-tsconfig-paths:
         specifier: ^4.3.2
         version: 4.3.2(typescript@5.4.5)(vite@5.2.11)
@@ -118,23 +118,17 @@ importers:
         specifier: ^5.15.17
         version: 5.15.17(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@types/react@18.2.79)(react-dom@18.2.0)(react@18.2.0)
       '@simple-playground-web/core':
-        specifier: latest
-        version: 0.0.50(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
+        specifier: ^0.0.51
+        version: 0.0.51(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
       '@simple-playground-web/gen-template':
-        specifier: latest
-        version: 0.0.50
+        specifier: ^0.0.51
+        version: 0.0.51
       '@simple-playground-web/react':
-        specifier: latest
-        version: 0.0.50(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@types/react@18.2.79)(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
-      buffer:
-        specifier: ^6.0.3
-        version: 6.0.3
+        specifier: ^0.0.51
+        version: 0.0.51(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@types/react@18.2.79)(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
       monaco-editor:
         specifier: ^0.48.0
         version: 0.48.0
-      process:
-        specifier: ^0.11.10
-        version: 0.11.10
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1957,6 +1951,13 @@ packages:
       regenerator-runtime: 0.14.1
     dev: false
 
+  /@babel/runtime@7.24.6:
+    resolution: {integrity: sha512-Ja18XcETdEl5mzzACGd+DKgaGJzPTCow7EglgwTmHdwokzDFYh/MHua6lU6DV/hjF2IaOJ4oX2nqnjG7RElKOw==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      regenerator-runtime: 0.14.1
+    dev: false
+
   /@babel/template@7.24.0:
     resolution: {integrity: sha512-Bkf2q8lMB0AFpX0NFEqSbx1OkTHf0f+0j82mkw+ZpzBnkk7e9Ql0891vlfgi+kHwOk8tQjiQHpqh4LaSa0fKEA==}
     engines: {node: '>=6.9.0'}
@@ -2244,7 +2245,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.5
+      '@babel/runtime': 7.24.6
       '@emotion/babel-plugin': 11.11.0
       '@emotion/cache': 11.11.0
       '@emotion/serialize': 1.1.4
@@ -4151,43 +4152,42 @@ packages:
     dev: true
     optional: true
 
-  /@simple-playground-web/bundler@0.0.50(esbuild-wasm@0.20.2):
-    resolution: {integrity: sha512-ebMJVFV56Sc3q1JHU6a2k6elMsJS5MFX3oKIAYqutdYo3OE5svPYLGMDQCXbD40JAP4diieDKjzerQTFAk+VPg==}
+  /@simple-playground-web/bundler@0.0.51(esbuild-wasm@0.20.2):
+    resolution: {integrity: sha512-KE1CoWZQJe65zxv6aMtkNLvcdxUMGB5/NyxjCPApebfQH7JJAzIrMPScDaQAfnq2PQt2K/xlAPNTsHSqeoBaEQ==}
     peerDependencies:
       esbuild-wasm: ^0.20.2
     dependencies:
-      '@simple-playground-web/logger': 0.0.50
-      '@simple-playground-web/path': 0.0.50
-      '@simple-playground-web/types': 0.0.50
+      '@simple-playground-web/logger': 0.0.51
+      '@simple-playground-web/path': 0.0.51
+      '@simple-playground-web/types': 0.0.51
       esbuild-wasm: 0.20.2
       lodash-es: 4.17.21
       rxjs: 7.8.1
-      type-fest: 4.18.2
+      type-fest: 4.18.3
     dev: false
 
-  /@simple-playground-web/core@0.0.50(esbuild-wasm@0.20.2)(monaco-editor@0.48.0):
-    resolution: {integrity: sha512-jDyJhx8V0tf3HPJ4QwQxPTGaC8tdzj1zzwby75n03FooQMzOGkOE6JUEjLNFh/YFyhhofgSN4aXZxKdLBbKHQA==}
+  /@simple-playground-web/core@0.0.51(esbuild-wasm@0.20.2)(monaco-editor@0.48.0):
+    resolution: {integrity: sha512-TKOrIn9M+kJHe56A0jV6AIa5Vwgk16+gblWA03wQEA1TuKL4ruNgaMPOBJCTpVqlbb8BKawg2tqeO8JiVsujyQ==}
     dependencies:
-      '@simple-playground-web/bundler': 0.0.50(esbuild-wasm@0.20.2)
-      '@simple-playground-web/logger': 0.0.50
-      '@simple-playground-web/playground': 0.0.50(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
-      '@simple-playground-web/project': 0.0.50(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
+      '@simple-playground-web/bundler': 0.0.51(esbuild-wasm@0.20.2)
+      '@simple-playground-web/logger': 0.0.51
+      '@simple-playground-web/playground': 0.0.51(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
+      '@simple-playground-web/project': 0.0.51(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
     transitivePeerDependencies:
       - esbuild-wasm
       - monaco-editor
     dev: false
 
-  /@simple-playground-web/dom@0.0.50:
-    resolution: {integrity: sha512-Gk94pwj6ukCCJV6sUUluESUpksbM5Vxmqa1sgS8zdh8zmz1FlRu5KO8aMetDjhZfiYLHPnZ73nGCtAUaSTWzTA==}
+  /@simple-playground-web/dom@0.0.51:
+    resolution: {integrity: sha512-VJeFGvNYZ9ooMTZLVLVID/8UQqN5HCULaznRs4rYe2jby5V6B2xiwrbHClqHmfGXYW//nVTqWJbE5bYyOoyEoA==}
     dependencies:
-      '@simple-playground-web/types': 0.0.50
+      '@simple-playground-web/types': 0.0.51
     dev: false
 
-  /@simple-playground-web/dts-rollup@0.0.50:
-    resolution: {integrity: sha512-nGVeQrupfnqvpskH4l3r/FhXAs9NCbwLHXSxDedD/g25lEdKDUhvp/243hNszKpmSskgx2bUwJYttVG+yFn/kA==}
+  /@simple-playground-web/dts-rollup@0.0.51:
+    resolution: {integrity: sha512-vlzMAHu0ADFuGQcA/DmynoVcW2ABcylSwbXHmOa/C8vsCdiUeektzVMXu/XoJQHwq104z1MnK2L6EgpixNpd9w==}
     dependencies:
       '@types/fs-extra': 11.0.4
-      '@types/lodash-es': 4.17.12
       find-up: 7.0.0
       fs-extra: 11.2.0
       lodash-es: 4.17.21
@@ -4196,69 +4196,70 @@ packages:
       ts-morph: 22.0.0
     dev: false
 
-  /@simple-playground-web/fs@0.0.50:
-    resolution: {integrity: sha512-ZWPfQ3Xt26s7QUsk/dBOya/N+TPX0mF/wbNStYRHsBiRITNXXJmm5BogJus9uo5oik0ufz1Lhkse0ehOCa7kXg==}
+  /@simple-playground-web/fs@0.0.51:
+    resolution: {integrity: sha512-sqc14hSRpXQN8J8X3yHmGe19RFt/NhYZGtUsRFQMmmTYHyhyD7t1GTMExZn/jFK+FtFpEyTLU2F2UfZxkr/8Kg==}
     dependencies:
-      '@simple-playground-web/path': 0.0.50
-      '@simple-playground-web/types': 0.0.50
+      '@simple-playground-web/path': 0.0.51
+      '@simple-playground-web/types': 0.0.51
       rxjs: 7.8.1
     dev: false
 
-  /@simple-playground-web/gen-template@0.0.50:
-    resolution: {integrity: sha512-GUtuoyPNKF2ub45i3NiK1BZEHCQ4alBaaePFN+zFXqgNfI/mmYZc/qwucIlm0CnO3cexAPp+1jniBQO+loDuRA==}
+  /@simple-playground-web/gen-template@0.0.51:
+    resolution: {integrity: sha512-Pjinoz2P3p8Z1yiQgY5Q1l6RIAjGtUYTqNzfCYC4fC1DJulxwFwMecTL37Ae/9Cn8L7vpR8T00yVNRTQVIVoKA==}
     hasBin: true
     dependencies:
-      '@simple-playground-web/dts-rollup': 0.0.50
+      '@simple-playground-web/dts-rollup': 0.0.51
+      '@types/fs-extra': 11.0.4
       commander: 12.0.0
       cpy: 11.0.1
       esbuild: 0.21.3
       fast-glob: 3.3.2
-      temp: 0.9.4
+      fs-extra: 11.2.0
       ts-morph: 22.0.0
     dev: false
 
-  /@simple-playground-web/logger@0.0.50:
-    resolution: {integrity: sha512-RRmzOl1Ka6BZmO4E8/sO2oYfMPUulgJKV9TMeHehGmSDTVaz/nhS0Bx2JHOouDcmG/kYNZOS2T9zZfRX3v7usg==}
+  /@simple-playground-web/logger@0.0.51:
+    resolution: {integrity: sha512-74hgyDy9Z78NJ9LCtLOx/SS2mwsvsQ3HtdzQbH+o/qKVW+pt8ItSt2kpfLyUwTYlkdpP6SEPKoxn/4CES3sKRA==}
     dependencies:
       change-case: 5.4.4
     dev: false
 
-  /@simple-playground-web/path@0.0.50:
-    resolution: {integrity: sha512-zqUB37Zcza6u/1ScAnx4gq4vnkCa10F2jAf/eALthLS2H0Z7JlPecmCsehdUJkU1ot/fG3AAdk1ch9Vw9Q9big==}
+  /@simple-playground-web/path@0.0.51:
+    resolution: {integrity: sha512-I2lg2vV4Djl6NVrRhGmYX4UZJAnSggM8n3xqLI9xUIjtmRwU2XArdeHlZ9XjeOlP6Fau4yIQEmQsAgo/9k/+1g==}
     dependencies:
-      '@simple-playground-web/types': 0.0.50
+      '@simple-playground-web/types': 0.0.51
       micromatch: 4.0.7
       minimatch: 9.0.4
       picomatch-browser: 2.2.6
     dev: false
 
-  /@simple-playground-web/playground@0.0.50(esbuild-wasm@0.20.2)(monaco-editor@0.48.0):
-    resolution: {integrity: sha512-uXjEsE2r3JvkvvZtLIhg7x+NU2kWC4neyCAtbUPylttrtLx1rc/wu83Cl3qQOolBEo+t3vq9dZtgmYswtp608Q==}
+  /@simple-playground-web/playground@0.0.51(esbuild-wasm@0.20.2)(monaco-editor@0.48.0):
+    resolution: {integrity: sha512-Nh22qpHKDP21Ds8l7v55BOwrRgyqNZl2F9enZaDotlrpbZJPqayEeRGVVDfwCkrAqSBdqelM+L0gJzJr5jF/XQ==}
     dependencies:
-      '@simple-playground-web/bundler': 0.0.50(esbuild-wasm@0.20.2)
-      '@simple-playground-web/logger': 0.0.50
-      '@simple-playground-web/path': 0.0.50
-      '@simple-playground-web/project': 0.0.50(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
-      '@simple-playground-web/renderers': 0.0.50
+      '@simple-playground-web/bundler': 0.0.51(esbuild-wasm@0.20.2)
+      '@simple-playground-web/logger': 0.0.51
+      '@simple-playground-web/path': 0.0.51
+      '@simple-playground-web/project': 0.0.51(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
+      '@simple-playground-web/renderers': 0.0.51
       lodash-es: 4.17.21
       rxjs: 7.8.1
-      type-fest: 4.18.2
+      type-fest: 4.18.3
       undo-manager: 1.1.1
     transitivePeerDependencies:
       - esbuild-wasm
       - monaco-editor
     dev: false
 
-  /@simple-playground-web/project@0.0.50(esbuild-wasm@0.20.2)(monaco-editor@0.48.0):
-    resolution: {integrity: sha512-Vu3EoOKDHSMZxgYQ6/CRNGO43X71fguaC2g3kOPLNBQ4hM8TbGDyI3+F9gVRQIvth91igHgepFPQEbkaX9uKgg==}
+  /@simple-playground-web/project@0.0.51(esbuild-wasm@0.20.2)(monaco-editor@0.48.0):
+    resolution: {integrity: sha512-s+LdTaz3r5f1Sz+mDW5U228huwXpWBW4hkgC04EDLcCswN9XF529Hxzw9lkxUZMWLOo/SCD6QpdUe0tTpsLA3Q==}
     peerDependencies:
       monaco-editor: ^0.48.0
     dependencies:
-      '@simple-playground-web/bundler': 0.0.50(esbuild-wasm@0.20.2)
-      '@simple-playground-web/fs': 0.0.50
-      '@simple-playground-web/logger': 0.0.50
-      '@simple-playground-web/path': 0.0.50
-      '@simple-playground-web/types': 0.0.50
+      '@simple-playground-web/bundler': 0.0.51(esbuild-wasm@0.20.2)
+      '@simple-playground-web/fs': 0.0.51
+      '@simple-playground-web/logger': 0.0.51
+      '@simple-playground-web/path': 0.0.51
+      '@simple-playground-web/types': 0.0.51
       minimatch: 9.0.4
       monaco-editor: 0.48.0
       rxjs: 7.8.1
@@ -4266,19 +4267,19 @@ packages:
       - esbuild-wasm
     dev: false
 
-  /@simple-playground-web/react@0.0.50(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@types/react@18.2.79)(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-tBZOC8EKYhopjAxFxbjEzIiwF9DeQX6MA1e8ykspsGecA9nAEuw7fEYls8/c6PvqkMLy0s9Yc5JktE3+0KNWew==}
+  /@simple-playground-web/react@0.0.51(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@types/react@18.2.79)(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-vKOVou2F/uSVjtq2Q5di90ZhjZSy/9kfr+ZvfqlpJIW7ppUFig0rf8hpGhgRQSkLOC6n/bMHMaOxy51E8W1Lgw==}
     peerDependencies:
       react: '>=16.8.0'
     dependencies:
       '@mui/icons-material': 5.15.18(@mui/material@5.15.17)(@types/react@18.2.79)(react@18.2.0)
       '@mui/material': 5.15.17(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@types/react@18.2.79)(react-dom@18.2.0)(react@18.2.0)
       '@mui/x-tree-view': 7.3.1(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@mui/material@5.15.17)(@types/react@18.2.79)(react-dom@18.2.0)(react@18.2.0)
-      '@simple-playground-web/bundler': 0.0.50(esbuild-wasm@0.20.2)
-      '@simple-playground-web/path': 0.0.50
-      '@simple-playground-web/playground': 0.0.50(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
-      '@simple-playground-web/project': 0.0.50(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
-      '@simple-playground-web/renderers': 0.0.50
+      '@simple-playground-web/bundler': 0.0.51(esbuild-wasm@0.20.2)
+      '@simple-playground-web/path': 0.0.51
+      '@simple-playground-web/playground': 0.0.51(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
+      '@simple-playground-web/project': 0.0.51(esbuild-wasm@0.20.2)(monaco-editor@0.48.0)
+      '@simple-playground-web/renderers': 0.0.51
       ahooks: 3.7.11(react@18.2.0)
       autoprefixer: 10.4.19(postcss@8.4.38)
       classnames: 2.5.1
@@ -4303,19 +4304,19 @@ packages:
       - ts-node
     dev: false
 
-  /@simple-playground-web/renderers@0.0.50:
-    resolution: {integrity: sha512-NLa0VFley5fCre5guI7CauXmasqETRiKTUPcM6QqIOH2EoDJX5ezx/hWAJeARh28PpeyY1gJkc2z6fm+X5u4Dg==}
+  /@simple-playground-web/renderers@0.0.51:
+    resolution: {integrity: sha512-0Vlyj26Ar0LEOvIjzjXUGL6OcamwInW1geXezTu4CYLyVgFCIz4//NZ262JgzFVxcYeXLJ7k0NVa3nLgBomxGA==}
     dependencies:
-      '@simple-playground-web/dom': 0.0.50
-      '@simple-playground-web/logger': 0.0.50
-      '@simple-playground-web/types': 0.0.50
+      '@simple-playground-web/dom': 0.0.51
+      '@simple-playground-web/logger': 0.0.51
+      '@simple-playground-web/types': 0.0.51
       lodash-es: 4.17.21
       monaco-editor: 0.48.0
       rxjs: 7.8.1
     dev: false
 
-  /@simple-playground-web/types@0.0.50:
-    resolution: {integrity: sha512-xQuGwzvB/jqSPaZTvuG6JYqWOyjXRGIwpQbeaFJ5/0IdcL31zxx9wMQctputXcdM9HUMaRfCdaWHp+0tUHA8mg==}
+  /@simple-playground-web/types@0.0.51:
+    resolution: {integrity: sha512-nh4nhabutQf1VkDc8S6S/lBYQFVlLXs6hJXca+N6axXvV4XyLaIOOjsMuYZl57MJXfSpcKYSjcikBq6uob8YnQ==}
     dev: false
 
   /@sinclair/typebox@0.27.8:
@@ -9140,6 +9141,11 @@ packages:
 
   /monaco-editor@0.48.0:
     resolution: {integrity: sha512-goSDElNqFfw7iDHMg8WDATkfcyeLTNpBHQpO8incK6p5qZt5G/1j41X0xdGzpIkGojGXM+QiRQyLjnfDVvrpwA==}
+    dev: false
+
+  /monaco-editor@0.49.0:
+    resolution: {integrity: sha512-2I8/T3X/hLxB2oPHgqcNYUVdA/ZEFShT7IAujifIPMfKkNbLOqY8XCoyHCXrsdjb36dW9MwoTwBCFpXKMwNwaQ==}
+    dev: true
 
   /ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
@@ -9777,6 +9783,7 @@ packages:
   /process@0.11.10:
     resolution: {integrity: sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==}
     engines: {node: '>= 0.6.0'}
+    dev: true
 
   /prompts@2.4.2:
     resolution: {integrity: sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==}
@@ -12039,6 +12046,11 @@ packages:
     resolution: {integrity: sha512-+suCYpfJLAe4OXS6+PPXjW3urOS4IoP9waSiLuXfLgqZODKw/aWwASvzqE886wA0kQgGy0mIWyhd87VpqIy6Xg==}
     engines: {node: '>=16'}
 
+  /type-fest@4.18.3:
+    resolution: {integrity: sha512-Q08/0IrpvM+NMY9PA2rti9Jb+JejTddwmwmVQGskAlhtcrw1wsRzoR6ode6mR+OAabNa75w/dxedSUY2mlphaQ==}
+    engines: {node: '>=16'}
+    dev: false
+
   /type-is@1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
     engines: {node: '>= 0.6'}
@@ -12248,12 +12260,12 @@ packages:
       - terser
     dev: true
 
-  /vite-plugin-monaco-editor@1.1.0(monaco-editor@0.48.0):
+  /vite-plugin-monaco-editor@1.1.0(monaco-editor@0.49.0):
     resolution: {integrity: sha512-IvtUqZotrRoVqwT0PBBDIZPNraya3BxN/bfcNfnxZ5rkJiGcNtO5eAOWWSgT7zullIAEqQwxMU83yL9J5k7gww==}
     peerDependencies:
       monaco-editor: '>=0.33.0'
     dependencies:
-      monaco-editor: 0.48.0
+      monaco-editor: 0.49.0
     dev: true
 
   /vite-tsconfig-paths@4.3.2(typescript@5.4.5)(vite@5.2.11):
