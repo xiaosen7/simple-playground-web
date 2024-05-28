@@ -98,6 +98,12 @@ export class Previewer {
       this.error$.next(`Unhandledrejection:\n${ev.reason}`);
     });
 
+    // 解决全屏后背景色是黑色的问题
+    const head = this.#window.document.head;
+    const defaultStyle = document.createElement("style");
+    defaultStyle.textContent = `body { background-color: white; }`;
+    head.append(defaultStyle);
+
     const body = this.#window.document.body;
 
     // sources
@@ -186,6 +192,6 @@ export class Previewer {
       return;
     }
 
-    return this.#iframe.requestFullscreen();
+    return this.#iframe.contentWindow?.document.documentElement.requestFullscreen();
   };
 }
