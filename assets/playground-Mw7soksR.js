@@ -1,0 +1,1 @@
+import{r as o}from"./index-CBqU2yxZ.js";import{a as t}from"./index-D2esnJS0.js";function e(){const r=o.useContext(t);if(!r)throw new Error("usePlayground must be used within a PlaygroundProvider");return r}export{e as u};
