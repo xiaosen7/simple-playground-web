@@ -15,7 +15,15 @@ import { Previewer } from "./previewer";
 import { usePlayground } from "../hooks/playground";
 import { omit } from "lodash-es";
 import { PlaygroundContext } from "../context";
-import { Button, Paper, Stack, Typography } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  Fade,
+  LinearProgress,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import {
   CreateFile,
   CreateFolder,
@@ -81,15 +89,33 @@ const PlaygroundUI = (props: PlaygroundUIProps) => {
   const playground = usePlayground();
 
   // Do not destroy playground because it may be used in other places
+  const loading = useObservable(playground.loading$);
 
   return (
     <DividerBox
       key={playground.cwd}
       mode="horizontal"
       style={style}
-      className={classNames("border border-solid border-gray-300", className)}
+      className={classNames(
+        "border border-solid border-gray-300 relative",
+        loading && "cursor-wait",
+        className
+      )}
     >
       <div className="flex flex-col w-1/5 border-0 border-r border-solid border-gray-300">
+        <Fade
+          in={loading}
+          style={{
+            transitionDelay: loading ? "200ms" : "0ms",
+          }}
+          unmountOnExit
+        >
+          <LinearProgress
+            style={{ position: "absolute" }}
+            className="w-full left-0 top-0"
+          />
+        </Fade>
+
         <Stack
           direction={"row"}
           justifyContent={"space-between"}

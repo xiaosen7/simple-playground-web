@@ -126,7 +126,10 @@ export class Explore {
   }
 
   isDirectory(path: string) {
-    return project.fs.statSync(resolve(this.cwd, path)).isDirectory();
+    return (
+      project.fs.existsSync(resolve(this.cwd, path)) &&
+      project.fs.statSync(resolve(this.cwd, path)).isDirectory()
+    );
   }
 
   resolve(path: string) {

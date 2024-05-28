@@ -92,12 +92,9 @@ export class Playground {
   previewer = new Previewer();
   explore: Explore;
 
+  loading$ = new BehaviorSubject(true);
   fs$: Observable<string | void>;
   debouncedFs$: Observable<string | void>;
-  /**
-   * The tree paths relative to cwd
-   */
-  directoryTreePaths$ = new ReplaySubject<string[]>();
   buildState$ = new BehaviorSubject<EBuildState>(EBuildState.Start);
   selectedPath$ = new ReplaySubject<string>();
   // @ts-ignore
@@ -144,6 +141,8 @@ export class Playground {
     this.fs$ = merge(this.explore.newFile$, this.explore.change$);
     this.debouncedFs$ = this.fs$.pipe(debounceTime(200));
 
+    this.debouncedFs$.subscribe(() => this.loading$.next(false));
+
     // auto build when content change
     this.#subscription.add(
       this.editor.contentChange$
@@ -176,16 +175,6 @@ export class Playground {
 
     // build
     this.#subscription.add(this.debouncedFs$.subscribe(() => this.build()));
-
-    // directory tree paths
-    this.#subscription.add(
-      this.debouncedFs$.subscribe(() => {
-        const paths = this.getDirectoryTreePaths();
-
-        this.#logger.log("directoryTreePaths$", paths);
-        this.directoryTreePaths$.next(paths);
-      })
-    );
 
     // entry
     this.#subscription.add(
@@ -350,7 +339,7 @@ export class Playground {
 
       zip.file(path, this.explore.readFileSync(path, "utf-8"));
     });
-    return zip.generateAsync({ type: "blob" }).then(function (content) {
+    return zip.generateAsync({ type: "blob" }).then((content) => {
       saveAs(content, "playground.zip");
     });
   }
