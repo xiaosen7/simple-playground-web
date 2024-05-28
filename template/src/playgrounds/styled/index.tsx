@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import React from "react";
 import styled from "@emotion/styled";
+import "./index.css";
 
 const StyledDiv = styled.div`
   color: red;

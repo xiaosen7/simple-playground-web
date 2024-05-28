@@ -100,9 +100,6 @@ export class Previewer {
 
     const body = this.#window.document.body;
 
-    // 解决全屏后背景色为黑色
-    body.style.backgroundColor = "white";
-
     // sources
 
     const { globals, scripts, styles, html } = this.#sources;

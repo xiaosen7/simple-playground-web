@@ -141,6 +141,24 @@ class Bundler {
       ],
       outdir: "dist",
       ...omit(options.esbuildOptions, "plugins"),
+      loader: {
+        ".js": "js",
+        ".json": "json",
+        ".css": "css",
+        ".jsx": "jsx",
+        ".ts": "ts",
+        ".tsx": "tsx",
+        ".text": "text",
+        ".jpg": "base64",
+        ".webp": "file",
+        ".svg": "dataurl",
+        ".ttf": "dataurl",
+        ".eot": "dataurl",
+        ".woff": "dataurl",
+        ".woff2": "dataurl",
+        ".png": "dataurl",
+        ...options.esbuildOptions?.loader,
+      },
     });
 
     const jsResult = result.outputFiles?.find((x) => x.path.endsWith(".js"));
