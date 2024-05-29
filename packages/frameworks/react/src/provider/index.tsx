@@ -17,10 +17,12 @@ export const PlaygroundProvider = (
   );
 };
 
+PlaygroundProvider.Consumer = PlaygroundContext.Consumer;
+
 export interface IPlaygroundProviderBuilderProps extends IPlaygroundOptions {
   children?: ReactNode;
 }
-export const PlaygroundProviderBuilder = React.memo(
+const _PlaygroundProviderBuilder = React.memo(
   (props: IPlaygroundProviderBuilderProps) => {
     const {
       entry,
@@ -70,5 +72,12 @@ export const PlaygroundProviderBuilder = React.memo(
         return JSON.stringify(oldProps[key]) === JSON.stringify(newProps[key]);
       }
     );
+  }
+);
+
+export const PlaygroundProviderBuilder = Object.assign(
+  _PlaygroundProviderBuilder,
+  {
+    Consumer: PlaygroundContext.Consumer,
   }
 );

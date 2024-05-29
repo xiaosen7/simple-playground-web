@@ -3,11 +3,9 @@ import { Logger } from "@simple-playground-web/logger";
 import { basename, createFilterPattern } from "@simple-playground-web/path";
 import { ReplaySubject } from "rxjs";
 import * as fs from "@simple-playground-web/fs";
-import { IProjectTemplate } from "./template";
+import { IProjectTemplate } from "@simple-playground-web/types";
 
 const { EFsEventType, FS } = fs;
-
-export * from "./template";
 
 const defaultCompilerOptions: monaco.languages.typescript.CompilerOptions = {
   target: monaco.languages.typescript.ScriptTarget.ESNext,
@@ -31,8 +29,7 @@ class Project {
   newFile$ = new ReplaySubject<string>();
   fs = new FS();
   template: IProjectTemplate = {
-    files: { "index.ts": `console.log("Hello world")` },
-    externals: { cjsCode: "module.exports = {  }" },
+    files: { "/index.ts": `console.log("Hello world")` },
   };
 
   constructor() {

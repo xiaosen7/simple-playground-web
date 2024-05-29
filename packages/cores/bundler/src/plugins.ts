@@ -1,4 +1,3 @@
-import { ISafeAny } from "@simple-playground-web/types";
 import * as esbuild from "esbuild-wasm";
 import { dirname } from "@simple-playground-web/path";
 

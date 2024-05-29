@@ -10,6 +10,7 @@ import {
   CircularProgress,
   Container,
   Divider,
+  LinearProgress,
   Paper,
   Stack,
   StackProps,
@@ -35,6 +36,7 @@ export function Previewer(props: IPreviewerProps) {
   const previewerRef = useRef(null);
   const playground = usePlayground();
 
+  const previewState = useObservable(playground.previewer.state$);
   const buildState = useObservable(playground.buildState$);
 
   useMount(() => {

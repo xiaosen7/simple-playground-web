@@ -1,6 +1,7 @@
 import type { Preview } from "@storybook/react";
 import "./tailwind.css";
 import { bundler, project } from "@simple-playground-web/core";
+import * as monacoEditor from "monaco-editor";
 
 fetch("./template.json")
   .then((res) => res.json())
@@ -9,6 +10,10 @@ fetch("./template.json")
   });
 
 bundler.setWasmUrl("./esbuild.wasm");
+
+bundler.setGlobalExternals({
+  "monaco-editor": monacoEditor, // Used in playground: /src/playgrounds/playground
+});
 
 const preview: Preview = {
   parameters: {

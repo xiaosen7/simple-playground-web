@@ -6,6 +6,7 @@ import { Command } from "commander";
 import cpy from "cpy";
 import { build } from "esbuild";
 import fsx from "fs-extra";
+import { IProjectTemplate } from "@simple-playground-web/types";
 
 import { Project } from "ts-morph";
 
@@ -89,7 +90,7 @@ async function execute({
   skipExternals?: string[];
 }): Promise<void> {
   await mkdir(join(outDir, "externals"));
-  const { code: externalCode, externals } = await buildExternals(
+  const { js: cjsCode, css: cssCode } = await buildExternals(
     root,
     join(outDir, "externals"),
     extraExternals,
@@ -115,14 +116,14 @@ async function execute({
   });
   await dtsRollup.run();
 
-  const json = {
+  const json: IProjectTemplate = {
     files: {
       ...(await dirToJson(projectOutDir, "/", ["**/*"])),
     },
 
     externals: {
-      cjsCode: externalCode,
-      externals,
+      cjsCode,
+      cssCode,
     },
   };
 
@@ -157,7 +158,8 @@ async function buildExternals(
   skipExternals: string[] = []
 ) {
   const entryFile = join(outDir, "index.ts");
-  const outFile = join(outDir, "index.js");
+  const outJsFile = join(outDir, "index.js");
+  const outCssFile = join(outDir, "index.js");
   const externals = [
     ...new Set([...(await scanExternals(scanSrcDir)), ...extraExternals]),
   ].filter((x) => !skipExternals.includes(x));
@@ -177,8 +179,8 @@ export default modules;
     entryPoints: [entryFile],
     bundle: true,
     format: "cjs",
-    minify: true,
-    outfile: outFile,
+    // minify: true,
+    outfile: outJsFile,
     loader: {
       ".js": "js",
       ".json": "json",
@@ -201,7 +203,11 @@ export default modules;
     },
   });
 
-  return { code: await readFile(outFile, "utf-8"), externals };
+  return {
+    js: await readFile(outJsFile, "utf-8"),
+    css: fsx.existsSync(outCssFile) ? await readFile(outCssFile, "utf-8") : "",
+    externals,
+  };
 }
 
 async function scanExternals(srcDir: string) {

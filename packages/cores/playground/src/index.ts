@@ -27,6 +27,7 @@ import { Explore } from "./explore";
 import { Logger } from "@simple-playground-web/logger";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import { IProjectTemplate } from "@simple-playground-web/types";
 
 export interface IPlaygroundOptions {
   globalExternals?: Record<string, any>;
@@ -58,6 +59,7 @@ export interface IPlaygroundOptions {
    * @default "/"
    */
   cwd: string;
+  // template?: IProjectTemplate | string;
 }
 
 enum EBuildState {
@@ -68,9 +70,6 @@ enum EBuildState {
   Done,
 }
 
-/**
- * TODO auto entry
- */
 export class Playground {
   static #playgroundMap = new Map<string, Playground>();
 
@@ -96,7 +95,7 @@ export class Playground {
   fs$: Observable<string | void>;
   debouncedFs$: Observable<string | void>;
   buildState$ = new BehaviorSubject<EBuildState>(EBuildState.Start);
-  selectedPath$ = new ReplaySubject<string>();
+  selectedPath$ = new BehaviorSubject<string>("");
   // @ts-ignore
   buildResult$ = new BehaviorSubject<IBuildResult | undefined>(undefined);
 
@@ -191,9 +190,11 @@ export class Playground {
         }
 
         if (
+          !this.selectedPath$.value &&
           this.#options.entry !== "" &&
           this.explore.resolve(path) === this.#options.entry
         ) {
+          this.#logger.log("auto select entry", this.getEntryPathRelativeCwd());
           this.selectedPath$.next(this.getEntryPathRelativeCwd());
         }
       })
@@ -308,12 +309,18 @@ export class Playground {
             throw new Error("module not found: " + name);
           }
           
-          ${project.template.externals.cjsCode}
+          ${project.template.externals?.cjsCode ?? ""}
             `,
             },
             { id: "build", content: js ?? "" },
           ],
-          styles: [{ id: "build", content: css ?? "" }],
+          styles: [
+            {
+              id: "externals",
+              content: project.template.externals?.cssCode ?? "",
+            },
+            { id: "build", content: css ?? "" },
+          ],
           globals: globalExternals,
         });
       });

@@ -49,9 +49,12 @@ export class Editor {
    */
   renderPath(absolutePath: string) {
     const model = monaco.editor.getModel(monaco.Uri.parse(absolutePath));
+    this.#logger.log("render path", absolutePath);
+    this.#logger.log("model", model);
 
-    if (model && this.#codeEditor?.getModel() !== model) {
-      this.#codeEditor?.setModel(model);
+    if (model && this.#codeEditor.getModel() !== model) {
+      this.#logger.log("set model", model);
+      this.#codeEditor.setModel(model);
     }
 
     this.#lastAbsolutePath = absolutePath;

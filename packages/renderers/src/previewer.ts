@@ -4,7 +4,6 @@ import {
   appendStylesheet,
   createNode,
 } from "@simple-playground-web/dom";
-import { ISafeAny } from "@simple-playground-web/types";
 import { Observable, Subject, Subscription, fromEvent } from "rxjs";
 import { createConsole } from "./console";
 import { Logger } from "@simple-playground-web/logger";
@@ -15,7 +14,7 @@ import { Logger } from "@simple-playground-web/logger";
 interface ISources {
   scripts: Array<{ type?: string; id: string; content?: string; src?: string }>;
   styles: Array<{ id: string; content: string }>;
-  globals: Record<string, ISafeAny>;
+  globals: Record<string, any>;
   html: string;
 }
 
@@ -25,7 +24,7 @@ interface ISources {
 interface ISourceReferences {
   scripts: Map<string, HTMLScriptElement>;
   styles: Map<string, HTMLStyleElement>;
-  globals: Record<string, ISafeAny>;
+  globals: Record<string, any>;
   html: HTMLElement;
 }
 
@@ -123,10 +122,10 @@ export class Previewer {
 
     // globals
     Object.keys(this.#sourceReferences.globals).forEach((key) => {
-      delete this.#window![key as ISafeAny];
+      delete this.#window![key as any];
     });
     Object.entries(globals).forEach(([key, value]) => {
-      this.#window![key as ISafeAny] = value;
+      this.#window![key as any] = value;
     });
     this.#sourceReferences.globals = globals;
 

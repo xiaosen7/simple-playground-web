@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@simple-playground-web/dts-rollup": "workspace:^",
+    "@simple-playground-web/types": "workspace:^",
     "@types/fs-extra": "^11.0.4",
     "commander": "^12.0.0",
     "cpy": "^11.0.1",

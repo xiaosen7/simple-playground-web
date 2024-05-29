@@ -32,6 +32,7 @@ import { range } from "lodash-es";
 import DockLayout, { DividerBox } from "rc-dock";
 import { SelectedPath } from "./selected-path";
 import { basename } from "@simple-playground-web/path";
+import { take } from "rxjs";
 
 export default {
   component: Playground,
@@ -65,57 +66,11 @@ export const Base = () => {
 
 export const CustomLayout = () => {
   return (
-    <PlaygroundProviderBuilder cwd="/src/playgrounds/xstate" entry="index.tsx">
-      <DividerBox
-        mode="vertical"
-        className={"border border-solid border-gray-300"}
-        style={{ height: "calc(100vh - 20px)" }}
-      >
-        {/* explore part */}
-        <div className="flex flex-col ">
-          <Stack direction={"row"} className="overflow-scroll">
-            <Rename />
-            <CreateFile />
-            <CreateFolder />
-            <Delete />
-            <Undo />
-            <Redo />
-          </Stack>
-          <Explore className="border-0 border-t border-solid border-gray-300 h-20" />
-        </div>
-
-        {/* editor part */}
-        <DividerBox
-          mode="vertical"
-          className="border-0 border-b border-t border-solid border-gray-300 "
-        >
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            paddingX={1}
-            justifyContent={"space-between"}
-          >
-            <SelectedPath />
-            <FormatCode />
-          </Stack>
-
-          <Editor className="flex-1 border-0 border-t border-b border-solid border-gray-300" />
-          <BuildInfo className="min-h-8" />
-        </DividerBox>
-
-        {/* preview part */}
-        <DividerBox mode="vertical">
-          <Stack>
-            <Stack direction={"row"} className="overflow-scroll">
-              <RequestPreviewerFullScreen />
-              <ReloadPreviewer />
-            </Stack>
-            <Previewer className="overflow-auto flex-1 border-0 border-b border-t border-solid border-gray-200" />
-          </Stack>
-
-          <Previewer.Console className="border-0 border-t border-solid border-gray-300 h-24" />
-        </DividerBox>
-      </DividerBox>
+    <PlaygroundProviderBuilder cwd="/src/playgrounds/hello-world">
+      <div className="h-[90vh] flex border border-gray-200 border-solid">
+        <Editor className="w-1/2" />
+        <Previewer className="w-1/2" />
+      </div>
     </PlaygroundProviderBuilder>
   );
 };

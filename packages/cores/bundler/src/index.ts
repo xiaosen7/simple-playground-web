@@ -7,7 +7,6 @@ import {
   dataURlPlugin,
   pluginGlobals,
 } from "./plugins";
-import { IFileObject, ISafeAny } from "@simple-playground-web/types";
 import { memoize, omit, once } from "lodash-es";
 import { AsyncReturnType } from "type-fest";
 import { Logger } from "@simple-playground-web/logger";
@@ -196,12 +195,12 @@ export type IBuildResult = {
 /**
  * 同一时间内，函数只会被执行一次，多次调用排队执行
  */
-function singleAsyncFn<T extends (...args: ISafeAny) => Promise<ISafeAny>>(
+function singleAsyncFn<T extends (...args: any) => Promise<any>>(
   originalFn: T
 ) {
   let last = Promise.resolve();
 
-  return ((...args: ISafeAny) => {
+  return ((...args: any) => {
     last = last.catch(() => {}).then(() => originalFn(...args));
 
     return last;
