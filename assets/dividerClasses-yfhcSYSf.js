@@ -1,1 +1,0 @@
-import{g as t}from"./subs-up_klfSl.js";import{g as e}from"./styled-DlxMxt4f.js";function s(i){return e("MuiDivider",i)}const a=t("MuiDivider",["root","absolute","fullWidth","inset","middle","flexItem","light","vertical","withChildren","withChildrenVertical","textAlignRight","textAlignLeft","wrapper","wrapperVertical"]);export{a as d,s as g};
