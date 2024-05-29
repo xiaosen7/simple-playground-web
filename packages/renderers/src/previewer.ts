@@ -87,6 +87,8 @@ export class Previewer {
       return;
     }
 
+    this.#logger.log("loadSources", { sources: this.#sources });
+
     // @ts-ignore
     this.#window.console = this.console;
 
@@ -133,12 +135,12 @@ export class Previewer {
       const { id, content } = style;
       let element = this.#sourceReferences.styles.get(id);
       if (element) {
-        element.textContent = content;
-      } else {
-        element = appendStylesheet(style.content, body);
-        element.setAttribute("data-style-id", id);
-        this.#sourceReferences.styles.set(id, element);
+        element.remove();
       }
+
+      element = appendStylesheet(content, body);
+      element.setAttribute("data-style-id", id);
+      this.#sourceReferences.styles.set(id, element);
     });
 
     // scripts

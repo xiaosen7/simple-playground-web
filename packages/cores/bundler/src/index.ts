@@ -128,6 +128,7 @@ class Bundler {
 
     const result = await esbuild.build({
       entryPoints: [entry],
+      sourcemap: "inline",
       bundle: true,
       plugins: [
         pluginGlobals(globals),
